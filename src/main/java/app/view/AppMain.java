@@ -15,17 +15,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-
+import app.controller.RevisionArticuloRevisorController;
+import app.model.RevisionArticuloRevisorModel;
 import giis.demo.util.Database;
-
 
 public class AppMain {
 
-    private JFrame frame;
-    private JPanel contentPane;
-    private JTextField textEmail;
+	private JFrame frame;
+	private JPanel contentPane;
+	private JTextField textEmail;
 
-    /**
+	/**
 	 * Lanzar la aplicación.
 	 */
 	public static void main(String[] args) {
@@ -34,69 +34,81 @@ public class AppMain {
 				try {
 					AppMain window = new AppMain();
 					window.frame.setVisible(true);
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-	
+
 	/**
 	 * Crear la aplicación.
 	 */
-    public AppMain() {
-        initialize();
-    }
-    
-    
-    /**
+	public AppMain() {
+		initialize();
+	}
+
+	/**
 	 * Inicializar los elementos del frame.
 	 */
-    public void initialize() {
+	public void initialize() {
 		frame = new JFrame();
-    	frame.setTitle("Gestor de conferencias");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setBounds(100, 100, 400, 600);
+		frame.setTitle("Gestor de conferencias");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setBounds(100, 100, 400, 600);
 
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(10,10,10,10));
-        contentPane.setLayout(new BorderLayout(10,10));
-        frame.setContentPane(contentPane);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+		contentPane.setLayout(new BorderLayout(10, 10));
+		frame.setContentPane(contentPane);
 
-        // Panel superior para el email
-        JPanel panelEmail = new JPanel(new BorderLayout(5,5));
-        JLabel lblEmail = new JLabel("Email:");
-        textEmail = new JTextField();
-        panelEmail.add(lblEmail, BorderLayout.WEST);
-        panelEmail.add(textEmail, BorderLayout.CENTER);
-        contentPane.add(panelEmail, BorderLayout.NORTH);
+		// Panel superior para el email
+		JPanel panelEmail = new JPanel(new BorderLayout(5, 5));
+		JLabel lblEmail = new JLabel("Email:");
+		textEmail = new JTextField();
+		panelEmail.add(lblEmail, BorderLayout.WEST);
+		panelEmail.add(textEmail, BorderLayout.CENTER);
+		contentPane.add(panelEmail, BorderLayout.NORTH);
 
-        // Panel central para los botones (alineados verticalmente)
-        JPanel panelBotones = new JPanel();
-        panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
+		// Panel central para los botones (alineados verticalmente)
+		JPanel panelBotones = new JPanel();
+		panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
 
-        // Crear lista de definiciones de botones
-        List<ButtonProvider> buttons = new ArrayList<>();
-        buttons.add(new ButtonProvider("Iniciar BBDD en blanco", e -> {
-        	Database db=new Database();
+		// Crear lista de definiciones de botones
+		List<ButtonProvider> buttons = new ArrayList<>();
+		buttons.add(new ButtonProvider("Iniciar BBDD en blanco", e -> {
+			Database db = new Database();
 			db.createDatabase(false);
-        }));
-        buttons.add(new ButtonProvider("Cargar datos en BBDD", e -> System.out.println("Acción de Funcionalidad 2")));
-        buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor", e -> System.out.println("Acción de Funcionalidad 3")));
-        buttons.add(new ButtonProvider("Revisar artículos asignados para revisión - Revisor", e -> System.out.println("Acción de Funcionalidad 4")));
-        buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador", e -> System.out.println("Acción de Funcionalidad 5")));
-        buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador", e -> System.out.println("Acción de Funcionalidad 6")));
-        buttons.add(new ButtonProvider("Ver revisión de mis articulos - Autor", e -> System.out.println("Acción de Funcionalidad 7")));
-        buttons.add(new ButtonProvider("Visualizar mis artículos - Autor", e -> System.out.println("Acción de Funcionalidad 8")));
+		}));
+		buttons.add(new ButtonProvider("Cargar datos en BBDD", e -> {
+			Database db = new Database();
+			db.createDatabase(false);
+			db.loadDatabase();
+		}));
+		buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor",
+				e -> System.out.println("Acción de Funcionalidad 3")));
+		buttons.add(new ButtonProvider("Revisar artículos asignados para revisión - Revisor", e -> {
+			RevisionArticuloRevisorController controller = new RevisionArticuloRevisorController(
+					new RevisionArticuloRevisorModel(), new RevisionArticuloRevisorView(), textEmail.getText());
+			controller.initController();
+		}));
+		buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador",
+				e -> System.out.println("Acción de Funcionalidad 5")));
+		buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador",
+				e -> System.out.println("Acción de Funcionalidad 6")));
+		buttons.add(new ButtonProvider("Ver revisión de mis articulos - Autor",
+				e -> System.out.println("Acción de Funcionalidad 7")));
+		buttons.add(new ButtonProvider("Visualizar mis artículos - Autor",
+				e -> System.out.println("Acción de Funcionalidad 8")));
 
-        // Agregar botones al panel
-        for (ButtonProvider bd : buttons) {
-            panelBotones.add(bd.createButton());
-            panelBotones.add(Box.createVerticalStrut(5));
-        }
+		// Agregar botones al panel
+		for (ButtonProvider bd : buttons) {
+			panelBotones.add(bd.createButton());
+			panelBotones.add(Box.createVerticalStrut(5));
+		}
 
-        contentPane.add(panelBotones, BorderLayout.CENTER);
-    }
-    
+		contentPane.add(panelBotones, BorderLayout.CENTER);
+	}
+
 }
