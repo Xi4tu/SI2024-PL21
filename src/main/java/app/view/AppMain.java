@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import app.controller.AceptarDenegarArticulosController;
+import app.model.AceptarDenegarArticulosModel;
 import giis.demo.util.Database;
 
 
@@ -86,7 +88,13 @@ public class AppMain {
         buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor", e -> System.out.println("Acción de Funcionalidad 3")));
         buttons.add(new ButtonProvider("Revisar artículos asignados para revisión - Revisor", e -> System.out.println("Acción de Funcionalidad 4")));
         buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador", e -> System.out.println("Acción de Funcionalidad 5")));
-        buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador", e -> System.out.println("Acción de Funcionalidad 6")));
+        buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador", e -> {
+        	AceptarDenegarArticulosController controller = new AceptarDenegarArticulosController(
+        			new AceptarDenegarArticulosModel(), new AceptarDenegarArticulosView(), textEmail.getText());
+        	controller.initView();
+        	controller.initController();
+        }));
+        
         buttons.add(new ButtonProvider("Ver revisión de mis articulos - Autor", e -> System.out.println("Acción de Funcionalidad 7")));
         buttons.add(new ButtonProvider("Visualizar mis artículos - Autor", e -> System.out.println("Acción de Funcionalidad 8")));
 
