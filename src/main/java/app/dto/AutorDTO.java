@@ -17,6 +17,8 @@ public class AutorDTO {
 		this.grupoInvestigacion = grupoInvestigacion;
 	}
 
+
+	
 	// Getters y setters
 	public String getEmail() {
 		return email;
@@ -49,10 +51,11 @@ public class AutorDTO {
 	public void setGrupoInvestigacion(String grupoInvestigacion) {
 		this.grupoInvestigacion = grupoInvestigacion;
 	}
-
+	
+	// toString con todos los datos separados por guiones
 	@Override
 	public String toString() {
-		return nombre + " - " + email;
+		return email + " - " + nombre + " - " + organizacion + " - " + grupoInvestigacion;
 	}
 
 }

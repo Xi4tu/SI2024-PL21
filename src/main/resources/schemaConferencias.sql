@@ -51,7 +51,7 @@ CREATE TABLE "Usuario" (
 	"email"	TEXT NOT NULL,
 	"nombre"	TEXT NOT NULL,
 	"organizacion"	TEXT NOT NULL,
-	"grupoInvestigacion"	TEXT NOT NULL,
+	"grupoInvestigacion"	TEXT,
 	PRIMARY KEY("email")
 );
 

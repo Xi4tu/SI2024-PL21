@@ -11,7 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import app.controller.EnviarArticuloController;
 import app.controller.RevisionArticuloRevisorController;
+import app.model.EnviarArticuloModel;
 import app.model.RevisionArticuloRevisorModel;
 import giis.demo.util.Database;
 
@@ -30,7 +33,6 @@ public class AppMain {
 				try {
 					AppMain window = new AppMain();
 					window.frame.setVisible(true);
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -82,8 +84,11 @@ public class AppMain {
 			db.createDatabase(false);
 			db.loadDatabase();
 		}));
-		buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor",
-				e -> System.out.println("Acción de Funcionalidad 3")));
+		buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor", e -> {
+			EnviarArticuloController controller = new EnviarArticuloController(new EnviarArticuloModel(),
+					new EnviarArticuloView(), textEmail.getText());
+			controller.initController();
+		}));
 		buttons.add(new ButtonProvider("Revisar artículos asignados para revisión - Revisor", e -> {
 			RevisionArticuloRevisorController controller = new RevisionArticuloRevisorController(
 					new RevisionArticuloRevisorModel(), new RevisionArticuloRevisorView(), textEmail.getText());
