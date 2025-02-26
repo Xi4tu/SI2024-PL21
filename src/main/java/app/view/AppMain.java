@@ -16,7 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import controller.EnviarArticuloController;
 import giis.demo.util.Database;
+import model.EnviarArticuloModel;
 
 
 public class AppMain {
@@ -82,8 +84,15 @@ public class AppMain {
         	Database db=new Database();
 			db.createDatabase(false);
         }));
-        buttons.add(new ButtonProvider("Cargar datos en BBDD", e -> System.out.println("Acción de Funcionalidad 2")));
-        buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor", e -> System.out.println("Acción de Funcionalidad 3")));
+        buttons.add(new ButtonProvider("Cargar datos en BBDD", e -> {
+        	Database db = new Database();
+            db.loadDatabase();
+        }));
+        buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor", e -> {
+        	EnviarArticuloController controller = new EnviarArticuloController(new EnviarArticuloModel(), new EnviarArticuloView(), textEmail.getText());
+        	controller.initView();
+        	controller.initController();
+        }));
         buttons.add(new ButtonProvider("Revisar artículos asignados para revisión - Revisor", e -> System.out.println("Acción de Funcionalidad 4")));
         buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador", e -> System.out.println("Acción de Funcionalidad 5")));
         buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador", e -> System.out.println("Acción de Funcionalidad 6")));
