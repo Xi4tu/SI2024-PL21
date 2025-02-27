@@ -99,8 +99,7 @@ public class RevisionArticuloAutorController {
 			    view.getLblDecisionFinal().setForeground(new Color(0, 0, 0));
 			}
 
-			// Guardar las revisiones asociadas al artículo seleccionado que se ha
-			// seleccionado
+			// Guardar las revisiones asociadas al artículo seleccionado
 			revisionesDTO = revisionesArticulos.get(articuloSeleccionado.getIdArticulo());
 
 			String decision;
