@@ -29,7 +29,7 @@ public class RevisionArticuloAutorController {
 	private String email;
 	private DefaultListModel<RevisionArticuloAutorDTO> listModel;
 	private List<RevisionArticuloAutorDTO> articulosDTO;
-	private List<RevisionAutorDTO> revisiones;
+	private List<RevisionAutorDTO> revisionesDTO;
 	private Map<Integer, List<RevisionAutorDTO>> revisionesArticulos = new HashMap<>();
 	private static final Rol ROL = Rol.AUTOR;
 
@@ -101,12 +101,12 @@ public class RevisionArticuloAutorController {
 
 			// Guardar las revisiones asociadas al artículo seleccionado que se ha
 			// seleccionado
-			revisiones = revisionesArticulos.get(articuloSeleccionado.getIdArticulo());
+			revisionesDTO = revisionesArticulos.get(articuloSeleccionado.getIdArticulo());
 
 			String decision;
 			// Iterar sobre cada uno de las revisiones del articulo seleccionado para
 			// mostrarlas en la vista.
-			for (RevisionAutorDTO r : revisiones) {
+			for (RevisionAutorDTO r : revisionesDTO) {
 				// Obtener la decisión del revisor usando el enum
 				decision = app.enums.DecisionRevisor.getLabelByValue(r.getDecisionRevisor());
 				// Agregar la revisión a la vista.
