@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.JCheckBox;
 
 public class VerMisArticulosView{
 
@@ -32,6 +33,8 @@ public class VerMisArticulosView{
 	private JLabel lblFicheroArticulo;
 	private JLabel lblFechaEnvioArticulo;
 	private JLabel lblEnviadoPorArticulo;
+	
+	private JCheckBox chckbxSoloEnviadosPorMi;
 
 	private JFrame frame;
 	
@@ -69,12 +72,12 @@ public class VerMisArticulosView{
 		
 		JLabel lblId = new JLabel("Id.");
 		lblId.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId.setBounds(10, 56, 60, 13);
+		lblId.setBounds(10, 81, 39, 13);
 		frame.getContentPane().add(lblId);
 		
 		JLabel lblNombre = new JLabel("Título");
 		lblNombre.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNombre.setBounds(55, 56, 121, 13);
+		lblNombre.setBounds(55, 81, 60, 13);
 		frame.getContentPane().add(lblNombre);
 		
 		tableArticulosDelAutor = new JTable();
@@ -89,7 +92,7 @@ public class VerMisArticulosView{
 		tableArticulosDelAutor.getColumnModel().getColumn(0).setMinWidth(20);
 		tableArticulosDelAutor.getColumnModel().getColumn(0).setMaxWidth(60);
 		tableArticulosDelAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tableArticulosDelAutor.setBounds(10, 71, 274, 460);
+		tableArticulosDelAutor.setBounds(10, 96, 274, 435);
 		frame.getContentPane().add(tableArticulosDelAutor);
 		
 		JLabel lblId_1 = new JLabel("Id.");
@@ -204,6 +207,11 @@ public class VerMisArticulosView{
 		lblId_1_1_1_1_3_3.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblId_1_1_1_1_3_3.setBounds(709, 281, 131, 13);
 		frame.getContentPane().add(lblId_1_1_1_1_3_3);
+		
+		chckbxSoloEnviadosPorMi = new JCheckBox("Ver solo artículos enviados por mí");
+		chckbxSoloEnviadosPorMi.setFont(new Font("Tahoma", Font.BOLD, 14));
+		chckbxSoloEnviadosPorMi.setBounds(10, 54, 274, 21);
+		frame.getContentPane().add(chckbxSoloEnviadosPorMi);
 	}
 
 	//Getters y Setters de las tablas
@@ -296,6 +304,14 @@ public class VerMisArticulosView{
 		this.frame = frame;
 	}
 	
+	public JCheckBox getChckbxSoloEnviadosPorMi() {
+		return chckbxSoloEnviadosPorMi;
+	}
+	public void setChckbxSoloEnviadosPorMi(JCheckBox chckbxSoloEnviadosPorMi) {
+		this.chckbxSoloEnviadosPorMi = chckbxSoloEnviadosPorMi;
+	}
+	
+	
 	
 	//Añadir lista de articulos a la tabla de articulos
 	public void agregarArticulo(int id, String titulo, String palabrasClave, String resumen, String nombreFichero) {
@@ -317,6 +333,9 @@ public class VerMisArticulosView{
 		model.addRow(new Object[] {nombre, email, organizacion, grupoInvestigacion});
 	}
 
-
-	
+	// Limpiar la tabla de articulos
+	public void limpiarTablaArticulos() {
+		DefaultTableModel model = (DefaultTableModel) tableArticulosDelAutor.getModel();
+		model.setRowCount(0);
+	}
 }

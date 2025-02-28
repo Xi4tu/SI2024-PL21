@@ -52,6 +52,24 @@ public class VerMisArticulosController {
 		
 		
 		public void initController() {
+			//Si se pulsa la checkbox de mostrar solo los articulos enviados por el autor, limpia la tabla y muestra solo los articulos enviados por el autor
+			view.getChckbxSoloEnviadosPorMi().addActionListener(e -> {
+				if (!view.getChckbxSoloEnviadosPorMi().isSelected()) {
+					view.limpiarTablaArticulos();
+					articulos = model.obtenerArticulos(email);
+					for (ArticuloDTOlite articulo : articulos) {
+						view.agregarArticulo(articulo.getidArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getResumen(), articulo.getNombreFichero());
+					}
+				} else { // Si no esta seleccionado, muestra todos los articulos en los que participa el autor
+					view.limpiarTablaArticulos();
+					articulos = model.obtenerArticulosEnviados(email);
+					for (ArticuloDTOlite articulo : articulos) {
+						view.agregarArticulo(articulo.getidArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getResumen(), articulo.getNombreFichero());
+					}
+				}
+			});
+			
+			
 			//Cuando se pulsa un articulo de la tabla, se muestra la informacion del articulo
 			view.getTableArticulosDelAutor().getSelectionModel().addListSelectionListener(e -> {
 				if (!e.getValueIsAdjusting()) {

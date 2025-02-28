@@ -51,10 +51,21 @@ public class VerMisArticulosModel {
 		String sql = "SELECT u.* " +
 					 "FROM Usuario u " +
 					 "JOIN Articulo_Usuario au ON u.email = au.emailUsuario " +
-					 "WHERE au.idArticulo = ? AND au.esEnviador = 0";
+					 "WHERE au.idArticulo = ?";
 		// Ejecutar la consulta y mapear el resultado a una lista de AutorDTO
 		List<AutorDTO> autores = db.executeQueryPojo(AutorDTO.class, sql, id);
 		return autores;
+	}
+
+	// Metodo que devuelve todos los articulos enviados por un autor
+	public List<ArticuloDTOlite> obtenerArticulosEnviados(String email) {
+	    String sql = "SELECT a.* " +
+	                 "FROM Articulo a " +
+	                 "JOIN Articulo_Usuario au ON a.idArticulo = au.idArticulo " +
+	                 "WHERE au.emailUsuario = ? " +
+	                 "AND au.esEnviador = 1";
+	    List<ArticuloDTOlite> articulos = db.executeQueryPojo(ArticuloDTOlite.class, sql, email);
+	    return articulos;
 	}
 
 
