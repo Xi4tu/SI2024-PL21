@@ -8,6 +8,7 @@ import app.model.EnviarArticuloModel;
 import app.util.UserUtil;
 import app.view.EnviarArticuloView;
 import giis.demo.util.SwingUtil;
+import app.util.UserUtil;
 
 public class EnviarArticuloController {
 	
@@ -97,8 +98,9 @@ public class EnviarArticuloController {
 	//Valida si los datos del autor son correctos y no nulos
 	// GRUPO DE INVESTIGACION PUEDE SER NULO
 	public boolean validarDatosAutor(String email, String nombre, String organizacion, String grupoInvestigacion) {
-		if ((email == null || nombre == null || organizacion == null)
-				|| (email.isEmpty() || nombre.isEmpty() || organizacion.isEmpty())) {
+		if ((nombre == null || organizacion == null)
+				|| nombre.isEmpty() || organizacion.isEmpty()
+				|| (!UserUtil.checkFormatoEmail(email))) { // Compruebo que el email tenga un formato correcto
 			return false;
 		}
 		return true;
