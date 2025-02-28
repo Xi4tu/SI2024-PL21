@@ -15,9 +15,11 @@ import javax.swing.border.EmptyBorder;
 import app.controller.EnviarArticuloController;
 import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
+import app.controller.VerMisArticulosController;
 import app.model.EnviarArticuloModel;
 import app.model.RevisionArticuloAutorModel;
 import app.model.RevisionArticuloRevisorModel;
+import app.model.VerMisArticulosModel;
 import giis.demo.util.Database;
 
 public class AppMain {
@@ -105,8 +107,11 @@ public class AppMain {
 					new RevisionArticuloAutorModel(), new RevisionArticuloAutorView(), textEmail.getText());
 			controller.initController();
 		}));
-		buttons.add(new ButtonProvider("Visualizar mis artículos - Autor",
-				e -> System.out.println("Acción de Funcionalidad 8")));
+		buttons.add(new ButtonProvider("Visualizar mis artículos - Autor", e -> {
+			VerMisArticulosController controller = new VerMisArticulosController(new VerMisArticulosModel(), 
+					new VerMisArticulosView(), textEmail.getText());
+			controller.initController();
+		}));
 
 		// Agregar botones al panel
 		for (ButtonProvider bd : buttons) {
