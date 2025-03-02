@@ -88,18 +88,18 @@ public class AceptarDenegarArticuloController {
 				model.actualizarDecisionFinal("Aceptado", view.getListArticulos().getSelectedValue().getTitulo());
 				SwingUtil.showMessage("Artículo aceptado correctamente", "Información",
 						JOptionPane.INFORMATION_MESSAGE);
-			}
-			listModel.removeElement(view.getListArticulos().getSelectedValue());
+				listModel.removeElement(view.getListArticulos().getSelectedValue());
 
-			if (listModel.isEmpty()) {
-				SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
-						JOptionPane.INFORMATION_MESSAGE);
-				view.getFrame().dispose();
-			}
-			if (indice != 0) {
-				view.getListArticulos().setSelectedIndex(indice - 1);
-			} else {
-				view.getListArticulos().setSelectedIndex(0);
+				if (listModel.isEmpty()) {
+					SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
+							JOptionPane.INFORMATION_MESSAGE);
+					view.getFrame().dispose();
+				}
+				if (indice != 0) {
+					view.getListArticulos().setSelectedIndex(indice - 1);
+				} else {
+					view.getListArticulos().setSelectedIndex(0);
+				}
 			}
 		});
 
@@ -217,14 +217,14 @@ public class AceptarDenegarArticuloController {
 	public void insertaDecision() {
 		decision = model.obtenerDecisionRevisor((String) view.getcbRevisor().getSelectedItem(),
 				view.getListArticulos().getSelectedValue().getTitulo());
-		
+
 		if (decision != null && !decision.isEmpty()) {
 			view.gettfDecision().setText(String.valueOf(decision.get(0).getDecisionRevisor()));
 			if (decision.get(0).getDecisionRevisor() == 0) {
 				view.gettfDecision().setText("");
 			}
 		}
-		
+
 	}
 
 	// Función para calcular la suma de todas las decisiones de los revisores e
