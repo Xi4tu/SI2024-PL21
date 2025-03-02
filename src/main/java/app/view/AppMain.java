@@ -11,10 +11,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-
 import app.controller.AceptarDenegarArticuloController;
+import app.controller.EnviarArticuloController;
+import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
 import app.model.AceptarDenegarArticuloModel;
+import app.model.EnviarArticuloModel;
+import app.model.RevisionArticuloAutorModel;
 import app.model.RevisionArticuloRevisorModel;
 import giis.demo.util.Database;
 
@@ -33,7 +36,6 @@ public class AppMain {
 				try {
 					AppMain window = new AppMain();
 					window.frame.setVisible(true);
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -85,8 +87,11 @@ public class AppMain {
 			db.createDatabase(false);
 			db.loadDatabase();
 		}));
-		buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor",
-				e -> System.out.println("Acción de Funcionalidad 3")));
+		buttons.add(new ButtonProvider("Enviar artículo conferencia - Autor", e -> {
+			EnviarArticuloController controller = new EnviarArticuloController(new EnviarArticuloModel(),
+					new EnviarArticuloView(), textEmail.getText());
+			controller.initController();
+		}));
 		buttons.add(new ButtonProvider("Revisar artículos asignados para revisión - Revisor", e -> {
 			RevisionArticuloRevisorController controller = new RevisionArticuloRevisorController(
 					new RevisionArticuloRevisorModel(), new RevisionArticuloRevisorView(), textEmail.getText());
@@ -94,13 +99,17 @@ public class AppMain {
 		}));
 		buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador",
 				e -> System.out.println("Acción de Funcionalidad 5")));
+
 		buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador", e -> {
         	AceptarDenegarArticuloController controller = new AceptarDenegarArticuloController(
         			new AceptarDenegarArticuloModel(), new AceptarDenegarArticuloView(), textEmail.getText());
         	controller.initController();
         }));
-		buttons.add(new ButtonProvider("Ver revisión de mis articulos - Autor",
-				e -> System.out.println("Acción de Funcionalidad 7")));
+		buttons.add(new ButtonProvider("Ver revisión de mis articulos - Autor", e -> {
+			RevisionArticuloAutorController controller = new RevisionArticuloAutorController(
+					new RevisionArticuloAutorModel(), new RevisionArticuloAutorView(), textEmail.getText());
+			controller.initController();
+		}));
 		buttons.add(new ButtonProvider("Visualizar mis artículos - Autor",
 				e -> System.out.println("Acción de Funcionalidad 8")));
 
