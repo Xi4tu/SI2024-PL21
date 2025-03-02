@@ -11,7 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import app.controller.AceptarDenegarArticuloController;
 import app.controller.RevisionArticuloRevisorController;
+import app.model.AceptarDenegarArticuloModel;
 import app.model.RevisionArticuloRevisorModel;
 import giis.demo.util.Database;
 
@@ -91,8 +94,11 @@ public class AppMain {
 		}));
 		buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador",
 				e -> System.out.println("Acción de Funcionalidad 5")));
-		buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador",
-				e -> System.out.println("Acción de Funcionalidad 6")));
+		buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador", e -> {
+        	AceptarDenegarArticuloController controller = new AceptarDenegarArticuloController(
+        			new AceptarDenegarArticuloModel(), new AceptarDenegarArticuloView(), textEmail.getText());
+        	controller.initController();
+        }));
 		buttons.add(new ButtonProvider("Ver revisión de mis articulos - Autor",
 				e -> System.out.println("Acción de Funcionalidad 7")));
 		buttons.add(new ButtonProvider("Visualizar mis artículos - Autor",
