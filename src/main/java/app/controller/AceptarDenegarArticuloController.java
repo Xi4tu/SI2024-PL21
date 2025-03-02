@@ -101,7 +101,6 @@ public class AceptarDenegarArticuloController {
 			} else {
 				view.getListArticulos().setSelectedIndex(0);
 			}
-
 		});
 
 		view.getbtnRechazar().addActionListener(e -> {
