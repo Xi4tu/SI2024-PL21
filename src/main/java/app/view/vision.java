@@ -24,7 +24,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.JTabbedPane;
 
-public class AceptarDenegarArticuloView {
+public class vision extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField tfNivelDeExperto;
@@ -44,9 +44,9 @@ public class AceptarDenegarArticuloView {
 	private JFrame frame;
 	private JTabbedPane tpListas;
 	private JList<AceptarDenegarArticuloDTO> lstAutomaticos;
-	private JButton btnAceptarTodos;
+	private JButton btnNewButton;
 
-	public AceptarDenegarArticuloView() {
+	public vision() {
 		initialize();
 	}
 
@@ -109,25 +109,27 @@ public class AceptarDenegarArticuloView {
 		
 		tpListas = new JTabbedPane(JTabbedPane.TOP);
 		tpListas.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        tpListas.setTitleAt(0, "Sin registro");
+        tpListas.setTitleAt(1, "Automáticos");
 
 		contentPane.add(tpListas, "cell 1 2 7 9,grow");
 		
 				//Lista
 				lstArticulosSinDecisionRegistrada = new JList<>();
-				tpListas.addTab("Sin registro", null, lstArticulosSinDecisionRegistrada, null);
+				tpListas.addTab("New tab", null, lstArticulosSinDecisionRegistrada, null);
 				lstArticulosSinDecisionRegistrada.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				
 				lstAutomaticos = new JList();
-				tpListas.addTab("Automáticos", null, lstAutomaticos, null);
+				tpListas.addTab("New tab", null, lstAutomaticos, null);
 
 		tpComentariosParaCoordinadores = new JTextPane();
 		tpComentariosParaCoordinadores.setEditable(false);
 		contentPane.add(tpComentariosParaCoordinadores, "cell 9 10 3 1,grow");
 		
-		btnAceptarTodos = new JButton("Aceptar todos");
-		btnAceptarTodos.setEnabled(false);
-		btnAceptarTodos.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		contentPane.add(btnAceptarTodos, "cell 1 11 4 1");
+		btnNewButton = new JButton("Aceptar todos");
+		btnNewButton.setEnabled(false);
+		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(btnNewButton, "cell 1 11 4 1");
 
 		lbValoraciónGlobal = new JLabel("Valoración global");
 		lbValoraciónGlobal.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -157,10 +159,6 @@ public class AceptarDenegarArticuloView {
 		return this.lstArticulosSinDecisionRegistrada;
 	}
 
-	public JList<AceptarDenegarArticuloDTO> getListAutomaticos() {
-		return this.lstAutomaticos;
-	}
-	
 	public JButton getbtnAceptar() {
 		return this.btnAceptar;
 	}
@@ -193,12 +191,5 @@ public class AceptarDenegarArticuloView {
 		return this.tfValoracionGlobal;
 	}
 	
-	public JButton getbtnAceptarTodos() {
-		return this.btnAceptarTodos;
-	}
 
-	public JTabbedPane gettpListas() {
-		return this.tpListas;
-	}
-	
 }
