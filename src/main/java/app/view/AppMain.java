@@ -12,10 +12,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import app.controller.AceptarDenegarArticuloController;
+import app.controller.AsignarRevisoresController;
 import app.controller.EnviarArticuloController;
 import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
 import app.model.AceptarDenegarArticuloModel;
+import app.model.AsignarRevisoresModel;
 import app.model.EnviarArticuloModel;
 import app.model.RevisionArticuloAutorModel;
 import app.model.RevisionArticuloRevisorModel;
@@ -97,8 +99,14 @@ public class AppMain {
 					new RevisionArticuloRevisorModel(), new RevisionArticuloRevisorView(), textEmail.getText());
 			controller.initController();
 		}));
-		buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador",
-				e -> System.out.println("Acción de Funcionalidad 5")));
+		buttons.add(new ButtonProvider("Asignar revisores a artículo - Coordinador", e -> {
+		    AsignarRevisoresController controller = new AsignarRevisoresController(
+		        new AsignarRevisoresModel(), 
+		        new AsignarRevisoresView(), 
+		        textEmail.getText()
+		    );
+		    controller.initController();
+		}));
 
 		buttons.add(new ButtonProvider("Aceptar o denegar artículos - Coordinador", e -> {
         	AceptarDenegarArticuloController controller = new AceptarDenegarArticuloController(

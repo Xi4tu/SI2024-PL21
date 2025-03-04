@@ -15,6 +15,12 @@ VALUES ('laura.martinez@ejemplo.com', 'Laura Martínez', 'Universidad de la Vida
 INSERT INTO Usuario (email, nombre, organizacion, grupoInvestigacion)
 VALUES ('andres.gomez@ejemplo.com', 'Andrés Gómez', 'Instituto Avanzado', 'Grupo Epsilon');
 
+INSERT INTO Usuario (email, nombre, organizacion, grupoInvestigacion)
+VALUES ('paquin@ejemplo.com', 'PACO', 'Epi', 'Grupo Omega');
+
+INSERT INTO Usuario (email, nombre, organizacion, grupoInvestigacion)
+VALUES ('bea@ejemplo.com', 'BEA', 'Orquestada', 'Grupo Beatriz');
+
 -- INSERTAR ROLES DISPONIBLES
 
 INSERT INTO Rol (rol) VALUES ('Autor');
@@ -41,6 +47,10 @@ INSERT INTO Usuario_Rol (emailUsuario, idRol) VALUES ('laura.martinez@ejemplo.co
 INSERT INTO Usuario_Rol (emailUsuario, idRol) VALUES ('andres.gomez@ejemplo.com', 1);
 INSERT INTO Usuario_Rol (emailUsuario, idRol) VALUES ('andres.gomez@ejemplo.com', 2);
 INSERT INTO Usuario_Rol (emailUsuario, idRol) VALUES ('andres.gomez@ejemplo.com', 3);
+
+-- Asignación de roles a pACO
+INSERT INTO Usuario_Rol (emailUsuario, idRol) VALUES ('paquin@ejemplo.com', 2);
+INSERT INTO Usuario_Rol (emailUsuario, idRol) VALUES ('bea@ejemplo.com', 2);
 
 -- INSERTAR ARTÍCULOS DE PRUEBA
 
@@ -106,17 +116,17 @@ VALUES (4, 'andres.gomez@ejemplo.com', 0);
 INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
 VALUES (5, 'andres.gomez@ejemplo.com', 1);
 
-INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
-VALUES (5, 'juan.perez@ejemplo.com', 0);
+--INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
+--VALUES (5, 'juan.perez@ejemplo.com', 0);
 
 INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
 VALUES (6, 'maria.lopez@ejemplo.com', 1);
 
-INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
-VALUES (6, 'carlos.sanchez@ejemplo.com', 0);
+--INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
+--VALUES (6, 'carlos.sanchez@ejemplo.com', 0);
 
-INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
-VALUES (6, 'laura.martinez@ejemplo.com', 0);
+--INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
+--VALUES (6, 'laura.martinez@ejemplo.com', 0);
 
 INSERT INTO Articulo_Usuario (idArticulo, emailUsuario, esEnviador)
 VALUES (7, 'juan.perez@ejemplo.com', 1);
@@ -175,6 +185,6 @@ VALUES (6, 'andres.gomez@ejemplo.com');
 
 -- Artículo 7: "Tendencias en Ciberseguridad" - 1 revisión pendiente
 INSERT INTO Revision (idArticulo, emailUsuario)
-VALUES (7, 'andres.gomez@ejemplo.com');
+VALUES (7, 'andres.gomez@ejemplo.com'); 
 
 
