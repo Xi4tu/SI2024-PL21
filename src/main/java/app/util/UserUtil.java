@@ -33,6 +33,23 @@ public class UserUtil {
         }
         return true;
     }
+    
+    /**
+	 * Método que se encarga de comprobar si un email está registrado en la base de datos.
+	 * SOLO COMPRUEBA EL EMAIL, NO EL ROL COMO LA FUNCION checkEmail
+	 *
+	 * @param email  El email a comprobar.
+	 * @return True si el email está registrado, false en caso contrario.
+	 */
+    public static boolean checkFormatoEmail(String email) {
+		// Comprobar que el email no es nulo/vacío y cumple el regex
+		if (email == null || email.isEmpty() ||
+				!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+			SwingUtil.showMessage("No se ha podido obtener el email del usuario", "ERROR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
 
     /**
      * Método que se encarga de comprobar si un email está asociado al rol que se le pasa como parámetro.

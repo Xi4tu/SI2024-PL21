@@ -86,10 +86,21 @@ public class EnviarArticuloView {
 		textfTituloArticulo.setColumns(10);
 
 		textfPalabrasClaveArticulo = new JTextField();
+		String textoPorDefecto = "separa las palabras por coma: palabra1,palabra2,palabra3...";
+		textfPalabrasClaveArticulo.setText(textoPorDefecto);
 		textfPalabrasClaveArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfPalabrasClaveArticulo.setColumns(10);
 		textfPalabrasClaveArticulo.setBounds(113, 49, 749, 19);
 		contentPane.add(textfPalabrasClaveArticulo);
+		//Borrar el texto por defecto al hacer click
+		textfPalabrasClaveArticulo.addFocusListener(new java.awt.event.FocusAdapter() {
+			// Solo cuando el texto es el texto por defecto, claro
+			public void focusGained(java.awt.event.FocusEvent evt) {
+				if (textfPalabrasClaveArticulo.getText().equals(textoPorDefecto)) {
+					textfPalabrasClaveArticulo.setText("");
+				}
+			}
+		});
 
 		textfResumenArticulo = new JTextField();
 		textfResumenArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
