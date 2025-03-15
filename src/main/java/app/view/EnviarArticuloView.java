@@ -16,8 +16,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import app.dto.AutorDTO;
+import app.dto.TrackDTO;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JList;
+import javax.swing.JComboBox;
 
 public class EnviarArticuloView {
 
@@ -35,9 +39,16 @@ public class EnviarArticuloView {
 	private JButton btnEnviar;
 	private JButton btnCancelar;
 	private JButton btnAnadirAutor;
+	private JButton btnAgregarPalabrasClaveDelTrack;
 	private JFrame frame;
+	private JLabel lblPalabrasDelTrackArticulo;
 	private List<AutorDTO> listaDeAutores = new ArrayList<AutorDTO>();
+	
+	private JComboBox<String> comboBoxSelectorTrackArticulo;
+	private JComboBox<String> comboBoxSelectorPalabrasDelTrack;
 
+	private String estadoInicialLabelPalabrasClaveTrack = "...";
+	
 	public EnviarArticuloView() {
 		initialize();
 	}
@@ -59,24 +70,24 @@ public class EnviarArticuloView {
 		lblNewLabel.setBounds(10, 10, 36, 17);
 		contentPane.add(lblNewLabel);
 
-		JLabel lblPalabrasClave = new JLabel("Palabras clave:");
+		JLabel lblPalabrasClave = new JLabel("Palabras clave del artículo:");
 		lblPalabrasClave.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblPalabrasClave.setBounds(10, 48, 93, 17);
+		lblPalabrasClave.setBounds(10, 128, 166, 17);
 		contentPane.add(lblPalabrasClave);
 
 		JLabel lblResumen = new JLabel("Resumen: ");
 		lblResumen.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblResumen.setBounds(10, 93, 67, 17);
+		lblResumen.setBounds(10, 158, 67, 17);
 		contentPane.add(lblResumen);
 
 		JLabel lblArticulo = new JLabel("Archivo:");
 		lblArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblArticulo.setBounds(10, 138, 61, 17);
+		lblArticulo.setBounds(10, 188, 61, 17);
 		contentPane.add(lblArticulo);
 
 		JLabel lblListaDeAutories = new JLabel("Lista de autores");
 		lblListaDeAutories.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblListaDeAutories.setBounds(10, 188, 100, 17);
+		lblListaDeAutories.setBounds(10, 218, 100, 17);
 		contentPane.add(lblListaDeAutories);
 
 		textfTituloArticulo = new JTextField();
@@ -90,7 +101,7 @@ public class EnviarArticuloView {
 		textfPalabrasClaveArticulo.setText(textoPorDefecto);
 		textfPalabrasClaveArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfPalabrasClaveArticulo.setColumns(10);
-		textfPalabrasClaveArticulo.setBounds(113, 49, 749, 19);
+		textfPalabrasClaveArticulo.setBounds(176, 129, 686, 19);
 		contentPane.add(textfPalabrasClaveArticulo);
 		//Borrar el texto por defecto al hacer click
 		textfPalabrasClaveArticulo.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -105,13 +116,13 @@ public class EnviarArticuloView {
 		textfResumenArticulo = new JTextField();
 		textfResumenArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfResumenArticulo.setColumns(10);
-		textfResumenArticulo.setBounds(87, 94, 775, 19);
+		textfResumenArticulo.setBounds(87, 159, 775, 19);
 		contentPane.add(textfResumenArticulo);
 
 		textfArchivoArticulo = new JTextField();
 		textfArchivoArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfArchivoArticulo.setColumns(10);
-		textfArchivoArticulo.setBounds(81, 139, 781, 19);
+		textfArchivoArticulo.setBounds(81, 189, 781, 19);
 		contentPane.add(textfArchivoArticulo);
 
 		tableListaDeAutores = new JTable();
@@ -126,76 +137,76 @@ public class EnviarArticuloView {
 			}
 		});
 		tableListaDeAutores.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tableListaDeAutores.setBounds(120, 205, 742, 107);
+		tableListaDeAutores.setBounds(120, 235, 742, 107);
 		contentPane.add(tableListaDeAutores);
 
 		JLabel lblNombre = new JLabel("Nombre");
 		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNombre.setBounds(158, 188, 100, 17);
+		lblNombre.setBounds(158, 218, 100, 17);
 		contentPane.add(lblNombre);
 
 		JLabel lblCorreo = new JLabel("Correo");
 		lblCorreo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblCorreo.setBounds(365, 188, 52, 17);
+		lblCorreo.setBounds(365, 218, 52, 17);
 		contentPane.add(lblCorreo);
 
 		JLabel lblOrganizacion = new JLabel("Organizacion");
 		lblOrganizacion.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblOrganizacion.setBounds(536, 188, 100, 17);
+		lblOrganizacion.setBounds(536, 218, 100, 17);
 		contentPane.add(lblOrganizacion);
 
 		JLabel lblGrupoinv = new JLabel("GrupoInv");
 		lblGrupoinv.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblGrupoinv.setBounds(723, 188, 100, 17);
+		lblGrupoinv.setBounds(723, 218, 100, 17);
 		contentPane.add(lblGrupoinv);
 
 		JLabel lblCoautores = new JLabel("Autores:");
 		lblCoautores.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblCoautores.setBounds(120, 322, 100, 17);
+		lblCoautores.setBounds(120, 352, 100, 17);
 		contentPane.add(lblCoautores);
 
 		JLabel lblNombre_1 = new JLabel("Nombre:");
 		lblNombre_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNombre_1.setBounds(176, 349, 100, 17);
+		lblNombre_1.setBounds(176, 379, 100, 17);
 		contentPane.add(lblNombre_1);
 
 		JLabel lblCorreo_1 = new JLabel("Correo:");
 		lblCorreo_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblCorreo_1.setBounds(176, 376, 100, 17);
+		lblCorreo_1.setBounds(176, 406, 100, 17);
 		contentPane.add(lblCorreo_1);
 
 		JLabel lblOrganizacin = new JLabel("Organización:");
 		lblOrganizacin.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblOrganizacin.setBounds(176, 403, 100, 17);
+		lblOrganizacin.setBounds(176, 433, 100, 17);
 		contentPane.add(lblOrganizacin);
 
 		JLabel lblGrupoInvest = new JLabel("Grupo Invest:");
 		lblGrupoInvest.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblGrupoInvest.setBounds(176, 430, 100, 17);
+		lblGrupoInvest.setBounds(176, 460, 100, 17);
 		contentPane.add(lblGrupoInvest);
 
 		textfNombreCoautor = new JTextField();
 		textfNombreCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfNombreCoautor.setColumns(10);
-		textfNombreCoautor.setBounds(274, 348, 588, 19);
+		textfNombreCoautor.setBounds(274, 378, 588, 19);
 		contentPane.add(textfNombreCoautor);
 
 		textfCorreoCoautor = new JTextField();
 		textfCorreoCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfCorreoCoautor.setColumns(10);
-		textfCorreoCoautor.setBounds(274, 377, 588, 19);
+		textfCorreoCoautor.setBounds(274, 407, 588, 19);
 		contentPane.add(textfCorreoCoautor);
 
 		textfOrganizacionCoautor = new JTextField();
 		textfOrganizacionCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfOrganizacionCoautor.setColumns(10);
-		textfOrganizacionCoautor.setBounds(274, 403, 588, 19);
+		textfOrganizacionCoautor.setBounds(274, 433, 588, 19);
 		contentPane.add(textfOrganizacionCoautor);
 
 		textfGrupoInvestigacionCoautor = new JTextField();
 		textfGrupoInvestigacionCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfGrupoInvestigacionCoautor.setColumns(10);
-		textfGrupoInvestigacionCoautor.setBounds(274, 432, 588, 19);
+		textfGrupoInvestigacionCoautor.setBounds(274, 462, 588, 19);
 		contentPane.add(textfGrupoInvestigacionCoautor);
 
 		btnEnviar = new JButton("Enviar");
@@ -214,8 +225,41 @@ public class EnviarArticuloView {
 			}
 		});
 		btnAnadirAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnAnadirAutor.setBounds(120, 457, 110, 21);
+		btnAnadirAutor.setBounds(120, 487, 110, 21);
 		contentPane.add(btnAnadirAutor);
+		
+		JLabel lblTrack = new JLabel("Track:");
+		lblTrack.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTrack.setBounds(10, 37, 44, 17);
+		contentPane.add(lblTrack);
+		
+		comboBoxSelectorTrackArticulo = new JComboBox();
+		comboBoxSelectorTrackArticulo.setBounds(56, 37, 806, 19);
+		contentPane.add(comboBoxSelectorTrackArticulo);
+		
+		JLabel lblPalabrasClaveDel = new JLabel("Palabras clave del track:");
+		lblPalabrasClaveDel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblPalabrasClaveDel.setBounds(10, 64, 151, 17);
+		contentPane.add(lblPalabrasClaveDel);
+		
+		lblPalabrasDelTrackArticulo = new JLabel(estadoInicialLabelPalabrasClaveTrack);
+		lblPalabrasDelTrackArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblPalabrasDelTrackArticulo.setBounds(139, 94, 723, 17);
+		contentPane.add(lblPalabrasDelTrackArticulo);
+		
+		comboBoxSelectorPalabrasDelTrack = new JComboBox();
+		comboBoxSelectorPalabrasDelTrack.setBounds(168, 64, 226, 19);
+		contentPane.add(comboBoxSelectorPalabrasDelTrack);
+		
+		JLabel lblMarcadas = new JLabel("Seleccionadas:");
+		lblMarcadas.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblMarcadas.setBounds(43, 94, 91, 17);
+		contentPane.add(lblMarcadas);
+		
+		btnAgregarPalabrasClaveDelTrack = new JButton("Agregar");
+		btnAgregarPalabrasClaveDelTrack.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnAgregarPalabrasClaveDelTrack.setBounds(406, 63, 110, 21);
+		contentPane.add(btnAgregarPalabrasClaveDelTrack);
 
 	}
 
@@ -227,6 +271,22 @@ public class EnviarArticuloView {
 	}
 	
 	//Getters y Setters
+	
+	public JComboBox getComboBoxSelectorTrackArticulo() {
+		return comboBoxSelectorTrackArticulo;
+	}
+	
+	public void setComboBoxSelectorTrackArticulo(JComboBox comboBoxSelectorTrackArticulo) {
+		this.comboBoxSelectorTrackArticulo = comboBoxSelectorTrackArticulo;
+	}
+	
+	public JComboBox getComboBoxSelectorPalabrasDelTrack() {
+		return comboBoxSelectorPalabrasDelTrack;
+	}
+	
+	public void setComboBoxSelectorPalabrasDelTrack(JComboBox comboBoxSelectorPalabrasDelTrack) {
+		this.comboBoxSelectorPalabrasDelTrack = comboBoxSelectorPalabrasDelTrack;
+	}
 
 	public JFrame getFrame() {
 		return frame;
@@ -331,6 +391,14 @@ public class EnviarArticuloView {
 	public void setBtnAnadirAutor(JButton btnAnadirAutor) {
 		this.btnAnadirAutor = btnAnadirAutor;
 	}
+	
+	public JButton getBtnAgregarPalabrasClaveDelTrack() {
+		return btnAgregarPalabrasClaveDelTrack;
+	}
+	
+	public void setBtnAgregarPalabrasClaveDelTrack(JButton btnAgregarPalabrasClaveDelTrack) {
+		this.btnAgregarPalabrasClaveDelTrack = btnAgregarPalabrasClaveDelTrack;
+	}
 
 	public List<AutorDTO> getListaDeAutores() {
 		return listaDeAutores;
@@ -345,5 +413,45 @@ public class EnviarArticuloView {
 	public void mostrarMensajeError(String mensaje) {
 		JOptionPane.showMessageDialog(frame, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
 	}
-
+	
+	//Metodo para rellenar el comboBox de tracks
+	public void setTracks(List<TrackDTO> obtenerTracks) {
+		for (TrackDTO track : obtenerTracks) {
+			comboBoxSelectorTrackArticulo.addItem(track.getNombre());
+		}
+	}
+	
+	// Metodo para rellenar el comboBox de palabras clave de un track
+	public void setPalabrasClaveTrack(String[] palabrasClave) {
+		for (String palabra : palabrasClave) {
+			comboBoxSelectorPalabrasDelTrack.addItem(palabra);
+		}
+	}
+	
+	// Metodo para limpiar las palabras clave de un track
+	public void limpiarPalabrasClaveTrack() {
+		comboBoxSelectorPalabrasDelTrack.removeAllItems();
+	}
+	
+	// Metodo para agregar la palabra clave seleccionada a label de palabras clave del track
+	// SI NO ESTA YA EN LA LISTA DE PALABRAS CLAVE DEL TRACK
+	public void agregarPalabraClave(String palabraClave) {
+		// Si es la primera que añaades (el label esta en su estado inicial) elimina el label
+		if (lblPalabrasDelTrackArticulo.getText().equals(estadoInicialLabelPalabrasClaveTrack)) {
+			lblPalabrasDelTrackArticulo.setText(palabraClave);
+		} else
+		if (!lblPalabrasDelTrackArticulo.getText().contains(palabraClave)) {
+			lblPalabrasDelTrackArticulo.setText(lblPalabrasDelTrackArticulo.getText() + " " + palabraClave);
+		}
+	}
+	
+	// Metodo para resetear el label de palabras clave del track a "..."
+	public void resetearPalabrasClaveTrack() {
+		lblPalabrasDelTrackArticulo.setText(estadoInicialLabelPalabrasClaveTrack);
+	}
+	
+	// Metodo que devuelve el texto del campo de texto de palabras clave del articulo como una lista de Strings
+	public String[] getPalabrasClaveArticulo() {
+		return lblPalabrasDelTrackArticulo.getText().split(" ");
+	}
 }
