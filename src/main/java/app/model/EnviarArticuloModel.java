@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.dto.AutorDTO;
+import app.dto.TrackDTO;
 import giis.demo.util.Database;
 import giis.demo.util.DbUtil;
 
@@ -75,7 +76,26 @@ public class EnviarArticuloModel {
 			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
 			return sdf.format(fecha);
 		}
-	
-		
+
+		//Metodo para obtener una lista con los tracks disponibles
+		//Devuelve una lista con los tracksDTO
+		public List<TrackDTO> obtenerTracks() {
+			String sql = "SELECT * FROM Track";
+			List<TrackDTO> listaTracks = db.executeQueryPojo(TrackDTO.class, sql);
+			
+			// A cada listaTracks le ejecuto el metodo separarPalabrasClave() para separar las palabras clave en un array de Strings
+			for (TrackDTO track : listaTracks) {
+				track.separarPalabrasClave();
+			} //asi relleno si array de palabras clave
+			
+			// debug imprime la lista de tracks
+//						for (TrackDTO track : listaTracks) {
+//							System.out.println(track.getPalabrasClave());
+//						}
+			
+			
+			return listaTracks;
+			
+		}
 
 }

@@ -1,30 +1,60 @@
+DROP TABLE IF EXISTS Conferencia;
+DROP TABLE IF EXISTS Track;
 DROP TABLE IF EXISTS Articulo;
-DROP TABLE IF EXISTS Articulo_Usuario;
+DROP TABLE IF EXISTS Discusion;
+DROP TABLE IF EXISTS Anotacion;
 DROP TABLE IF EXISTS Revision;
-DROP TABLE IF EXISTS Rol;
 DROP TABLE IF EXISTS Usuario;
+DROP TABLE IF EXISTS Rol;
+DROP TABLE IF EXISTS Usuario_Discusion;
+DROP TABLE IF EXISTS Articulo_Usuario;
 DROP TABLE IF EXISTS Usuario_Rol;
 
 
+CREATE TABLE "Conferencia" (
+	"idConferencia"	INTEGER NOT NULL UNIQUE,
+	"nombre"	TEXT NOT NULL,
+	"deadline"	TEXT NOT NULL,
+	PRIMARY KEY("idConferencia" AUTOINCREMENT)
+);
+
+CREATE TABLE "Track" (
+	"idTrack"	INTEGER NOT NULL UNIQUE,
+	"idConferencia"	INTEGER NOT NULL,
+	"nombre"	TEXT NOT NULL,
+	"palabrasClave"	TEXT NOT NULL,
+	PRIMARY KEY("idTrack" AUTOINCREMENT)
+);
+
 CREATE TABLE "Articulo" (
 	"idArticulo"	INTEGER,
+	"idTrack"	INTEGER NOT NULL,
 	"titulo"	TEXT NOT NULL UNIQUE,
 	"palabrasClave"	TEXT NOT NULL,
+	"palabrasClaveTrack"	TEXT NOT NULL,
 	"resumen"	TEXT NOT NULL,
 	"nombreFichero"	TEXT NOT NULL UNIQUE,
 	"fechaEnvio"	TEXT NOT NULL,
 	"decisionFinal"	TEXT DEFAULT 'Pendiente' CHECK("decisionFinal" IN ("Pendiente", "Aceptado", "Rechazado")),
 	"valoracionGlobal"	INTEGER DEFAULT NULL,
-	PRIMARY KEY("idArticulo" AUTOINCREMENT)
+	PRIMARY KEY("idArticulo" AUTOINCREMENT),
+	FOREIGN KEY("idTrack") REFERENCES "Track"("idTrack")
 );
 
-CREATE TABLE "Articulo_Usuario" (
+CREATE TABLE "Discusion" (
+	"idDiscusion"	INTEGER NOT NULL UNIQUE,
 	"idArticulo"	INTEGER NOT NULL,
-	"emailUsuario"	TEXT NOT NULL,
-	"esEnviador"	INTEGER NOT NULL CHECK("esEnviador" IN (0, 1)),
-	FOREIGN KEY("emailUsuario") REFERENCES "Usuario"("email") ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY("idArticulo") REFERENCES "Articulo"("idArticulo") ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY("idArticulo","emailUsuario")
+	PRIMARY KEY("idDiscusion" AUTOINCREMENT)
+);
+
+CREATE TABLE "Anotacion" (
+	"idAnotacion"	INTEGER NOT NULL UNIQUE,
+	"idDiscusion"	INTEGER NOT NULL,
+	"emailUsuario"	INTEGER NOT NULL,
+	"comentario"	TEXT NOT NULL,
+	"fecha"	TEXT NOT NULL,
+	"hora"	TEXT NOT NULL,
+	PRIMARY KEY("idAnotacion" AUTOINCREMENT)
 );
 
 CREATE TABLE "Revision" (
@@ -41,18 +71,34 @@ CREATE TABLE "Revision" (
 	PRIMARY KEY("idRevision" AUTOINCREMENT)
 );
 
-CREATE TABLE "Rol" (
-	"idRol"	INTEGER,
-	"rol"	TEXT NOT NULL,
-	PRIMARY KEY("idRol" AUTOINCREMENT)
-);
-
 CREATE TABLE "Usuario" (
 	"email"	TEXT NOT NULL,
 	"nombre"	TEXT NOT NULL,
 	"organizacion"	TEXT NOT NULL,
 	"grupoInvestigacion"	TEXT,
 	PRIMARY KEY("email")
+);
+
+CREATE TABLE "Rol" (
+	"idRol"	INTEGER,
+	"rol"	TEXT NOT NULL,
+	PRIMARY KEY("idRol" AUTOINCREMENT)
+);
+
+
+CREATE TABLE "Usuario_Discusion" (
+	"emailUsuario"	TEXT NOT NULL,
+	"idDiscusion"	INTEGER NOT NULL,
+	PRIMARY KEY("emailUsuario","idDiscusion")
+);
+
+CREATE TABLE "Articulo_Usuario" (
+	"idArticulo"	INTEGER NOT NULL,
+	"emailUsuario"	TEXT NOT NULL,
+	"esEnviador"	INTEGER NOT NULL CHECK("esEnviador" IN (0, 1)),
+	FOREIGN KEY("emailUsuario") REFERENCES "Usuario"("email") ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY("idArticulo") REFERENCES "Articulo"("idArticulo") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY("idArticulo","emailUsuario")
 );
 
 CREATE TABLE "Usuario_Rol" (
