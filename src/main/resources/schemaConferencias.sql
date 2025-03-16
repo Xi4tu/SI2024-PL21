@@ -31,6 +31,7 @@ CREATE TABLE "Articulo" (
 	"idTrack"	INTEGER NOT NULL,
 	"titulo"	TEXT NOT NULL UNIQUE,
 	"palabrasClave"	TEXT NOT NULL,
+	"palabrasClaveTrack"	TEXT NOT NULL,
 	"resumen"	TEXT NOT NULL,
 	"nombreFichero"	TEXT NOT NULL UNIQUE,
 	"fechaEnvio"	TEXT NOT NULL,

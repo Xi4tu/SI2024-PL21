@@ -8,18 +8,18 @@ VALUES
 
 INSERT INTO Track (idConferencia, nombre, palabrasClave)
 VALUES
-(1, 'Track IA', 'IA, Machine Learning'),
-(1, 'Track Energía', 'Energía, Renovable'),
-(2, 'Track Software', 'Programación, Software'),
-(2, 'Track MedioAmbiente', 'Medio Ambiente, Sustentabilidad');
+(1, 'Track IA', 'IA,Machine Learning'),
+(1, 'Track Energía', 'Energía,Renovable'),
+(2, 'Track Software', 'Programación,Software'),
+(2, 'Track MedioAmbiente', 'Medio Ambiente,Sustentabilidad');
 
 INSERT INTO Conferencia (nombre, deadline)
 VALUES ('Conferencia C', '2025-07-10');
 
 INSERT INTO Track (idConferencia, nombre, palabrasClave)
 VALUES
-(3, 'Track Big Data', 'Big Data, Analytics'),
-(3, 'Track IoT', 'IoT, Edge');
+(3, 'Track Big Data', 'Big Data,Analytics'),
+(3, 'Track IoT', 'IoT,Edge');
 
 /***********************************************************************
   2. INSERTAR USUARIOS
@@ -68,39 +68,39 @@ INSERT INTO Usuario_Rol (emailUsuario, idRol) VALUES ('pablo.rodriguez@ejemplo.c
 /***********************************************************************
   4. ARTÍCULOS
 ***********************************************************************/
-INSERT INTO Articulo (idTrack, titulo, palabrasClave, resumen, nombreFichero, fechaEnvio, decisionFinal, valoracionGlobal)
+INSERT INTO Articulo (idTrack, titulo, palabrasClave, palabrasClaveTrack, resumen, nombreFichero, fechaEnvio, decisionFinal, valoracionGlobal)
 VALUES 
-(1, 'Avances en IA', 'IA, Machine Learning', 
+(1, 'Avances en IA', 'Inteligentes', 'IA', 
     'Este artículo trata sobre avances en inteligencia artificial.', 
-    'avances_ia.pdf', '2025-02-01', 'Aceptado', 3),
-(2, 'Innovación en Energías', 'Energía, Renovable', 
+    'avances_ia.pdf', '2025-02-01', 'Aceptado', 1),
+(2, 'Innovación en Energías', 'Fabrica,Progreso', 'Renovable', 
     'Analiza innovaciones en energías renovables.', 
     'innovacion_energias.pdf', '2025-02-05', 'Rechazado', -1),
-(3, 'Nuevas Técnicas de Programación', 'Programación, Software', 
+(3, 'Nuevas Técnicas de Programación', 'Futuro,Desempleo,PHP','Programación,Software', 
     'Explora técnicas modernas en desarrollo de software.', 
-    'nuevas_tecnicas_programacion.pdf', '2025-01-20', 'Aceptado', 5),
-(4, 'Impacto Ambiental', 'Medio Ambiente, Sustentabilidad', 
+    'nuevas_tecnicas_programacion.pdf', '2025-01-20', 'Aceptado', 1),
+(4, 'Impacto Ambiental', 'Desarrollo,Naturaleza','Medio Ambiente', 
     'Discusión sobre impacto ambiental de la tecnología.', 
-    'impacto_ambiental.pdf', '2025-02-10', 'Rechazado', -3),
-(1, 'Futuro de la Robótica', 'Robótica, Tecnología', 
+    'impacto_ambiental.pdf', '2025-02-10', 'Rechazado', 0),
+(1, 'Futuro de la Robótica', 'Pilas,Enchufes,Luces','Robótica,Tecnología', 
     'Examina el futuro de la robótica.', 
     'futuro_robotica.pdf', '2025-02-15', 'Pendiente', NULL),
-(2, 'Estrategias de Marketing', 'Marketing, Ventas', 
+(2, 'Estrategias de Marketing', 'Emprender,Decision,Publicidad', 'Marketing,Ventas', 
     'Revisión de estrategias de marketing digital.', 
     'estrategias_marketing.pdf', '2025-02-18', 'Pendiente', NULL),
-(3, 'Tendencias en Ciberseguridad', 'Ciberseguridad, IT', 
+(3, 'Tendencias en Ciberseguridad', 'Hackers,Programacion', 'Ciberseguridad', 
     'Análisis de tendencias en ciberseguridad.', 
     'tendencias_ciberseguridad.pdf', '2025-02-20', 'Pendiente', NULL);
 
-INSERT INTO Articulo (idTrack, titulo, palabrasClave, resumen, nombreFichero, fechaEnvio, decisionFinal, valoracionGlobal)
+INSERT INTO Articulo (idTrack, titulo, palabrasClave, palabrasClaveTrack, resumen, nombreFichero, fechaEnvio, decisionFinal, valoracionGlobal)
 VALUES 
-(5, 'Análisis de Grandes Volúmenes de Datos', 'Big Data, Analytics', 
+(5, 'Análisis de Grandes Volúmenes de Datos', 'Datos,Muchos datos', 'Big Data,Analytics', 
     'Un estudio sobre el procesamiento masivo de datos.', 
     'analisis_big_data.pdf', '2025-03-20', 'Pendiente', NULL);
 
-INSERT INTO Articulo (idTrack, titulo, palabrasClave, resumen, nombreFichero, fechaEnvio, decisionFinal, valoracionGlobal)
+INSERT INTO Articulo (idTrack, titulo, palabrasClave, palabrasClaveTrack, resumen, nombreFichero, fechaEnvio, decisionFinal, valoracionGlobal)
 VALUES 
-(6, 'Aplicaciones IoT en la Industria', 'IoT, Edge', 
+(6, 'Aplicaciones IoT en la Industria', 'Bolsonaro,Bolsocaro', 'IoT,Edge', 
     'Examina casos de uso IoT en entornos industriales.', 
     'iot_industria.pdf', '2025-03-22', 'Pendiente', NULL);
 
@@ -139,19 +139,19 @@ VALUES
 (1, 'maria.lopez@ejemplo.com', 'Buen trabajo, se destaca la metodología.', 
     'Revisión adecuada para coordinación.', 'Alto', 2, '2025-02-02'),
 (1, 'carlos.sanchez@ejemplo.com', 'El enfoque es innovador, pero podría mejorar en detalles.', 
-    'Observaciones pertinentes para coordinación.', 'Medio', 1, '2025-02-03'),
+    'Observaciones pertinentes para coordinación.', 'Medio', -1, '2025-02-03'),
 (2, 'andres.gomez@ejemplo.com', 'Falta profundidad en análisis de fuentes.', 
     'Coordinación recomendada.', 'Normal', -1, '2025-02-06'),
 (3, 'maria.lopez@ejemplo.com', 'Muy completo, enfoque actualizado.', 
-    'Listo para publicación.', 'Alto', 2, '2025-01-25'),
+    'Listo para publicación.', 'Alto', -1, '2025-01-25'),
 (3, 'carlos.sanchez@ejemplo.com', 'Se sugiere ampliar ejemplos prácticos.', 
     'Sin observaciones adicionales.', 'Medio', 1, '2025-01-26'),
 (3, 'andres.gomez@ejemplo.com', 'Excelente redacción y estructura.', 
-    'Aprobado por coordinación.', 'Alto', 2, '2025-01-27'),
+    'Aprobado por coordinación.', 'Alto', 1, '2025-01-27'),
 (4, 'carlos.sanchez@ejemplo.com', 'El artículo no profundiza en la problemática.', 
     'Requiere revisión de estilo.', 'Bajo', -2, '2025-02-11'),
 (4, 'maria.lopez@ejemplo.com', 'Observaciones menores en conclusión.', 
-    'Sugerencias incluidas.', 'Normal', -1, '2025-02-12');
+    'Sugerencias incluidas.', 'Alto', 2, '2025-02-12');
 
 INSERT INTO Revision (idArticulo, emailUsuario)
 VALUES 
@@ -170,15 +170,14 @@ VALUES
 ***********************************************************************/
 INSERT INTO Discusion (idArticulo) VALUES (1);
 INSERT INTO Discusion (idArticulo) VALUES (3);
-INSERT INTO Discusion (idArticulo) VALUES (5);
 
 INSERT INTO Usuario_Discusion (emailUsuario, idDiscusion)
 VALUES 
 ('maria.lopez@ejemplo.com', 1),
-('andres.gomez@ejemplo.com', 1),
-('juan.perez@ejemplo.com', 2),
+('carlos.sanchez@ejemplo.com', 1),
+('maria.lopez@ejemplo.com', 2),
 ('carlos.sanchez@ejemplo.com', 2),
-('laura.martinez@ejemplo.com', 3);
+('andres.gomez@ejemplo.com', 2);
 
 INSERT INTO Anotacion (idDiscusion, emailUsuario, comentario, fecha, hora)
 VALUES 
@@ -188,34 +187,12 @@ VALUES
 (1, 'andres.gomez@ejemplo.com', 
     'Estoy de acuerdo, añadiré referencias adicionales.', 
     '2025-03-10', '10:45'),
-(2, 'juan.perez@ejemplo.com', 
+(2, 'andres.gomez@ejemplo.com', 
     'La sección de resultados necesita más ejemplos.', 
     '2025-03-12', '09:15'),
+(2, 'maria.lopez@ejemplo.com', 
+    'Concuerdo contigo acerca de los ejemplos.', 
+    '2025-03-12', '09:20'),
 (2, 'carlos.sanchez@ejemplo.com', 
     'He revisado esa sección, puedo añadir ejemplos de proyectos reales.', 
-    '2025-03-12', '09:25'),
-(3, 'laura.martinez@ejemplo.com', 
-    'Necesitamos más datos de las pruebas con prototipos.', 
-    '2025-03-15', '11:00');
-
-INSERT INTO Discusion (idArticulo) VALUES (8);
-INSERT INTO Discusion (idArticulo) VALUES (9);
-
-INSERT INTO Usuario_Discusion (emailUsuario, idDiscusion)
-VALUES
-('carla.torres@ejemplo.com', 4),
-('paquin@ejemplo.com', 4),
-('pablo.rodriguez@ejemplo.com', 5),
-('bea@ejemplo.com', 5);
-
-INSERT INTO Anotacion (idDiscusion, emailUsuario, comentario, fecha, hora)
-VALUES
-(4, 'carla.torres@ejemplo.com', 
-    'Revisé los métodos estadísticos; se pueden optimizar.', 
-    '2025-03-25', '10:00'),
-(4, 'paquin@ejemplo.com', 
-    'Coincido. Falta clarificar la arquitectura de procesamiento.', 
-    '2025-03-25', '10:15'),
-(5, 'bea@ejemplo.com', 
-    'El enfoque IoT está bien, pero falta detalle en seguridad.', 
-    '2025-03-26', '09:45');
+    '2025-03-12', '09:25');

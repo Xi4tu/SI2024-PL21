@@ -20,7 +20,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import app.dto.RevisionArticuloAutorDTO;
+import app.dto.ArticuloDiscusionDTO;
+import app.enums.DecisionRevisor;
 
 import javax.swing.BorderFactory;
 
@@ -35,7 +36,7 @@ public class GestionarDiscusionesCoordinadorView {
 	private JPanel contentPane;
 
 	// Lista de artículos controversiales
-	private JList<RevisionArticuloAutorDTO> listArticulos;
+	private JList<ArticuloDiscusionDTO> listArticulos;
 
 	// Etiqueta para mostrar la valoración global
 	private JLabel lblValoracionGlobal;
@@ -160,54 +161,63 @@ public class GestionarDiscusionesCoordinadorView {
 	 * NOTA: Se eliminó la lógica de colorear la decisión.
 	 */
 	public void addRevisionCard(String revisor, String nivel, String decision, String comentario) {
-		JPanel tarjetaRevision = new JPanel(new BorderLayout(5, 5));
-		tarjetaRevision.setBorder(BorderFactory.createCompoundBorder(
-			new EmptyBorder(5, 5, 5, 5),
-			BorderFactory.createCompoundBorder(
-				new LineBorder(new Color(200, 200, 200), 1, true),
-				new EmptyBorder(10, 10, 10, 10)
-			)
-		));
-		tarjetaRevision.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
-		tarjetaRevision.setBackground(new Color(250, 250, 250));
+	    JPanel tarjetaRevision = new JPanel(new BorderLayout(5, 5));
+	    tarjetaRevision.setBorder(BorderFactory.createCompoundBorder(
+	        new EmptyBorder(5, 5, 5, 5),
+	        BorderFactory.createCompoundBorder(
+	            new LineBorder(new Color(200, 200, 200), 1, true),
+	            new EmptyBorder(10, 10, 10, 10)
+	        )
+	    ));
+	    tarjetaRevision.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+	    tarjetaRevision.setBackground(new Color(250, 250, 250));
 
-		// Construimos encabezado con HTML, pero sin color.  
-		String encabezadoHtml = String.format("<html><body>"
-			+ "<b>%s</b> | <b>Nivel %s</b> | <b>%s</b>"
-			+ "</body></html>", revisor, nivel, decision);
+	    // 1. Obtenemos la instancia de DecisionRevisor a partir de la etiqueta 'decision'
+	    DecisionRevisor decisionRevisor = DecisionRevisor.fromLabel(decision);
+	    
+	    // Construimos el encabezado HTML
+	    String encabezadoHtml = String.format("<html><body>"
+	        + "<b>%s</b> | <b>Nivel %s</b> | <b>%s</b>"
+	        + "</body></html>", revisor, nivel, decision);
 
-		JLabel lblEncabezado = new JLabel(encabezadoHtml);
-		lblEncabezado.setFont(new Font("SansSerif", Font.PLAIN, 12));
+	    JLabel lblEncabezado = new JLabel(encabezadoHtml);
+	    lblEncabezado.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-		JPanel panelEncabezado = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		panelEncabezado.setOpaque(false);
-		panelEncabezado.add(lblEncabezado);
+	    // 2. Si el enum existe, aplicamos su color al label de encabezado
+	    if (decisionRevisor != null) {
+	        lblEncabezado.setForeground(decisionRevisor.getColor());
+	    }
 
-		tarjetaRevision.add(panelEncabezado, BorderLayout.NORTH);
+	    JPanel panelEncabezado = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+	    panelEncabezado.setOpaque(false);
+	    panelEncabezado.add(lblEncabezado);
 
-		JSeparator separador = new JSeparator();
-		separador.setForeground(new Color(220, 220, 220));
-		tarjetaRevision.add(separador, BorderLayout.CENTER);
+	    tarjetaRevision.add(panelEncabezado, BorderLayout.NORTH);
 
-		JPanel panelComentario = new JPanel(new BorderLayout(5, 5));
-		panelComentario.setOpaque(false);
+	    JSeparator separador = new JSeparator();
+	    separador.setForeground(new Color(220, 220, 220));
+	    tarjetaRevision.add(separador, BorderLayout.CENTER);
 
-		JLabel lblComentarioTitulo = new JLabel("Comentario:");
-		lblComentarioTitulo.setFont(new Font("SansSerif", Font.BOLD, 12));
+	    JPanel panelComentario = new JPanel(new BorderLayout(5, 5));
+	    panelComentario.setOpaque(false);
 
-		JLabel lblComentarioValor = new JLabel("<html><p style='width:400px'>" + comentario + "</p></html>");
+	    JLabel lblComentarioTitulo = new JLabel("Comentario:");
+	    lblComentarioTitulo.setFont(new Font("SansSerif", Font.BOLD, 12));
 
-		panelComentario.add(lblComentarioTitulo, BorderLayout.NORTH);
-		panelComentario.add(lblComentarioValor, BorderLayout.CENTER);
+	    JLabel lblComentarioValor = new JLabel("<html><p style='width:400px'>" + comentario + "</p></html>");
 
-		tarjetaRevision.add(panelComentario, BorderLayout.SOUTH);
+	    panelComentario.add(lblComentarioTitulo, BorderLayout.NORTH);
+	    panelComentario.add(lblComentarioValor, BorderLayout.CENTER);
 
-		panelRevisiones.add(tarjetaRevision);
-		panelRevisiones.add(Box.createRigidArea(new Dimension(0, 10)));
+	    tarjetaRevision.add(panelComentario, BorderLayout.SOUTH);
 
-		panelRevisiones.revalidate();
-		scrollRevisiones.getVerticalScrollBar().setValue(0);
+	    panelRevisiones.add(tarjetaRevision);
+	    panelRevisiones.add(Box.createRigidArea(new Dimension(0, 10)));
+
+	    panelRevisiones.revalidate();
+	    scrollRevisiones.getVerticalScrollBar().setValue(0);
 	}
+
 
 	// -----------------------------------------------------
 	// Getters y Setters para que el controlador acceda a los componentes
@@ -221,7 +231,7 @@ public class GestionarDiscusionesCoordinadorView {
 		return contentPane;
 	}
 
-	public JList<RevisionArticuloAutorDTO> getListArticulos() {
+	public JList<ArticuloDiscusionDTO> getListArticulos() {
 		return listArticulos;
 	}
 
