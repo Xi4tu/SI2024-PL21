@@ -196,3 +196,40 @@ VALUES
 (2, 'carlos.sanchez@ejemplo.com', 
     'He revisado esa sección, puedo añadir ejemplos de proyectos reales.', 
     '2025-03-12', '09:25');
+    
+/***********************************************************************
+  8. Agregar preferencias de Articulos a Revisores
+***********************************************************************/
+INSERT INTO Preferencia (decision, idArticulo)
+VALUES
+('Lo quiero revisar', 5),
+('No quiero revisar', 5),
+('Puedo revisar', 5),
+('Conflicto', 5),
+('Lo quiero revisar', 6),
+('No quiero revisar', 6),
+('Puedo revisar', 6),
+('Conflicto', 6),
+('Lo quiero revisar', 7),
+('No quiero revisar', 7),
+('Puedo revisar', 7),
+('Conflicto', 7);
+
+INSERT INTO Usuario_Preferencia (emailUsuario, idPreferencia)
+VALUES
+('maria.lopez@ejemplo.com', 1),
+('carlos.sanchez@ejemplo.com', 2),
+('andres.gomez@ejemplo.com', 3),
+('paquin@ejemplo.com', 4),
+('carlos.sanchez@ejemplo.com', 5),
+('andres.gomez@ejemplo.com', 6),
+('maria.lopez@ejemplo.com', 7),
+('paquin@ejemplo.com', 8),
+('andres.gomez@ejemplo.com', 9),
+('maria.lopez@ejemplo.com', 10),
+('paquin@ejemplo.com', 11),
+('carlos.sanchez@ejemplo.com', 12);
+
+
+
+
