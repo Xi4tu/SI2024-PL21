@@ -58,7 +58,6 @@ public class EnviarArticuloController {
 		// Inserto las palabras clave del primer track en el comboBox de la vista
 		view.setPalabrasClaveTrack(tracks.get(0).getPalabrasClaveLista());
 		
-		
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
 		
