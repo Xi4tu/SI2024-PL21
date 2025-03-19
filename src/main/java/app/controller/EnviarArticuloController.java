@@ -17,7 +17,7 @@ import giis.demo.util.SwingUtil;
 import app.util.UserUtil;
 
 public class EnviarArticuloController {
-	
+	// MODIFICACION (prueba)
 	// Variables
 	private EnviarArticuloModel model;
 	private EnviarArticuloView view;
