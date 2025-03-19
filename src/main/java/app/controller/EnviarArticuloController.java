@@ -57,9 +57,7 @@ public class EnviarArticuloController {
 		view.setTracks(tracks);
 		// Inserto las palabras clave del primer track en el comboBox de la vista
 		view.setPalabrasClaveTrack(tracks.get(0).getPalabrasClaveLista());
-		
-		// Correccion de la pull request (esto es para probar)
-		
+				
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
 		
