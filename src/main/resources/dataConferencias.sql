@@ -1,10 +1,10 @@
 /***********************************************************************
   1. INSERTAR CONFERENCIAS Y TRACKS
 ***********************************************************************/
-INSERT INTO Conferencia (nombre, deadline)
+INSERT INTO Conferencia (nombre, deadlineEnvio, deadlineDiscusion, deadlineRevision)
 VALUES 
-('Conferencia A', '2025-05-01'),
-('Conferencia B', '2025-06-15');
+('Conferencia A', '2026-03-01', '2026-01-10', '2026-01-05'),
+('Conferencia B', '2025-03-27', '2025-04-10', '2025-04-05');
 
 INSERT INTO Track (idConferencia, nombre, palabrasClave)
 VALUES
@@ -13,8 +13,8 @@ VALUES
 (2, 'Track Software', 'Programación,Software'),
 (2, 'Track MedioAmbiente', 'Medio Ambiente,Sustentabilidad');
 
-INSERT INTO Conferencia (nombre, deadline)
-VALUES ('Conferencia C', '2025-07-10');
+INSERT INTO Conferencia (nombre, deadlineEnvio, deadlineDiscusion, deadlineRevision)
+VALUES ('Conferencia C', '2025-01-01', '2025-01-10', '2025-01-05');
 
 INSERT INTO Track (idConferencia, nombre, palabrasClave)
 VALUES
