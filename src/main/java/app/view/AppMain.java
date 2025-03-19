@@ -62,6 +62,9 @@ public class AppMain {
 		frame.setTitle("Gestor de conferencias");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(100, 100, 400, 600);
+		
+
+		EnviarArticuloModel model = new EnviarArticuloModel();
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
