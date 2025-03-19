@@ -9,20 +9,29 @@ public class ConferenciaDTO {
 	// Nombre de la conferencia
 	private String nombre;
 	// Deadline de envío de artículos
-	private String deadline;
+	private String deadlineEnvio;
+	// deadline discusion
+	private String deadlineDiscusion;
+	// Deadline de revision
+	private String deadlineRevision;
+	
 	
 	// Deadline como Date
 	private Date deadlineDate;
+	
+	// 
 	
 	// Constructor vacío
 	public ConferenciaDTO() {
 	}
 	
 	// Constructor con todos los parametros
-	public ConferenciaDTO(int idConferencia, String nombre, String deadline) {
+	public ConferenciaDTO(int idConferencia, String nombre, String deadlineEnvio, String deadlineDiscusion, String deadlineRevision) {
 		this.idConferencia = idConferencia;
 		this.nombre = nombre;
-		this.deadline = deadline;
+		this.deadlineEnvio = deadlineEnvio;
+		this.deadlineDiscusion = deadlineDiscusion;
+		this.deadlineRevision = deadlineRevision;
 	}
 
 	//Getters  Setters
@@ -43,12 +52,28 @@ public class ConferenciaDTO {
 		this.nombre = nombre;
 	}
 
-	public String getDeadline() {
-		return deadline;
+	public String getDeadlineEnvio() {
+		return deadlineEnvio;
 	}
 
-	public void setDeadline(String deadline) {
-		this.deadline = deadline;
+	public void setDeadlineEnvio(String deadlineEnvio) {
+		this.deadlineEnvio = deadlineEnvio;
+	}
+
+	public String getDeadlineDiscusion() {
+		return deadlineDiscusion;
+	}
+
+	public void setDeadlineDiscusion(String deadlineDiscusion) {
+		this.deadlineDiscusion = deadlineDiscusion;
+	}
+
+	public String getDeadlineRevision() {
+		return deadlineRevision;
+	}
+
+	public void setDeadlineRevision(String deadlineRevision) {
+		this.deadlineRevision = deadlineRevision;
 	}
 
 	public Date getDeadlineDate() {
@@ -61,7 +86,7 @@ public class ConferenciaDTO {
 	
 	// Metodo para pasar el Deadline de String a Date
 	public void setFechaDeadline() {
-		this.deadlineDate = stringToDate(this.deadline);
+		this.deadlineDate = stringToDate(this.deadlineEnvio);
 	}
 	
 	//Metodo para convertir el string de la fecha en un Date

@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS Anotacion;
 DROP TABLE IF EXISTS Revision;
 DROP TABLE IF EXISTS Usuario;
 DROP TABLE IF EXISTS Rol;
+DROP TABLE IF EXISTS Preferencia;
+DROP TABLE IF EXISTS Usuario_Preferencia;
 DROP TABLE IF EXISTS Usuario_Discusion;
 DROP TABLE IF EXISTS Articulo_Usuario;
 DROP TABLE IF EXISTS Usuario_Rol;
@@ -14,7 +16,9 @@ DROP TABLE IF EXISTS Usuario_Rol;
 CREATE TABLE "Conferencia" (
 	"idConferencia"	INTEGER NOT NULL UNIQUE,
 	"nombre"	TEXT NOT NULL,
-	"deadline"	TEXT NOT NULL,
+	"deadlineEnvio"	TEXT NOT NULL,
+	"deadlineDiscusion" TEXT NOT NULL,
+	"deadlineRevision" TEXT NOT NULL,
 	PRIMARY KEY("idConferencia" AUTOINCREMENT)
 );
 
@@ -85,6 +89,14 @@ CREATE TABLE "Rol" (
 	PRIMARY KEY("idRol" AUTOINCREMENT)
 );
 
+CREATE TABLE "Preferencia" (
+	"idPreferencia"	INTEGER NOT NULL UNIQUE,
+	"idArticulo"	INTEGER,
+	"decision"	TEXT CHECK("decision" IN ("Lo quiero revisar", "Puedo revisar", "No quiero revisar","Conflicto")),
+	FOREIGN KEY("idArticulo") REFERENCES "Articulo"("idArticulo"),
+	PRIMARY KEY("idPreferencia")
+);
+
 
 CREATE TABLE "Usuario_Discusion" (
 	"emailUsuario"	TEXT NOT NULL,
@@ -107,4 +119,12 @@ CREATE TABLE "Usuario_Rol" (
 	FOREIGN KEY("idRol") REFERENCES "Rol"("idRol") ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY("emailUsuario") REFERENCES "Usuario"("email") ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY("emailUsuario","idRol")
+);
+
+CREATE TABLE "Usuario_Preferencia" (
+	"emailUsuario"	INTEGER,
+	"idPreferencia"	INTEGER,
+	PRIMARY KEY("emailUsuario","idPreferencia"),
+	FOREIGN KEY("idPreferencia") REFERENCES "Preferencia"("idPreferencia"),
+	FOREIGN KEY("emailUsuario") REFERENCES "Usuario"("email")
 );

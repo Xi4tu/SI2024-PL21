@@ -1,10 +1,10 @@
 /***********************************************************************
   1. INSERTAR CONFERENCIAS Y TRACKS
 ***********************************************************************/
-INSERT INTO Conferencia (nombre, deadline)
+INSERT INTO Conferencia (nombre, deadlineEnvio, deadlineDiscusion, deadlineRevision)
 VALUES 
-('Conferencia A', '2025-01-01'),
-('Conferencia B', '2025-09-15');
+('Conferencia A', '2026-03-01', '2026-01-10', '2026-01-05'),
+('Conferencia B', '2025-03-27', '2025-04-10', '2025-04-05');
 
 INSERT INTO Track (idConferencia, nombre, palabrasClave)
 VALUES
@@ -13,8 +13,8 @@ VALUES
 (2, 'Track Software', 'Programación,Software'),
 (2, 'Track MedioAmbiente', 'Medio Ambiente,Sustentabilidad');
 
-INSERT INTO Conferencia (nombre, deadline)
-VALUES ('Conferencia C', '2025-07-10');
+INSERT INTO Conferencia (nombre, deadlineEnvio, deadlineDiscusion, deadlineRevision)
+VALUES ('Conferencia C', '2025-01-01', '2025-01-10', '2025-01-05');
 
 INSERT INTO Track (idConferencia, nombre, palabrasClave)
 VALUES
@@ -72,16 +72,16 @@ INSERT INTO Articulo (idTrack, titulo, palabrasClave, palabrasClaveTrack, resume
 VALUES 
 (1, 'Avances en IA', 'Inteligentes', 'IA', 
     'Este artículo trata sobre avances en inteligencia artificial.', 
-    'avances_ia.pdf', '2025-02-01', 'Aceptado', 3),
+    'avances_ia.pdf', '2025-02-01', 'Aceptado', 1),
 (2, 'Innovación en Energías', 'Fabrica,Progreso', 'Renovable', 
     'Analiza innovaciones en energías renovables.', 
     'innovacion_energias.pdf', '2025-02-05', 'Rechazado', -1),
 (3, 'Nuevas Técnicas de Programación', 'Futuro,Desempleo,PHP','Programación,Software', 
     'Explora técnicas modernas en desarrollo de software.', 
-    'nuevas_tecnicas_programacion.pdf', '2025-01-20', 'Aceptado', 5),
+    'nuevas_tecnicas_programacion.pdf', '2025-01-20', 'Aceptado', 1),
 (4, 'Impacto Ambiental', 'Desarrollo,Naturaleza','Medio Ambiente', 
     'Discusión sobre impacto ambiental de la tecnología.', 
-    'impacto_ambiental.pdf', '2025-02-10', 'Rechazado', -3),
+    'impacto_ambiental.pdf', '2025-02-10', 'Rechazado', 0),
 (1, 'Futuro de la Robótica', 'Pilas,Enchufes,Luces','Robótica,Tecnología', 
     'Examina el futuro de la robótica.', 
     'futuro_robotica.pdf', '2025-02-15', 'Pendiente', NULL),
@@ -139,19 +139,19 @@ VALUES
 (1, 'maria.lopez@ejemplo.com', 'Buen trabajo, se destaca la metodología.', 
     'Revisión adecuada para coordinación.', 'Alto', 2, '2025-02-02'),
 (1, 'carlos.sanchez@ejemplo.com', 'El enfoque es innovador, pero podría mejorar en detalles.', 
-    'Observaciones pertinentes para coordinación.', 'Medio', 1, '2025-02-03'),
+    'Observaciones pertinentes para coordinación.', 'Medio', -1, '2025-02-03'),
 (2, 'andres.gomez@ejemplo.com', 'Falta profundidad en análisis de fuentes.', 
     'Coordinación recomendada.', 'Normal', -1, '2025-02-06'),
 (3, 'maria.lopez@ejemplo.com', 'Muy completo, enfoque actualizado.', 
-    'Listo para publicación.', 'Alto', 2, '2025-01-25'),
+    'Listo para publicación.', 'Alto', -1, '2025-01-25'),
 (3, 'carlos.sanchez@ejemplo.com', 'Se sugiere ampliar ejemplos prácticos.', 
     'Sin observaciones adicionales.', 'Medio', 1, '2025-01-26'),
 (3, 'andres.gomez@ejemplo.com', 'Excelente redacción y estructura.', 
-    'Aprobado por coordinación.', 'Alto', 2, '2025-01-27'),
+    'Aprobado por coordinación.', 'Alto', 1, '2025-01-27'),
 (4, 'carlos.sanchez@ejemplo.com', 'El artículo no profundiza en la problemática.', 
     'Requiere revisión de estilo.', 'Bajo', -2, '2025-02-11'),
 (4, 'maria.lopez@ejemplo.com', 'Observaciones menores en conclusión.', 
-    'Sugerencias incluidas.', 'Normal', -1, '2025-02-12');
+    'Sugerencias incluidas.', 'Alto', 2, '2025-02-12');
 
 INSERT INTO Revision (idArticulo, emailUsuario)
 VALUES 
@@ -170,15 +170,14 @@ VALUES
 ***********************************************************************/
 INSERT INTO Discusion (idArticulo) VALUES (1);
 INSERT INTO Discusion (idArticulo) VALUES (3);
-INSERT INTO Discusion (idArticulo) VALUES (5);
 
 INSERT INTO Usuario_Discusion (emailUsuario, idDiscusion)
 VALUES 
 ('maria.lopez@ejemplo.com', 1),
-('andres.gomez@ejemplo.com', 1),
-('juan.perez@ejemplo.com', 2),
+('carlos.sanchez@ejemplo.com', 1),
+('maria.lopez@ejemplo.com', 2),
 ('carlos.sanchez@ejemplo.com', 2),
-('laura.martinez@ejemplo.com', 3);
+('andres.gomez@ejemplo.com', 2);
 
 INSERT INTO Anotacion (idDiscusion, emailUsuario, comentario, fecha, hora)
 VALUES 
@@ -188,34 +187,48 @@ VALUES
 (1, 'andres.gomez@ejemplo.com', 
     'Estoy de acuerdo, añadiré referencias adicionales.', 
     '2025-03-10', '10:45'),
-(2, 'juan.perez@ejemplo.com', 
+(2, 'andres.gomez@ejemplo.com', 
     'La sección de resultados necesita más ejemplos.', 
     '2025-03-12', '09:15'),
+(2, 'maria.lopez@ejemplo.com', 
+    'Concuerdo contigo acerca de los ejemplos.', 
+    '2025-03-12', '09:20'),
 (2, 'carlos.sanchez@ejemplo.com', 
     'He revisado esa sección, puedo añadir ejemplos de proyectos reales.', 
-    '2025-03-12', '09:25'),
-(3, 'laura.martinez@ejemplo.com', 
-    'Necesitamos más datos de las pruebas con prototipos.', 
-    '2025-03-15', '11:00');
-
-INSERT INTO Discusion (idArticulo) VALUES (8);
-INSERT INTO Discusion (idArticulo) VALUES (9);
-
-INSERT INTO Usuario_Discusion (emailUsuario, idDiscusion)
+    '2025-03-12', '09:25');
+    
+/***********************************************************************
+  8. Agregar preferencias de Articulos a Revisores
+***********************************************************************/
+INSERT INTO Preferencia (decision, idArticulo)
 VALUES
-('carla.torres@ejemplo.com', 4),
+('Lo quiero revisar', 5),
+('No quiero revisar', 5),
+('Puedo revisar', 5),
+('Conflicto', 5),
+('Lo quiero revisar', 6),
+('No quiero revisar', 6),
+('Puedo revisar', 6),
+('Conflicto', 6),
+('Lo quiero revisar', 7),
+('No quiero revisar', 7),
+('Puedo revisar', 7),
+('Conflicto', 7);
+
+INSERT INTO Usuario_Preferencia (emailUsuario, idPreferencia)
+VALUES
+('maria.lopez@ejemplo.com', 1),
+('carlos.sanchez@ejemplo.com', 2),
+('andres.gomez@ejemplo.com', 3),
 ('paquin@ejemplo.com', 4),
-('pablo.rodriguez@ejemplo.com', 5),
-('bea@ejemplo.com', 5);
+('carlos.sanchez@ejemplo.com', 5),
+('andres.gomez@ejemplo.com', 6),
+('maria.lopez@ejemplo.com', 7),
+('paquin@ejemplo.com', 8),
+('andres.gomez@ejemplo.com', 9),
+('maria.lopez@ejemplo.com', 10),
+('paquin@ejemplo.com', 11),
+('carlos.sanchez@ejemplo.com', 12);
 
-INSERT INTO Anotacion (idDiscusion, emailUsuario, comentario, fecha, hora)
-VALUES
-(4, 'carla.torres@ejemplo.com', 
-    'Revisé los métodos estadísticos; se pueden optimizar.', 
-    '2025-03-25', '10:00'),
-(4, 'paquin@ejemplo.com', 
-    'Coincido. Falta clarificar la arquitectura de procesamiento.', 
-    '2025-03-25', '10:15'),
-(5, 'bea@ejemplo.com', 
-    'El enfoque IoT está bien, pero falta detalle en seguridad.', 
-    '2025-03-26', '09:45');
+
+
