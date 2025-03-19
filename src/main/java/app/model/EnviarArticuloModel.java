@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.dto.AutorDTO;
+import app.dto.ConferenciaDTO;
 import app.dto.TrackDTO;
 import giis.demo.util.Database;
 import giis.demo.util.DbUtil;
@@ -18,11 +19,11 @@ public class EnviarArticuloModel {
 	}
 	
 	// Enviar artícilo a la base de datos
-	public void enviarArticulo(String titulo, String palabrasClave, String resumen, String archivo, ArrayList<AutorDTO> autores) {
+	public void enviarArticulo(int idTrack, String titulo, String palabrasClave, String palabrasClaveTrack, String resumen, String archivo, ArrayList<AutorDTO> autores) {
 		
 		// Inserta el artículo en la base de datos incluyendo la fecha generada automáticamente con la funcion fecha()
-		String sql = "INSERT INTO Articulo (titulo, palabrasClave, resumen, nombreFichero, fechaEnvio) VALUES (?, ?, ?, ?, ?)";
-		db.executeUpdate(sql, titulo, palabrasClave, resumen, archivo, fecha());
+		String sql = "INSERT INTO Articulo (idTrack, titulo, palabrasClave, palabrasClaveTrack, resumen, nombreFichero, fechaEnvio) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		db.executeUpdate(sql, idTrack, titulo, palabrasClave, palabrasClaveTrack, resumen, archivo, fecha());
 		
 		//Para ese articulo, insertar los autores en la tabla de Usuario y en la tabla de Articulo_Usuario
 		for (AutorDTO autor : autores) {
@@ -76,6 +77,12 @@ public class EnviarArticuloModel {
 			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
 			return sdf.format(fecha);
 		}
+		
+		// Metodo para obtener la fecha actual como Date
+		public java.util.Date fechaDate() {
+			java.util.Date fecha = new java.util.Date();
+			return fecha;
+		}
 
 		//Metodo para obtener una lista con los tracks disponibles
 		//Devuelve una lista con los tracksDTO
@@ -96,6 +103,24 @@ public class EnviarArticuloModel {
 			
 			return listaTracks;
 			
+		}
+		
+		//Metodo para obtener la fecha limite de envio de un articulo a una conferencia como String
+		public String obtenerDeadlineConferenciaString(String idConferencia) {
+			String sql = "SELECT deadline FROM Conferencia WHERE idConferencia = ?";
+			List<String> listaFechas = db.executeQueryPojo(String.class, sql, idConferencia);
+			return listaFechas.get(0);
+		}
+		
+		// Metodo para obtener el DTO de una conferencia a partir de su id
+		public ConferenciaDTO obtenerConferencia(String idConferencia) {
+			String sql = "SELECT * FROM Conferencia WHERE idConferencia = ?";
+			List<ConferenciaDTO> listaConferencias = db.executeQueryPojo(ConferenciaDTO.class, sql, idConferencia);
+			// Guarda la conferencia en un objeto ConferenciaDTO
+			ConferenciaDTO conferencia = listaConferencias.get(0);
+			// Relleno su fecha de deadline como Date
+			conferencia.setFechaDeadline();
+			return conferencia;
 		}
 
 }
