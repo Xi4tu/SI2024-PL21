@@ -47,7 +47,7 @@ public class EnviarArticuloView {
 	private JComboBox<String> comboBoxSelectorTrackArticulo;
 	private JComboBox<String> comboBoxSelectorPalabrasDelTrack;
 
-	private String estadoInicialLabelPalabrasClaveTrack = "...";
+	private String estadoInicialLabelPalabrasClaveTrack = "";
 	
 	public EnviarArticuloView() {
 		initialize();
@@ -441,7 +441,7 @@ public class EnviarArticuloView {
 			lblPalabrasDelTrackArticulo.setText(palabraClave);
 		} else
 		if (!lblPalabrasDelTrackArticulo.getText().contains(palabraClave)) {
-			lblPalabrasDelTrackArticulo.setText(lblPalabrasDelTrackArticulo.getText() + " " + palabraClave);
+			lblPalabrasDelTrackArticulo.setText(lblPalabrasDelTrackArticulo.getText() + "," + palabraClave);
 		}
 	}
 	
@@ -451,7 +451,17 @@ public class EnviarArticuloView {
 	}
 	
 	// Metodo que devuelve el texto del campo de texto de palabras clave del articulo como una lista de Strings
-	public String[] getPalabrasClaveArticulo() {
-		return lblPalabrasDelTrackArticulo.getText().split(" ");
+	public String[] getPalabrasClaveArticuloLista() {
+		// Si esta como el texto por defecto, devuelvo un array vacio
+		if (lblPalabrasDelTrackArticulo.getText().equals(estadoInicialLabelPalabrasClaveTrack)) {
+			return new String[0];
+		}
+		// Si no, devuelvo un array con las palabras clave separadas por comas
+		return lblPalabrasDelTrackArticulo.getText().split(",");
+	}
+	
+	// Metodo que devuelve el texto del campo de texto de palabras clave del articulo como una unica String separada por comas
+	public String getPalabrasClaveArticuloString() {
+		return lblPalabrasDelTrackArticulo.getText();
 	}
 }

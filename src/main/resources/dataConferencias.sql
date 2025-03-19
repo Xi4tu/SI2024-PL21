@@ -3,8 +3,8 @@
 ***********************************************************************/
 INSERT INTO Conferencia (nombre, deadline)
 VALUES 
-('Conferencia A', '2025-05-01'),
-('Conferencia B', '2025-06-15');
+('Conferencia A', '2025-01-01'),
+('Conferencia B', '2025-09-15');
 
 INSERT INTO Track (idConferencia, nombre, palabrasClave)
 VALUES
