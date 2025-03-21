@@ -31,6 +31,7 @@ public class AceptarDenegarArticuloController {
 	private int valoracionFinal;
 	DefaultListModel<AceptarDenegarArticuloDTO> listModel;
 	DefaultListModel<AceptarDenegarArticuloDTO> listModelAuto;
+	DefaultListModel<AceptarDenegarArticuloDTO> listModelCambios;
 
 	private static final Rol ROL = Rol.COORDINADOR;
 
@@ -53,9 +54,12 @@ public class AceptarDenegarArticuloController {
 			return;
 		}
 
+		if (!obtenerArticulosCambios()) {
+			return;
+		}
+
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
-
 	}
 
 	public void initController() {
@@ -86,6 +90,18 @@ public class AceptarDenegarArticuloController {
 			Integer idSeleccionado = articuloSeleccionado.getId();
 			llenarComboBoxAutores(view.getListAutomaticos().getSelectedValue().getTitulo());
 
+		});
+
+		view.getListAceptarConCambios().addListSelectionListener(e -> {
+			AceptarDenegarArticuloDTO articuloSeleccionado = view.getListAceptarConCambios().getSelectedValue();
+			// Verifica si el objeto o su id son nulos
+			if (articuloSeleccionado == null || articuloSeleccionado.getId() == 0) {
+				return;
+			}
+
+			// Guarda el id en una variable (objeto Integer)
+			Integer idSeleccionado = articuloSeleccionado.getId();
+			llenarComboBoxAutores(view.getListAceptarConCambios().getSelectedValue().getTitulo());
 		});
 
 		view.getcbRevisor().addActionListener(e -> {
@@ -135,7 +151,7 @@ public class AceptarDenegarArticuloController {
 					model.actualizarDecisionFinal("Aceptado", view.getListAutomaticos().getSelectedValue().getTitulo());
 					SwingUtil.showMessage("Artículo aceptado correctamente", "Información",
 							JOptionPane.INFORMATION_MESSAGE);
-					//Si el artículo está en la otra lista, lo elimina también
+					// Si el artículo está en la otra lista, lo elimina también
 					for (int i = 0; i < view.getListArticulos().getModel().getSize(); i++) {
 
 						if (view.getListAutomaticos().getSelectedValue().getTitulo()
@@ -145,7 +161,7 @@ public class AceptarDenegarArticuloController {
 					}
 
 					listModelAuto.removeElement(view.getListAutomaticos().getSelectedValue());
-					//Si no hay elementos en las listas, se cierra la ventana
+					// Si no hay elementos en las listas, se cierra la ventana
 					if (listModelAuto.isEmpty() && listModel.isEmpty()) {
 						SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
 								JOptionPane.INFORMATION_MESSAGE);
@@ -207,7 +223,7 @@ public class AceptarDenegarArticuloController {
 							view.getListAutomaticos().getSelectedValue().getTitulo());
 					SwingUtil.showMessage("Artículo rechazado correctamente", "Información",
 							JOptionPane.INFORMATION_MESSAGE);
-					//Si el artículo está en la otra lista, lo elimina también
+					// Si el artículo está en la otra lista, lo elimina también
 					for (int i = 0; i < view.getListArticulos().getModel().getSize(); i++) {
 
 						if (view.getListAutomaticos().getSelectedValue().getTitulo()
@@ -217,7 +233,7 @@ public class AceptarDenegarArticuloController {
 					}
 
 					listModelAuto.removeElement(view.getListAutomaticos().getSelectedValue());
-					//Si no hay elementos en las listas, se cierra la ventana
+					// Si no hay elementos en las listas, se cierra la ventana
 					if (listModelAuto.isEmpty() && listModel.isEmpty()) {
 						SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
 								JOptionPane.INFORMATION_MESSAGE);
@@ -234,20 +250,48 @@ public class AceptarDenegarArticuloController {
 			}
 		});
 
+		
+		//Cada vez que se selecciona una lista, cambia el botón aceptar y se deseleccionan las demás listas
 		view.gettpListas().addChangeListener(e -> {
 
 			if (view.gettpListas().getSelectedIndex() == 0) {
+
+				if (view.getbtnAceptar().getParent() == null) {
+					view.getContentPane().remove(view.getbtnAceptarConCambios());
+					view.getContentPane().add(view.getbtnAceptar(), "cell 10 13");
+					view.getContentPane().repaint();
+
+				}
 				view.getbtnAceptarTodos().setEnabled(false);
 				view.getListArticulos().setSelectedIndex(0);
 				introducirDatos();
 				view.getListAutomaticos().clearSelection();
-			} else {
+				view.getListAceptarConCambios().clearSelection();
+			} else if (view.gettpListas().getSelectedIndex() == 1) {
+				if (view.getbtnAceptar().getParent() == null) {
+					view.getContentPane().remove(view.getbtnAceptarConCambios());
+					view.getContentPane().add(view.getbtnAceptar(), "cell 10 13");
+					view.getContentPane().repaint();
+
+				}
 				view.getbtnAceptarTodos().setEnabled(true);
 				view.getListArticulos().clearSelection();
 				if (view.getListAutomaticos().getModel().getSize() > 0) {
 					view.getListAutomaticos().setSelectedIndex(0);
 					introducirDatos();
 				}
+			} else {
+				view.getListArticulos().clearSelection();
+				view.getListAceptarConCambios().clearSelection();
+				if (view.getListAceptarConCambios().getModel().getSize() > 0) {
+					view.getListAceptarConCambios().setSelectedIndex(0);
+					introducirDatos();
+				}
+
+				view.getContentPane().remove(view.getbtnAceptar());
+				view.getContentPane().add(view.getbtnAceptarConCambios(), "cell 10 13");
+				view.getContentPane().revalidate();
+				view.getContentPane().repaint();
 			}
 		});
 
@@ -273,7 +317,7 @@ public class AceptarDenegarArticuloController {
 							JOptionPane.INFORMATION_MESSAGE);
 					view.getFrame().dispose();
 				} else {
-					//Si no, se eliminan todos los elementos y se pasa a la otra lista
+					// Si no, se eliminan todos los elementos y se pasa a la otra lista
 					listModelAuto.removeAllElements();
 					view.gettpListas().setSelectedIndex(0);
 					view.getListArticulos().setSelectedIndex(0);
@@ -293,6 +337,7 @@ public class AceptarDenegarArticuloController {
 		// Asignar el modelo al JList de la vista
 		view.getListArticulos().setModel(listModel);
 		view.getListAutomaticos().setModel(listModelAuto);
+		view.getListAceptarConCambios().setModel(listModelCambios);
 
 	}
 
@@ -354,6 +399,36 @@ public class AceptarDenegarArticuloController {
 		return true;
 	}
 
+	private boolean obtenerArticulosCambios() {
+		// Llamar al backend para obtener los artículos asignados
+		articulos = model.obtenerArticulosSinDecisionFinal();
+		// Convertir cada Articulo a ArticuloDTO
+		List<AceptarDenegarArticuloDTO> listaDTO = new ArrayList<>();
+		for (AceptarDenegarArticuloDTO articulo : articulos) {
+			AceptarDenegarArticuloDTO dto = new AceptarDenegarArticuloDTO(articulo.getId(), articulo.getTitulo(),
+					articulo.getNombreFichero(), articulo.getNombre());
+			listaDTO.add(dto);
+		}
+
+		// Crear un modelo para el JList y agregar los DTOs
+		listModelCambios = new DefaultListModel<>();
+		for (AceptarDenegarArticuloDTO dto : listaDTO) {
+			if (valoracion(dto.getTitulo()) == 2 || ((valoracion(dto.getTitulo()) == 1 && dto.getNivelExperto() == "Bajo" && dto.getDecisionRevisor() == -2)) 
+					|| ((valoracion(dto.getTitulo()) == 1 && (dto.getNivelExperto() == "Bajo" || dto.getNivelExperto() == "Normal") && dto.getDecisionRevisor() == -1))) { 
+				listModelCambios.addElement(dto);
+			}
+		}
+
+		// Si no hay articulos asignados, mostrar un mensaje y cerrar la vista
+		if (articulos.isEmpty()) {
+			SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
+					JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}
+
+		return true;
+	}
+
 	// Método para rellenar el combo box con los revisores asignados a ese artículo
 	public void llenarComboBoxAutores(String nombreArticulo) {
 		// Obtener los revisores asociados al artículo (debería ser un método filtrado)
@@ -373,12 +448,15 @@ public class AceptarDenegarArticuloController {
 
 	// Método para insertar el comentario del autor en su TextPane
 	public void insertaComentarioAutor() {
-		if (view.getListArticulos().getSelectedValue() != null) {
+		if (view.gettpListas().getSelectedIndex() == 0) {
 			comentarioAutor = model.obtenerComentariosParaAutor((String) view.getcbRevisor().getSelectedItem(),
 					view.getListArticulos().getSelectedValue().getTitulo());
-		} else {
+		} else if (view.gettpListas().getSelectedIndex() == 1) {
 			comentarioAutor = model.obtenerComentariosParaAutor((String) view.getcbRevisor().getSelectedItem(),
 					view.getListAutomaticos().getSelectedValue().getTitulo());
+		} else {
+			comentarioAutor = model.obtenerComentariosParaAutor((String) view.getcbRevisor().getSelectedItem(),
+					view.getListAceptarConCambios().getSelectedValue().getTitulo());
 		}
 
 		if (comentarioAutor != null && !comentarioAutor.isEmpty()) {
@@ -389,14 +467,18 @@ public class AceptarDenegarArticuloController {
 
 	// Método para insertar el comentario del coordinador en su TextPane
 	public void insertaComentarioCoordinador() {
-		if (view.getListArticulos().getSelectedValue() != null) {
+		if (view.gettpListas().getSelectedIndex() == 0) {
 			comentarioCoordinador = model.obtenerComentariosParaCoordinador(
 					(String) view.getcbRevisor().getSelectedItem(),
 					view.getListArticulos().getSelectedValue().getTitulo());
-		} else {
+		} else if (view.gettpListas().getSelectedIndex() == 1) {
 			comentarioCoordinador = model.obtenerComentariosParaCoordinador(
 					(String) view.getcbRevisor().getSelectedItem(),
 					view.getListAutomaticos().getSelectedValue().getTitulo());
+		} else {
+			comentarioCoordinador = model.obtenerComentariosParaCoordinador(
+					(String) view.getcbRevisor().getSelectedItem(),
+					view.getListAceptarConCambios().getSelectedValue().getTitulo());
 		}
 
 		if (comentarioCoordinador != null && !comentarioCoordinador.isEmpty()) {
@@ -408,12 +490,15 @@ public class AceptarDenegarArticuloController {
 
 	// Método para insertar el nivel de experto en su TextField
 	public void insertaNivelExperto() {
-		if (view.getListArticulos().getSelectedValue() != null) {
+		if (view.gettpListas().getSelectedIndex() == 0) {
 			nivelExperto = model.obtenerNivelExperto((String) view.getcbRevisor().getSelectedItem(),
 					view.getListArticulos().getSelectedValue().getTitulo());
-		} else {
+		} else if (view.gettpListas().getSelectedIndex() == 1) {
 			nivelExperto = model.obtenerNivelExperto((String) view.getcbRevisor().getSelectedItem(),
 					view.getListAutomaticos().getSelectedValue().getTitulo());
+		} else {
+			nivelExperto = model.obtenerNivelExperto((String) view.getcbRevisor().getSelectedItem(),
+					view.getListAceptarConCambios().getSelectedValue().getTitulo());
 		}
 
 		if (nivelExperto != null && !nivelExperto.isEmpty()) {
@@ -423,12 +508,15 @@ public class AceptarDenegarArticuloController {
 
 	// Método para insertar la decisión del revisor en su TextField
 	public void insertaDecision() {
-		if (view.getListArticulos().getSelectedValue() != null) {
+		if (view.gettpListas().getSelectedIndex() == 0) {
 			decision = model.obtenerDecisionRevisor((String) view.getcbRevisor().getSelectedItem(),
 					view.getListArticulos().getSelectedValue().getTitulo());
-		} else {
+		} else if (view.gettpListas().getSelectedIndex() == 1) {
 			decision = model.obtenerDecisionRevisor((String) view.getcbRevisor().getSelectedItem(),
 					view.getListAutomaticos().getSelectedValue().getTitulo());
+		} else {
+			decision = model.obtenerDecisionRevisor((String) view.getcbRevisor().getSelectedItem(),
+					view.getListAceptarConCambios().getSelectedValue().getTitulo());
 		}
 
 		if (decision != null && !decision.isEmpty()) {
@@ -447,10 +535,12 @@ public class AceptarDenegarArticuloController {
 		valoracionFinal = 0;
 		view.gettfValoracion().removeAll();
 
-		if (view.getListArticulos().getSelectedValue() != null) {
+		if (view.gettpListas().getSelectedIndex() == 0) {
 			valoraciones = model.obtenerTodasDecisiones(view.getListArticulos().getSelectedValue().getTitulo());
-		} else {
+		} else if (view.gettpListas().getSelectedIndex() == 1) {
 			valoraciones = model.obtenerTodasDecisiones(view.getListAutomaticos().getSelectedValue().getTitulo());
+		} else {
+			valoraciones = model.obtenerTodasDecisiones(view.getListAceptarConCambios().getSelectedValue().getTitulo());
 		}
 
 		if (decision != null && !decision.isEmpty()) {

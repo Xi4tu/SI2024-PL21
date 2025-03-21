@@ -38,12 +38,15 @@ public class AceptarDenegarArticuloView {
 	private JTextField tfValoracionGlobal;
 	private JButton btnAceptar;
 	private JButton btnRechazar;
+	private JButton btnAceptarConCambios;
 	private JLabel lbArticulosSinDecisionRegistrada;
 	private JList<AceptarDenegarArticuloDTO> lstArticulosSinDecisionRegistrada;
 
 	private JFrame frame;
 	private JTabbedPane tpListas;
 	private JList<AceptarDenegarArticuloDTO> lstAutomaticos;
+	private JList<AceptarDenegarArticuloDTO> lstAceptarConCambios;
+
 	private JButton btnAceptarTodos;
 
 	public AceptarDenegarArticuloView() {
@@ -119,6 +122,9 @@ public class AceptarDenegarArticuloView {
 				
 				lstAutomaticos = new JList();
 				tpListas.addTab("Automáticos", null, lstAutomaticos, null);
+				
+				lstAceptarConCambios = new JList<>();
+				tpListas.addTab("Aceptar con cambios", null, lstAceptarConCambios, null);
 
 		tpComentariosParaCoordinadores = new JTextPane();
 		tpComentariosParaCoordinadores.setEditable(false);
@@ -145,6 +151,10 @@ public class AceptarDenegarArticuloView {
 		btnRechazar = new JButton("Rechazar");
 		btnRechazar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(btnRechazar, "cell 11 13");
+		
+		btnAceptarConCambios = new JButton("Aceptar con cambios");
+		btnAceptarConCambios.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		//contentPane.add(btnAceptarConCambios, "cell 10 13");
 	}
 
 	// Getters
@@ -161,8 +171,16 @@ public class AceptarDenegarArticuloView {
 		return this.lstAutomaticos;
 	}
 	
+	public JList<AceptarDenegarArticuloDTO> getListAceptarConCambios() {
+		return this.lstAceptarConCambios;
+	}
+	
 	public JButton getbtnAceptar() {
 		return this.btnAceptar;
+	}
+	
+	public JButton getbtnAceptarConCambios() {
+		return this.btnAceptarConCambios;
 	}
 	
 	public JButton getbtnRechazar() {
@@ -199,6 +217,10 @@ public class AceptarDenegarArticuloView {
 
 	public JTabbedPane gettpListas() {
 		return this.tpListas;
+	}
+	
+	public  JPanel getContentPane() {
+		return this.contentPane;
 	}
 	
 }
