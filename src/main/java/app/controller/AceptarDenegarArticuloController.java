@@ -221,6 +221,7 @@ public class AceptarDenegarArticuloController {
 
 			int indice = view.getListAceptarConCambios().getSelectedIndex();
 			model.actualizarConCambios("Si", view.getListAceptarConCambios().getSelectedValue().getTitulo());
+			model.actualizarDecisionFinal("Aceptado", view.getListAceptarConCambios().getSelectedValue().getTitulo());
 			SwingUtil.showMessage("Artículo aceptado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
 			// Elimina el artículo de las dos listas
 			for (int i = 0; i < view.getListArticulos().getModel().getSize(); i++) {
@@ -570,10 +571,6 @@ public class AceptarDenegarArticuloController {
 		// Crear un modelo para el JList y agregar los DTOs
 		listModelCambios = new DefaultListModel<>();
 		for (AceptarDenegarArticuloDTO dto : listaDTO) {
-			// if (valoracion(dto.getTitulo()) == 2 || ((valoracion(dto.getTitulo()) == 1 &&
-			// dto.getNivelExperto() == "Bajo" && dto.getDecisionRevisor() == -2))
-			// || ((valoracion(dto.getTitulo()) == 1 && (dto.getNivelExperto() == "Bajo" ||
-			// dto.getNivelExperto() == "Normal") && dto.getDecisionRevisor() == -1))) {
 
 			if (valoracion(dto.getTitulo()) == 2 || (valoracion(dto.getTitulo()) == 1 && condicionRevisor(dto))) {
 				listModelCambios.addElement(dto);
@@ -733,8 +730,10 @@ public class AceptarDenegarArticuloController {
 		for (int i = 0; i < revisores.size(); i++) {
 			decision = model.obtenerDecisionRevisor(revisores.get(i).getNombre(), dto.getTitulo());
 			nivelExperto = model.obtenerNivelExperto(revisores.get(i).getNombre(), dto.getTitulo());
+			System.out.println("-------------------------");
 			System.out.println(decision.get(0).getDecisionRevisor());
 			System.out.println(nivelExperto.get(0).getNivelExperto());
+			System.out.println("-------------------------\n\n");
 			if (decision.get(0).getDecisionRevisor() == -2 && nivelExperto.get(0).getNivelExperto().equals("Bajo")) {
 				return true;
 			} else if (decision.get(0).getDecisionRevisor() == -1
