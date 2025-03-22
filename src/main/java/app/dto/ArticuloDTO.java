@@ -8,11 +8,22 @@ public class ArticuloDTO {
     // Número único asignado al artículo (se asigna al aceptar el envío)
     private int id;
     
+    // Id del track al que pertenece el articulo
+    private int idTrack;
+    
     // Título del artículo (debe ser único en el sistema)
     private String titulo;
     
-    // Lista de palabras clave
-    private List<String> palabrasClave;
+    // String de palabras clave
+    private String palabrasClave;
+    // String de palabras clave del track
+    private String palabrasClaveTrack;
+    
+    // Lista de palabras clave como String[]
+    private String[] palabrasClaveLista;
+    // Lista de palabras clave del track como String[]
+    private String[] palabrasClaveTrackLista;
+    
     
     // Resumen del artículo
     private String resumen;
@@ -32,11 +43,13 @@ public class ArticuloDTO {
     public ArticuloDTO() {
     }
 
-    public ArticuloDTO(int id, String titulo, List<String> palabrasClave, String resumen, String nombreFichero,
+    public ArticuloDTO(int id, int idTrack, String titulo, String palabrasClave, String palabrasClaveTrack, String resumen, String nombreFichero,
             List<AutorDTO> autores, Date fechaEnvio, AutorDTO autorEnvio) {
         this.id = id;
+        this.idTrack = idTrack;
         this.titulo = titulo;
         this.palabrasClave = palabrasClave;
+        this.palabrasClaveTrack = palabrasClaveTrack;
         this.resumen = resumen;
         this.nombreFichero = nombreFichero;
         this.autores = autores;
@@ -54,7 +67,15 @@ public class ArticuloDTO {
         this.id = id;
     }
 
-    public String getTitulo() {
+    public int getIdTrack() {
+		return idTrack;
+	}
+
+	public void setIdTrack(int idTrack) {
+		this.idTrack = idTrack;
+	}
+
+	public String getTitulo() {
         return titulo;
     }
 
@@ -62,15 +83,23 @@ public class ArticuloDTO {
         this.titulo = titulo;
     }
 
-    public List<String> getPalabrasClave() {
-        return palabrasClave;
+    public String getPalabrasClave() {
+		return palabrasClave;
+	}
+    
+    public void setPalabrasClave(String palabrasClave) {
+    	this.palabrasClave = palabrasClave;
     }
+    
+    public String getPalabrasClaveTrack() {
+		return palabrasClaveTrack;
+	}
 
-    public void setPalabrasClave(List<String> palabrasClave) {
-        this.palabrasClave = palabrasClave;
-    }
+	public void setPalabrasClaveTrack(String palabrasClaveTrack) {
+		this.palabrasClaveTrack = palabrasClaveTrack;
+	}
 
-    public String getResumen() {
+	public String getResumen() {
         return resumen;
     }
 
@@ -123,4 +152,13 @@ public class ArticuloDTO {
                 ", autorEnvio=" + autorEnvio +
                 '}';
     }
+    
+    // Metodo que separa las palabras clave en un array de Strings y lo guarda en la lista que se indique
+    public void separarPalabrasClave(String lista) {
+		if (lista.equals("palabrasClave")) {
+			this.palabrasClaveLista = palabrasClave.split(",");
+		} else if (lista.equals("palabrasClaveTrack")) {
+			this.palabrasClaveTrackLista = palabrasClaveTrack.split(",");
+		}
+	}
 }

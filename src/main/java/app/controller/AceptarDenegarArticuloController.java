@@ -11,8 +11,10 @@ import app.dto.AceptarDenegarArticuloDTO;
 import app.dto.RevisionArticuloRevisorDTO;
 import app.enums.Rol;
 import app.model.AceptarDenegarArticuloModel;
+import app.model.GestionarDiscusionesCoordinadorModel;
 import app.util.UserUtil;
 import app.view.AceptarDenegarArticuloView;
+import app.view.GestionarDiscusionesCoordinadorView;
 import giis.demo.util.SwingUtil;
 
 public class AceptarDenegarArticuloController {
@@ -90,6 +92,16 @@ public class AceptarDenegarArticuloController {
 			llenarComboBoxAutores(view.getListArticulos().getSelectedValue().getTitulo());
 
 		});
+		
+		// Listener para el botón de discusiones que va a abrir la ventana de GestionarDiscusionesCoordinadorView
+		view.getBtnAbrirDiscusiones().addActionListener(e -> {
+			// Crear el controlador de la vista de discusiones
+			GestionarDiscusionesCoordinadorController controller = new GestionarDiscusionesCoordinadorController(
+					new GestionarDiscusionesCoordinadorModel(), new GestionarDiscusionesCoordinadorView(), email);
+			// Inicializar el controlador
+			controller.initController();
+		});
+		
 
 		view.getListAutomaticos().addListSelectionListener(e -> {
 			AceptarDenegarArticuloDTO articuloSeleccionado = view.getListAutomaticos().getSelectedValue();
@@ -126,7 +138,7 @@ public class AceptarDenegarArticuloController {
 			// Si no se ha seleccionado nada en ninguna lista salta un error
 			if (view.getListArticulos().getSelectedValue() == null
 					&& view.getListAutomaticos().getSelectedValue() == null) {
-				JOptionPane.showMessageDialog(null, "No hay ningñun artículo seleccionado", "Error",
+				JOptionPane.showMessageDialog(null, "No hay ningún artículo seleccionado", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				// Si el artículo seleccionado pertenece a la primera lista
@@ -269,7 +281,7 @@ public class AceptarDenegarArticuloController {
 			if (view.getListArticulos().getSelectedValue() == null
 					&& view.getListAutomaticos().getSelectedValue() == null
 					&& view.getListAceptarConCambios().getSelectedValue() == null) {
-				JOptionPane.showMessageDialog(null, "No hay ningñun artículo seleccionado", "Error",
+				JOptionPane.showMessageDialog(null, "No hay ningún artículo seleccionado", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				// Si el artículo seleccionado pertenece a la primera lista
