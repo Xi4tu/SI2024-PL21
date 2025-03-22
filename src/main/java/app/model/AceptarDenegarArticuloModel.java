@@ -117,13 +117,6 @@ public class AceptarDenegarArticuloModel {
 	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, tituloArticulo);
 	}
 	
-	public void actualizarConCambios(String conCambios, String tituloArticulo) {
-		String sql =  "UPDATE Articulo " +
-					  "SET conCambios = ? " +
-					  "WHERE titulo = ?";
-	    db.executeUpdate(sql, conCambios, tituloArticulo);
-	}
-	
 	
 
 	/**

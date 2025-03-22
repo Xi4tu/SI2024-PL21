@@ -56,7 +56,7 @@ public class AceptarDenegarArticuloView {
 		frame.setBounds(100, 100, 450, 300);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Aceptar o denegar artículos");
-		frame.setBounds(100, 100, 757, 533);
+		frame.setBounds(100, 100, 900, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
