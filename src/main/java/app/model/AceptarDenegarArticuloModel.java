@@ -107,7 +107,22 @@ public class AceptarDenegarArticuloModel {
 	    db.executeUpdate(sql, decisionFinal, tituloArticulo);
 	}
 	
+	public List<AceptarDenegarArticuloDTO> obtenerRevisoresPorTitulo(String tituloArticulo) {
+	    String sql = "SELECT DISTINCT u.nombre " +
+	                 "FROM Articulo a " +
+	                 "JOIN Revision r ON a.idArticulo = r.idArticulo " +
+	                 "JOIN Usuario u ON r.emailUsuario = u.email " +
+	                 "WHERE a.titulo = ?";
+	    
+	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, tituloArticulo);
+	}
 	
+	public void actualizarConCambios(String conCambios, String tituloArticulo) {
+		String sql =  "UPDATE Articulo " +
+					  "SET conCambios = ? " +
+					  "WHERE titulo = ?";
+	    db.executeUpdate(sql, conCambios, tituloArticulo);
+	}
 	
 	
 

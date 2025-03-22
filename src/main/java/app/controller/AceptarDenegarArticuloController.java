@@ -64,6 +64,18 @@ public class AceptarDenegarArticuloController {
 
 	public void initController() {
 
+		if (view.getListAutomaticos().getModel().getSize() == 0) {
+			view.gettpListas().setEnabledAt(1, false);
+		} else {
+			view.gettpListas().setEnabledAt(1, true);
+		}
+
+		if (view.getListAceptarConCambios().getModel().getSize() == 0) {
+			view.gettpListas().setEnabledAt(2, false);
+		} else {
+			view.gettpListas().setEnabledAt(2, true);
+		}
+
 		view.getcbRevisor().removeAllItems();
 
 		view.getListArticulos().addListSelectionListener(e -> {
@@ -118,7 +130,7 @@ public class AceptarDenegarArticuloController {
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				// Si el artículo seleccionado pertenece a la primera lista
-				if (view.getListArticulos().getSelectedValue() != null) {
+				if (view.gettpListas().getSelectedIndex() == 0) {
 					int indice = view.getListArticulos().getSelectedIndex();
 					model.actualizarDecisionFinal("Aceptado", view.getListArticulos().getSelectedValue().getTitulo());
 					SwingUtil.showMessage("Artículo aceptado correctamente", "Información",
@@ -131,6 +143,14 @@ public class AceptarDenegarArticuloController {
 							listModelAuto.removeElement(view.getListAutomaticos().getModel().getElementAt(i));
 						}
 					}
+
+					for (int i = 0; i < view.getListAceptarConCambios().getModel().getSize(); i++) {
+						if (view.getListArticulos().getSelectedValue().getTitulo()
+								.equals(view.getListAceptarConCambios().getModel().getElementAt(i).getTitulo())) {
+							listModelCambios.removeElement(view.getListAceptarConCambios().getModel().getElementAt(i));
+						}
+					}
+
 					listModel.removeElement(view.getListArticulos().getSelectedValue());
 					// Si está vacía se cierra la pantalla
 					if (listModel.isEmpty()) {
@@ -146,7 +166,7 @@ public class AceptarDenegarArticuloController {
 						view.getListArticulos().setSelectedIndex(0);
 					}
 					// Si el artículo seleccionado pertenece a la segunda lista
-				} else {
+				} else if (view.gettpListas().getSelectedIndex() == 1) {
 					int indice = view.getListAutomaticos().getSelectedIndex();
 					model.actualizarDecisionFinal("Aceptado", view.getListAutomaticos().getSelectedValue().getTitulo());
 					SwingUtil.showMessage("Artículo aceptado correctamente", "Información",
@@ -157,6 +177,13 @@ public class AceptarDenegarArticuloController {
 						if (view.getListAutomaticos().getSelectedValue().getTitulo()
 								.equals(view.getListArticulos().getModel().getElementAt(i).getTitulo())) {
 							listModel.removeElement(view.getListArticulos().getModel().getElementAt(i));
+						}
+					}
+
+					for (int i = 0; i < view.getListAceptarConCambios().getModel().getSize(); i++) {
+						if (view.getListArticulos().getSelectedValue().getTitulo()
+								.equals(view.getListAceptarConCambios().getModel().getElementAt(i).getTitulo())) {
+							listModelCambios.removeElement(view.getListAceptarConCambios().getModel().getElementAt(i));
 						}
 					}
 
@@ -177,18 +204,75 @@ public class AceptarDenegarArticuloController {
 				}
 
 			}
+
+			if (view.getListAutomaticos().getModel().getSize() == 0) {
+				view.gettpListas().setEnabledAt(1, false);
+			}
+			if (view.getListAceptarConCambios().getModel().getSize() == 0) {
+				view.gettpListas().setEnabledAt(2, false);
+			}
+
+		});
+
+		view.getbtnAceptarConCambios().addActionListener(e -> {
+			// Si no se ha seleccionado nada en ninguna lista salta un error
+
+			// Si el artículo seleccionado pertenece a la primera lista
+
+			int indice = view.getListAceptarConCambios().getSelectedIndex();
+			model.actualizarConCambios("Si", view.getListAceptarConCambios().getSelectedValue().getTitulo());
+			SwingUtil.showMessage("Artículo aceptado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+			// Elimina el artículo de las dos listas
+			for (int i = 0; i < view.getListArticulos().getModel().getSize(); i++) {
+
+				if (view.getListAceptarConCambios().getSelectedValue().getTitulo()
+						.equals(view.getListArticulos().getModel().getElementAt(i).getTitulo())) {
+					listModel.removeElement(view.getListArticulos().getModel().getElementAt(i));
+				}
+			}
+
+			for (int i = 0; i < view.getListAutomaticos().getModel().getSize(); i++) {
+
+				if (view.getListAceptarConCambios().getSelectedValue().getTitulo()
+						.equals(view.getListAutomaticos().getModel().getElementAt(i).getTitulo())) {
+					listModelAuto.removeElement(view.getListAutomaticos().getModel().getElementAt(i));
+				}
+			}
+
+			listModelCambios.removeElement(view.getListAceptarConCambios().getSelectedValue());
+			// Si está vacía se cierra la pantalla
+
+			if (listModel.isEmpty() && listModelCambios.isEmpty() && listModelAuto.isEmpty()) {
+				SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
+						JOptionPane.INFORMATION_MESSAGE);
+				view.getFrame().dispose();
+			}
+
+			if (view.getListAceptarConCambios().getModel().getSize() == 0) {
+				view.gettpListas().setSelectedIndex(0);
+				view.gettpListas().setEnabledAt(2, false);
+			}
+			// Cuando se elimina un elemento se va seleccionando el elemento anterior
+			// excepto si el índice es 0
+			if (indice != 0) {
+				view.getListAceptarConCambios().setSelectedIndex(indice - 1);
+			} else {
+				view.getListAceptarConCambios().setSelectedIndex(0);
+			}
+			// Si el artículo seleccionado pertenece a la segunda lista
 		});
 
 		// Botón de rechazar, el cual cambia el campo decisión final a 'Rechazado'
 		view.getbtnRechazar().addActionListener(e -> {
 			// Si no se ha seleccionado nada en ninguna lista salta un error
 			if (view.getListArticulos().getSelectedValue() == null
-					&& view.getListAutomaticos().getSelectedValue() == null) {
+					&& view.getListAutomaticos().getSelectedValue() == null
+					&& view.getListAceptarConCambios().getSelectedValue() == null) {
 				JOptionPane.showMessageDialog(null, "No hay ningñun artículo seleccionado", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				// Si el artículo seleccionado pertenece a la primera lista
-				if (view.getListArticulos().getSelectedValue() != null) {
+				if (view.gettpListas().getSelectedIndex() == 0) {
 					int indice = view.getListArticulos().getSelectedIndex();
 					model.actualizarDecisionFinal("Rechazado", view.getListArticulos().getSelectedValue().getTitulo());
 					SwingUtil.showMessage("Artículo rechazado correctamente", "Información",
@@ -201,6 +285,14 @@ public class AceptarDenegarArticuloController {
 							listModelAuto.removeElement(view.getListAutomaticos().getModel().getElementAt(i));
 						}
 					}
+
+					for (int i = 0; i < view.getListAceptarConCambios().getModel().getSize(); i++) {
+						if (view.getListArticulos().getSelectedValue().getTitulo()
+								.equals(view.getListAceptarConCambios().getModel().getElementAt(i).getTitulo())) {
+							listModelCambios.removeElement(view.getListAceptarConCambios().getModel().getElementAt(i));
+						}
+					}
+
 					listModel.removeElement(view.getListArticulos().getSelectedValue());
 
 					// Si está vacía se cierra la pantalla
@@ -217,7 +309,7 @@ public class AceptarDenegarArticuloController {
 						view.getListArticulos().setSelectedIndex(0);
 					}
 					// Si el artículo seleccionado pertenece a la segunda lista
-				} else {
+				} else if (view.gettpListas().getSelectedIndex() == 1) {
 					int indice = view.getListAutomaticos().getSelectedIndex();
 					model.actualizarDecisionFinal("Rechazado",
 							view.getListAutomaticos().getSelectedValue().getTitulo());
@@ -232,9 +324,17 @@ public class AceptarDenegarArticuloController {
 						}
 					}
 
+					for (int i = 0; i < view.getListAceptarConCambios().getModel().getSize(); i++) {
+
+						if (view.getListAutomaticos().getSelectedValue().getTitulo()
+								.equals(view.getListAceptarConCambios().getModel().getElementAt(i).getTitulo())) {
+							listModelCambios.removeElement(view.getListAceptarConCambios().getModel().getElementAt(i));
+						}
+					}
+
 					listModelAuto.removeElement(view.getListAutomaticos().getSelectedValue());
 					// Si no hay elementos en las listas, se cierra la ventana
-					if (listModelAuto.isEmpty() && listModel.isEmpty()) {
+					if (listModelAuto.isEmpty() && listModel.isEmpty() && listModelCambios.isEmpty()) {
 						SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
 								JOptionPane.INFORMATION_MESSAGE);
 						view.getFrame().dispose();
@@ -246,15 +346,68 @@ public class AceptarDenegarArticuloController {
 					} else {
 						view.getListAutomaticos().setSelectedIndex(0);
 					}
+					if (view.getListAutomaticos().getModel().getSize() == 0) {
+						view.gettpListas().setSelectedIndex(0);
+						view.gettpListas().setEnabledAt(1, false);
+					}
+				} else {
+					int indice = view.getListAceptarConCambios().getSelectedIndex();
+					model.actualizarDecisionFinal("Rechazado",
+							view.getListAceptarConCambios().getSelectedValue().getTitulo());
+					SwingUtil.showMessage("Artículo rechazado correctamente", "Información",
+							JOptionPane.INFORMATION_MESSAGE);
+					// Si el artículo está en la otra lista, lo elimina también
+					for (int i = 0; i < view.getListArticulos().getModel().getSize(); i++) {
+
+						if (view.getListAceptarConCambios().getSelectedValue().getTitulo()
+								.equals(view.getListArticulos().getModel().getElementAt(i).getTitulo())) {
+							listModel.removeElement(view.getListArticulos().getModel().getElementAt(i));
+						}
+					}
+
+					for (int i = 0; i < view.getListAutomaticos().getModel().getSize(); i++) {
+
+						if (view.getListAceptarConCambios().getSelectedValue().getTitulo()
+								.equals(view.getListAutomaticos().getModel().getElementAt(i).getTitulo())) {
+							listModelAuto.removeElement(view.getListAutomaticos().getModel().getElementAt(i));
+						}
+					}
+
+					listModelCambios.removeElement(view.getListAceptarConCambios().getSelectedValue());
+					// Si no hay elementos en las listas, se cierra la ventana
+					if (listModelAuto.isEmpty() && listModel.isEmpty() && listModelCambios.isEmpty()) {
+						SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
+								JOptionPane.INFORMATION_MESSAGE);
+						view.getFrame().dispose();
+					}
+					// Cuando se elimina un elemento se va seleccionando el elemento anterior
+					// excepto si el índice es 0
+					if (indice != 0) {
+						view.getListAceptarConCambios().setSelectedIndex(indice - 1);
+					} else {
+						view.getListAceptarConCambios().setSelectedIndex(0);
+					}
+					if (view.getListAceptarConCambios().getModel().getSize() == 0) {
+						view.gettpListas().setSelectedIndex(0);
+						view.gettpListas().setEnabledAt(2, false);
+					}
 				}
 			}
+
+			if (view.getListAutomaticos().getModel().getSize() == 0) {
+				view.gettpListas().setEnabledAt(1, false);
+			}
+			if (view.getListAceptarConCambios().getModel().getSize() == 0) {
+				view.gettpListas().setEnabledAt(2, false);
+			}
+
 		});
 
-		
-		//Cada vez que se selecciona una lista, cambia el botón aceptar y se deseleccionan las demás listas
+		// Cada vez que se selecciona una lista, cambia el botón aceptar y se
+		// deseleccionan las demás listas
 		view.gettpListas().addChangeListener(e -> {
 
-			if (view.gettpListas().getSelectedIndex() == 0) {
+			if (view.gettpListas().getSelectedIndex() == 0 && !listModel.isEmpty()) {
 
 				if (view.getbtnAceptar().getParent() == null) {
 					view.getContentPane().remove(view.getbtnAceptarConCambios());
@@ -323,6 +476,10 @@ public class AceptarDenegarArticuloController {
 					view.getListArticulos().setSelectedIndex(0);
 					SwingUtil.showMessage("Artículos aceptados correctamente", "Información",
 							JOptionPane.INFORMATION_MESSAGE);
+				}
+				if (view.getListAutomaticos().getModel().getSize() == 0) {
+					view.gettpListas().setSelectedIndex(0);
+					view.gettpListas().setEnabledAt(1, false);
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "No quedan artículos que aceptar", "Error",
@@ -413,8 +570,12 @@ public class AceptarDenegarArticuloController {
 		// Crear un modelo para el JList y agregar los DTOs
 		listModelCambios = new DefaultListModel<>();
 		for (AceptarDenegarArticuloDTO dto : listaDTO) {
-			if (valoracion(dto.getTitulo()) == 2 || ((valoracion(dto.getTitulo()) == 1 && dto.getNivelExperto() == "Bajo" && dto.getDecisionRevisor() == -2)) 
-					|| ((valoracion(dto.getTitulo()) == 1 && (dto.getNivelExperto() == "Bajo" || dto.getNivelExperto() == "Normal") && dto.getDecisionRevisor() == -1))) { 
+			// if (valoracion(dto.getTitulo()) == 2 || ((valoracion(dto.getTitulo()) == 1 &&
+			// dto.getNivelExperto() == "Bajo" && dto.getDecisionRevisor() == -2))
+			// || ((valoracion(dto.getTitulo()) == 1 && (dto.getNivelExperto() == "Bajo" ||
+			// dto.getNivelExperto() == "Normal") && dto.getDecisionRevisor() == -1))) {
+
+			if (valoracion(dto.getTitulo()) == 2 || (valoracion(dto.getTitulo()) == 1 && condicionRevisor(dto))) {
 				listModelCambios.addElement(dto);
 			}
 		}
@@ -563,6 +724,26 @@ public class AceptarDenegarArticuloController {
 			}
 		}
 		return valoracionFinal;
+	}
+
+	public boolean condicionRevisor(AceptarDenegarArticuloDTO dto) {
+		// Obtiene todos los revisores vinculados a ese artículo
+		revisores = model.obtenerRevisoresPorTitulo(dto.getTitulo());
+		// Mira si paracada uno de los revisores se cumple la condición
+		for (int i = 0; i < revisores.size(); i++) {
+			decision = model.obtenerDecisionRevisor(revisores.get(i).getNombre(), dto.getTitulo());
+			nivelExperto = model.obtenerNivelExperto(revisores.get(i).getNombre(), dto.getTitulo());
+			System.out.println(decision.get(0).getDecisionRevisor());
+			System.out.println(nivelExperto.get(0).getNivelExperto());
+			if (decision.get(0).getDecisionRevisor() == -2 && nivelExperto.get(0).getNivelExperto().equals("Bajo")) {
+				return true;
+			} else if (decision.get(0).getDecisionRevisor() == -1
+					&& (nivelExperto.get(0).getNivelExperto().equals("Bajo")
+							|| nivelExperto.get(0).getNivelExperto().equals("Normal"))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// Método que inserta los datos en pantalla
