@@ -21,6 +21,7 @@ import javax.swing.ListSelectionModel;
 
 public class AceptarDenegarArticuloView {
 
+	private JFrame frame;
 	private JPanel contentPane;
 	private JTextField tfNivelDeExperto;
 	private JTextField tfDecision;
@@ -33,15 +34,14 @@ public class AceptarDenegarArticuloView {
 	private JTextField tfValoracionGlobal;
 	private JButton btnAceptar;
 	private JButton btnRechazar;
-	private JButton btnAceptarConCambios;
-	private JLabel lbArticulosSinDecisionRegistrada;
-	private JList<AceptarDenegarArticuloDTO> lstArticulosSinDecisionRegistrada;
-
-	private JFrame frame;
-	private JTabbedPane tpListas;
-	private JList<AceptarDenegarArticuloDTO> lstAutomaticos;
 	private JButton btnAceptarTodos;
-
+	private JButton btnAceptarConCambios;
+	private JButton btnDenegarTodos;
+	private JLabel lbArticulosSinDecisionRegistrada;
+	private JTabbedPane tpListas;
+	private JList<AceptarDenegarArticuloDTO> lstArticulosSinDecisionRegistrada;
+	private JList<AceptarDenegarArticuloDTO> lstAutomaticos;
+	private JList<AceptarDenegarArticuloDTO> lstAutomaticosDenegar;
 	private JList<AceptarDenegarArticuloDTO> lstAceptarConCambios;
 
 	// --- NUEVO: botón para abrir discusiones ---
@@ -119,10 +119,13 @@ public class AceptarDenegarArticuloView {
 		lstArticulosSinDecisionRegistrada.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		lstAutomaticos = new JList();
-		tpListas.addTab("Automáticos", null, lstAutomaticos, null);
+		tpListas.addTab("Aceptar auto", null, lstAutomaticos, null);
 
 		lstAceptarConCambios = new JList<>();
 		tpListas.addTab("Aceptar con cambios", null, lstAceptarConCambios, null);
+		
+		lstAutomaticosDenegar = new JList();
+		tpListas.addTab("Denegar auto", null, lstAutomaticosDenegar, null);
 
 		tpComentariosParaCoordinadores = new JTextPane();
 		tpComentariosParaCoordinadores.setEditable(false);
@@ -133,13 +136,18 @@ public class AceptarDenegarArticuloView {
 		btnAceptarTodos.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(btnAceptarTodos, "cell 1 11 4 1");
 
+		btnDenegarTodos = new JButton("Denegar todos");
+		btnDenegarTodos.setEnabled(false);
+		btnDenegarTodos.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(btnDenegarTodos, "cell 1 11 4 1");
+		
 		lbValoraciónGlobal = new JLabel("Valoración global");
 		lbValoraciónGlobal.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(lbValoraciónGlobal, "cell 9 11,alignx left,aligny baseline");
 
 		btnAceptarConCambios = new JButton("Aceptar con cambios");
 		btnAceptarConCambios.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		// contentPane.add(btnAceptarConCambios, "cell 10 13");
+		
 
 		tfValoracionGlobal = new JTextField();
 		tfValoracionGlobal.setEditable(false);
@@ -184,6 +192,10 @@ public class AceptarDenegarArticuloView {
 	public JList<AceptarDenegarArticuloDTO> getListAutomaticos() {
 		return this.lstAutomaticos;
 	}
+	
+	public JList<AceptarDenegarArticuloDTO> getListAutomaticosDenegar() {
+		return this.lstAutomaticosDenegar;
+	}
 
 	public JButton getbtnAceptar() {
 		return this.btnAceptar;
@@ -219,6 +231,10 @@ public class AceptarDenegarArticuloView {
 
 	public JButton getbtnAceptarTodos() {
 		return this.btnAceptarTodos;
+	}
+	
+	public JButton getbtnDenegarTodos() {
+		return this.btnDenegarTodos;
 	}
 
 	public JTabbedPane gettpListas() {
