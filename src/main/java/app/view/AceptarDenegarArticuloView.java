@@ -21,189 +21,212 @@ import javax.swing.ListSelectionModel;
 
 public class AceptarDenegarArticuloView {
 
-    private JPanel contentPane;
-    private JTextField tfNivelDeExperto;
-    private JTextField tfDecision;
-    private JComboBox cbRevisor;
-    private JLabel lbComentariosParaAutores;
-    private JLabel lbComentariosCoordinadores;
-    private JTextPane tpComentariosParaAutores;
-    private JTextPane tpComentariosParaCoordinadores;
-    private JLabel lbValoraciónGlobal;
-    private JTextField tfValoracionGlobal;
-    private JButton btnAceptar;
-    private JButton btnRechazar;
-    private JLabel lbArticulosSinDecisionRegistrada;
-    private JList<AceptarDenegarArticuloDTO> lstArticulosSinDecisionRegistrada;
+	private JPanel contentPane;
+	private JTextField tfNivelDeExperto;
+	private JTextField tfDecision;
+	private JComboBox cbRevisor;
+	private JLabel lbComentariosParaAutores;
+	private JLabel lbComentariosCoordinadores;
+	private JTextPane tpComentariosParaAutores;
+	private JTextPane tpComentariosParaCoordinadores;
+	private JLabel lbValoraciónGlobal;
+	private JTextField tfValoracionGlobal;
+	private JButton btnAceptar;
+	private JButton btnRechazar;
+	private JButton btnAceptarConCambios;
+	private JLabel lbArticulosSinDecisionRegistrada;
+	private JList<AceptarDenegarArticuloDTO> lstArticulosSinDecisionRegistrada;
 
-    private JFrame frame;
-    private JTabbedPane tpListas;
-    private JList<AceptarDenegarArticuloDTO> lstAutomaticos;
-    private JButton btnAceptarTodos;
+	private JFrame frame;
+	private JTabbedPane tpListas;
+	private JList<AceptarDenegarArticuloDTO> lstAutomaticos;
+	private JButton btnAceptarTodos;
 
-    // --- NUEVO: botón para abrir discusiones ---
-    private JButton btnAbrirDiscusiones;
+	private JList<AceptarDenegarArticuloDTO> lstAceptarConCambios;
 
-    public AceptarDenegarArticuloView() {
-        initialize();
-    }
+	// --- NUEVO: botón para abrir discusiones ---
+	private JButton btnAbrirDiscusiones;
 
-    public void initialize() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
-        frame.getContentPane().setLayout(null);
-        frame.setTitle("Aceptar o denegar artículos");
-        frame.setBounds(100, 100, 757, 533);
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+	public AceptarDenegarArticuloView() {
+		initialize();
+	}
 
-        frame.setContentPane(contentPane);
-        contentPane.setLayout(new MigLayout("", "[][grow][][][grow][][][][][215.00,grow][][grow]", "[][][::25px,grow][][][][][][grow][][grow][][][]"));
+	public void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.getContentPane().setLayout(null);
+		frame.setTitle("Aceptar o denegar artículos");
+		frame.setBounds(100, 100, 900, 600);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        lbArticulosSinDecisionRegistrada = new JLabel("Artículos sin decisión registrada");
-        lbArticulosSinDecisionRegistrada.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(lbArticulosSinDecisionRegistrada, "cell 1 1 7 1");
+		frame.setContentPane(contentPane);
+		contentPane.setLayout(new MigLayout("", "[][grow][][][grow][][][][][215.00,grow][][grow]",
+				"[][][::25px,grow][][][][][][grow][][grow][][][]"));
 
-        JLabel lbRevisor = new JLabel("Revisor");
-        lbRevisor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(lbRevisor, "cell 9 1,alignx left");
+		lbArticulosSinDecisionRegistrada = new JLabel("Artículos sin decisión registrada");
+		lbArticulosSinDecisionRegistrada.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(lbArticulosSinDecisionRegistrada, "cell 1 1 7 1");
 
-        cbRevisor = new JComboBox();
-        cbRevisor.setModel(new DefaultComboBoxModel(new String[] { "Revisor 1", "Revisor 2", "Revisor 3" }));
-        cbRevisor.setSelectedIndex(0);
-        contentPane.add(cbRevisor, "cell 10 1,growx");
+		JLabel lbRevisor = new JLabel("Revisor");
+		lbRevisor.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(lbRevisor, "cell 9 1,alignx left");
 
-        JLabel lbNivelDeExperto = new JLabel("Nivel de experto");
-        lbNivelDeExperto.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(lbNivelDeExperto, "cell 9 3");
+		cbRevisor = new JComboBox();
+		cbRevisor.setModel(new DefaultComboBoxModel(new String[] { "Revisor 1", "Revisor 2", "Revisor 3" }));
+		cbRevisor.setSelectedIndex(0);
+		contentPane.add(cbRevisor, "cell 10 1,growx");
 
-        tfNivelDeExperto = new JTextField();
-        tfNivelDeExperto.setEditable(false);
-        contentPane.add(tfNivelDeExperto, "cell 10 3,growx");
-        tfNivelDeExperto.setColumns(10);
+		JLabel lbNivelDeExperto = new JLabel("Nivel de experto");
+		lbNivelDeExperto.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(lbNivelDeExperto, "cell 9 3");
 
-        JLabel lblDecisión = new JLabel("Decisión");
-        lblDecisión.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(lblDecisión, "cell 9 5");
+		tfNivelDeExperto = new JTextField();
+		tfNivelDeExperto.setEditable(false);
+		contentPane.add(tfNivelDeExperto, "cell 10 3,growx");
+		tfNivelDeExperto.setColumns(10);
 
-        tfDecision = new JTextField();
-        tfDecision.setEditable(false);
-        contentPane.add(tfDecision, "cell 10 5,growx");
-        tfDecision.setColumns(10);
+		JLabel lblDecisión = new JLabel("Decisión");
+		lblDecisión.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(lblDecisión, "cell 9 5");
 
-        lbComentariosParaAutores = new JLabel("Comentarios para los autores");
-        lbComentariosParaAutores.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(lbComentariosParaAutores, "cell 9 7");
+		tfDecision = new JTextField();
+		tfDecision.setEditable(false);
+		contentPane.add(tfDecision, "cell 10 5,growx");
+		tfDecision.setColumns(10);
 
-        tpComentariosParaAutores = new JTextPane();
-        tpComentariosParaAutores.setEditable(false);
-        contentPane.add(tpComentariosParaAutores, "cell 9 8 3 1,grow");
+		lbComentariosParaAutores = new JLabel("Comentarios para los autores");
+		lbComentariosParaAutores.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(lbComentariosParaAutores, "cell 9 7");
 
-        lbComentariosCoordinadores = new JLabel("Comentarios para los coordinadores");
-        lbComentariosCoordinadores.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(lbComentariosCoordinadores, "cell 9 9");
+		tpComentariosParaAutores = new JTextPane();
+		tpComentariosParaAutores.setEditable(false);
+		contentPane.add(tpComentariosParaAutores, "cell 9 8 3 1,grow");
 
-        tpListas = new JTabbedPane(JTabbedPane.TOP);
-        tpListas.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        contentPane.add(tpListas, "cell 1 2 7 9,grow");
+		lbComentariosCoordinadores = new JLabel("Comentarios para los coordinadores");
+		lbComentariosCoordinadores.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(lbComentariosCoordinadores, "cell 9 9");
 
-        //Lista
-        lstArticulosSinDecisionRegistrada = new JList<>();
-        tpListas.addTab("Sin registro", null, lstArticulosSinDecisionRegistrada, null);
-        lstArticulosSinDecisionRegistrada.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tpListas = new JTabbedPane(JTabbedPane.TOP);
+		tpListas.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		contentPane.add(tpListas, "cell 1 2 7 9,grow");
 
-        lstAutomaticos = new JList();
-        tpListas.addTab("Automáticos", null, lstAutomaticos, null);
+		contentPane.add(tpListas, "cell 1 2 7 9,grow");
 
-        tpComentariosParaCoordinadores = new JTextPane();
-        tpComentariosParaCoordinadores.setEditable(false);
-        contentPane.add(tpComentariosParaCoordinadores, "cell 9 10 3 1,grow");
+		// Lista
+		lstArticulosSinDecisionRegistrada = new JList<>();
+		tpListas.addTab("Sin registro", null, lstArticulosSinDecisionRegistrada, null);
+		lstArticulosSinDecisionRegistrada.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        btnAceptarTodos = new JButton("Aceptar todos");
-        btnAceptarTodos.setEnabled(false);
-        btnAceptarTodos.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(btnAceptarTodos, "cell 1 11 4 1");
+		lstAutomaticos = new JList();
+		tpListas.addTab("Automáticos", null, lstAutomaticos, null);
 
-        lbValoraciónGlobal = new JLabel("Valoración global");
-        lbValoraciónGlobal.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(lbValoraciónGlobal, "cell 9 11,alignx left,aligny baseline");
+		lstAceptarConCambios = new JList<>();
+		tpListas.addTab("Aceptar con cambios", null, lstAceptarConCambios, null);
 
-        tfValoracionGlobal = new JTextField();
-        tfValoracionGlobal.setEditable(false);
-        tfValoracionGlobal.setColumns(10);
-        contentPane.add(tfValoracionGlobal, "cell 10 11,growx");
+		tpComentariosParaCoordinadores = new JTextPane();
+		tpComentariosParaCoordinadores.setEditable(false);
+		contentPane.add(tpComentariosParaCoordinadores, "cell 9 10 3 1,grow");
 
-        btnAceptar = new JButton("Aceptar");
-        btnAceptar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(btnAceptar, "cell 10 13");
+		btnAceptarTodos = new JButton("Aceptar todos");
+		btnAceptarTodos.setEnabled(false);
+		btnAceptarTodos.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(btnAceptarTodos, "cell 1 11 4 1");
 
-        btnRechazar = new JButton("Rechazar");
-        btnRechazar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(btnRechazar, "cell 11 13");
+		lbValoraciónGlobal = new JLabel("Valoración global");
+		lbValoraciónGlobal.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(lbValoraciónGlobal, "cell 9 11,alignx left,aligny baseline");
 
-        btnAbrirDiscusiones = new JButton("Gestionar Discusiones");
-        btnAbrirDiscusiones.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        contentPane.add(btnAbrirDiscusiones, "cell 9 13");
+		btnAceptarConCambios = new JButton("Aceptar con cambios");
+		btnAceptarConCambios.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		// contentPane.add(btnAceptarConCambios, "cell 10 13");
 
-    }
+		tfValoracionGlobal = new JTextField();
+		tfValoracionGlobal.setEditable(false);
+		tfValoracionGlobal.setColumns(10);
+		contentPane.add(tfValoracionGlobal, "cell 10 11,growx");
 
-    // Getters
+		btnAceptar = new JButton("Aceptar");
+		btnAceptar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(btnAceptar, "cell 10 13");
 
-    public JFrame getFrame() {
-        return this.frame;
-    }
+		btnRechazar = new JButton("Rechazar");
+		btnRechazar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(btnRechazar, "cell 11 13");
 
-    public JList<AceptarDenegarArticuloDTO> getListArticulos() {
-        return this.lstArticulosSinDecisionRegistrada;
-    }
+		btnAbrirDiscusiones = new JButton("Gestionar Discusiones");
+		btnAbrirDiscusiones.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(btnAbrirDiscusiones, "cell 9 13");
+	}
 
-    public JList<AceptarDenegarArticuloDTO> getListAutomaticos() {
-        return this.lstAutomaticos;
-    }
+	// Getters
 
-    public JButton getbtnAceptar() {
-        return this.btnAceptar;
-    }
+	public JList<AceptarDenegarArticuloDTO> getListAceptarConCambios() {
+		return this.lstAceptarConCambios;
+	}
 
-    public JButton getbtnRechazar() {
-        return this.btnRechazar;
-    }
+	public JButton getbtnAceptarConCambios() {
+		return this.btnAceptarConCambios;
+	}
 
-    public JComboBox getcbRevisor() {
-        return this.cbRevisor;
-    }
+	public JPanel getContentPane() {
+		return this.contentPane;
+	}
 
-    public JTextField gettfNivelDeExperto() {
-        return this.tfNivelDeExperto;
-    }
+	public JFrame getFrame() {
+		return this.frame;
+	}
 
-    public JTextPane gettpComentariosParaAutores() {
-        return this.tpComentariosParaAutores;
-    }
+	public JList<AceptarDenegarArticuloDTO> getListArticulos() {
+		return this.lstArticulosSinDecisionRegistrada;
+	}
 
-    public JTextPane gettpComentariosParaCoordinadores() {
-        return this.tpComentariosParaCoordinadores;
-    }
+	public JList<AceptarDenegarArticuloDTO> getListAutomaticos() {
+		return this.lstAutomaticos;
+	}
 
-    public JTextField gettfDecision() {
-        return this.tfDecision;
-    }
+	public JButton getbtnAceptar() {
+		return this.btnAceptar;
+	}
 
-    public JTextField gettfValoracion() {
-        return this.tfValoracionGlobal;
-    }
+	public JButton getbtnRechazar() {
+		return this.btnRechazar;
+	}
 
-    public JButton getbtnAceptarTodos() {
-        return this.btnAceptarTodos;
-    }
+	public JComboBox getcbRevisor() {
+		return this.cbRevisor;
+	}
 
-    public JTabbedPane gettpListas() {
-        return this.tpListas;
-    }
+	public JTextField gettfNivelDeExperto() {
+		return this.tfNivelDeExperto;
+	}
 
-    // NUEVO getter para el botón de discusiones
-    public JButton getBtnAbrirDiscusiones() {
+	public JTextPane gettpComentariosParaAutores() {
+		return this.tpComentariosParaAutores;
+	}
+
+	public JTextPane gettpComentariosParaCoordinadores() {
+		return this.tpComentariosParaCoordinadores;
+	}
+
+	public JTextField gettfDecision() {
+		return this.tfDecision;
+	}
+
+	public JTextField gettfValoracion() {
+		return this.tfValoracionGlobal;
+	}
+
+	public JButton getbtnAceptarTodos() {
+		return this.btnAceptarTodos;
+	}
+
+	public JTabbedPane gettpListas() {
+		return this.tpListas;
+	}
+
+	// NUEVO getter para el botón de discusiones
+	public JButton getBtnAbrirDiscusiones() {
         return this.btnAbrirDiscusiones;
     }
-
 }
