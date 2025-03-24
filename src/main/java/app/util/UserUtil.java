@@ -76,4 +76,34 @@ public class UserUtil {
         }
         return false;
     }
+    
+    /**
+     * Retorna la fecha actual formateada según el patrón "yyyy-MM-dd".
+     * <p>
+     * Este método crea una nueva instancia de {@link java.util.Date} y la formatea utilizando
+     * {@link java.text.SimpleDateFormat} para obtener la fecha del día actual en el formato deseado.
+     * </p>
+     *
+     * @return un {@link String} que representa la fecha actual en el formato "yyyy-MM-dd"
+     */
+    public static String getFechaActual() {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
+    }
+
+    /**
+     * Retorna la hora actual del sistema utilizando el formato <strong>HH:mm</strong>.
+     * <p>
+     * El método crea una instancia de {@link java.util.Date} con la hora actual y la
+     * formatea mediante {@link java.text.SimpleDateFormat} para devolver una cadena
+     * en formato de 24 horas (por ejemplo, "14:35").
+     * </p>
+     *
+     * @return un {@link String} que representa la hora actual en el formato "HH:mm"
+     */
+    public static String getHoraActual() {
+        return new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+    }
+
+
+
 }
