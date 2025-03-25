@@ -169,8 +169,6 @@ public class RevisionArticuloRevisorController {
 		for (RevisionArticuloRevisorDTO articulo : articulos) {
 			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
 					articulo.getNombreFichero());
-			System.out.println(articulo.getId());
-			System.out.println(articulo.getId());
 			listaDTO.add(dto);
 		}
 		// Crear un modelo para el JList y agregar los DTOs

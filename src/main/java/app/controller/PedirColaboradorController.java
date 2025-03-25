@@ -110,9 +110,11 @@ public class PedirColaboradorController {
 
 		view.getBtnConfirmar().addActionListener(e -> {
 			if (view.getListRevisores().getSelectedValue() != null) {
-				SwingUtil.showMessage("Se ha enviado el mensaje", "Información",
+				SwingUtil.showMessage("Se ha enviado la petición", "Información",
 						JOptionPane.INFORMATION_MESSAGE);
+				
 				listModel.removeElement(view.getListRevisores().getSelectedValue());
+				
 			} else {
 				SwingUtil.showMessage("No has seleccionado a ningún colaborador", "ERROR", JOptionPane.ERROR_MESSAGE);
 			}
@@ -177,7 +179,7 @@ public class PedirColaboradorController {
 					
 								if (decision.get(0).getDecision().equals("Lo quiero revisar")) {
 									PedirColaboradorDTO dto = new PedirColaboradorDTO(si2.getId(), si2.getTitulo(),
-											si2.getNombreFichero(), si2.getNombre(), si2.getIdTrack());
+											si2.getNombreFichero(), si2.getNombre(), si2.getIdTrack(), si2.getEmailUsuario());
 									listaDTO.add(dto);
 								}
 							}

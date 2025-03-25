@@ -17,7 +17,7 @@ public class PedirColaboradorModel {
 	}
 
 	public List<PedirColaboradorDTO> obtenerTrack(String emailUsuario) {
-		String sql = "SELECT DISTINCT a.idTrack, u.nombre " +
+		String sql = "SELECT DISTINCT a.idTrack, u.nombre, r.emailUsuario " +
 	             "FROM articulo a " +
 	             "JOIN revision r ON a.idArticulo = r.idArticulo " +
 	             "JOIN usuario u ON r.emailUsuario = u.email " +
@@ -69,7 +69,7 @@ public class PedirColaboradorModel {
 		
 		
 	}
-	
+
 	 
 		
 	

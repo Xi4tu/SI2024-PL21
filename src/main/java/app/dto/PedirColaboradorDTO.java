@@ -18,11 +18,12 @@ public class PedirColaboradorDTO {
 	
 	public PedirColaboradorDTO() {}
 	
-	public PedirColaboradorDTO(int id, String titulo, String nombreFichero, String nombre, int idTrack) {
+	public PedirColaboradorDTO(int id, String titulo, String nombreFichero, String nombre, int idTrack, String emailUsuario) {
 		this.id = id;
 		this.titulo = titulo;
 		this.nombre= nombre;
 		this.idTrack = idTrack;
+		this.emailUsuario = emailUsuario;
 	}
 	
 	public PedirColaboradorDTO(String nivelExperto) {
