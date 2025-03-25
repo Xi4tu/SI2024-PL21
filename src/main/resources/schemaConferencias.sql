@@ -101,6 +101,7 @@ CREATE TABLE "Preferencia" (
 CREATE TABLE "Usuario_Discusion" (
 	"emailUsuario"	TEXT NOT NULL,
 	"idDiscusion"	INTEGER NOT NULL,
+	"mantenerseFirme"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("emailUsuario","idDiscusion")
 );
 

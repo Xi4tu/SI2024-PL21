@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import app.controller.AccederDiscusionController;
 import app.controller.AceptarDenegarArticuloController;
 import app.controller.AsignarRevisoresController;
 import app.controller.EnviarArticuloController;
@@ -18,6 +20,7 @@ import app.controller.IndicarPreferenciaArticulosController;
 import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
 import app.controller.VerMisArticulosController;
+import app.model.AccederDiscusionModel;
 import app.model.AceptarDenegarArticuloModel;
 import app.model.AsignarRevisoresModel;
 import app.model.EnviarArticuloModel;
@@ -130,9 +133,15 @@ public class AppMain {
 					new VerMisArticulosView(), textEmail.getText());
 			controller.initController();
 		}));
+
+		buttons.add(new ButtonProvider("Acceder a discusiones - Revisor", e -> {
+			AccederDiscusionController controller = new AccederDiscusionController(new AccederDiscusionModel(), 
+					new AccederDiscusionView(), textEmail.getText());
+
 		buttons.add(new ButtonProvider("Indicar Preferencias - Revisor", e -> {
 			IndicarPreferenciaArticulosController controller = new IndicarPreferenciaArticulosController(new IndicarPreferenciaArticulosModel(), 
 					new IndicarPreferenciaArticulosView(), textEmail.getText());
+
 			controller.initController();
 		}));
 
