@@ -39,6 +39,7 @@ public class EnviarArticuloView {
 	private JButton btnEnviar;
 	private JButton btnCancelar;
 	private JButton btnAnadirAutor;
+	private JButton btnBorrarAutor;
 	private JButton btnAgregarPalabrasClaveDelTrack;
 	private JFrame frame;
 	private JLabel lblPalabrasDelTrackArticulo;
@@ -225,8 +226,18 @@ public class EnviarArticuloView {
 			}
 		});
 		btnAnadirAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnAnadirAutor.setBounds(120, 487, 110, 21);
+		btnAnadirAutor.setBounds(120, 499, 110, 21);
 		contentPane.add(btnAnadirAutor);
+		
+		btnBorrarAutor = new JButton("Borrar");
+		btnBorrarAutor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnBorrarAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnBorrarAutor.setBounds(241, 499, 110, 21);
+		contentPane.add(btnBorrarAutor);
+		
 		
 		JLabel lblTrack = new JLabel("Track:");
 		lblTrack.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -260,7 +271,6 @@ public class EnviarArticuloView {
 		btnAgregarPalabrasClaveDelTrack.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnAgregarPalabrasClaveDelTrack.setBounds(406, 63, 110, 21);
 		contentPane.add(btnAgregarPalabrasClaveDelTrack);
-
 	}
 
 
@@ -312,6 +322,14 @@ public class EnviarArticuloView {
 		this.textfPalabrasClaveArticulo = textfPalabrasClaveArticulo;
 	}
 
+	public JLabel getLblPalabrasDelTrackArticulo() {
+		return lblPalabrasDelTrackArticulo;
+	}
+	
+	public void setLblPalabrasDelTrackArticulo(JLabel lblPalabrasDelTrackArticulo) {
+		this.lblPalabrasDelTrackArticulo = lblPalabrasDelTrackArticulo;
+	}
+	
 	public JTextField getTextfResumenArticulo() {
 		return textfResumenArticulo;
 	}
@@ -392,6 +410,14 @@ public class EnviarArticuloView {
 		this.btnAnadirAutor = btnAnadirAutor;
 	}
 	
+	public JButton getBtnBorrarAutor() {
+		return btnBorrarAutor;
+	}
+	
+	public void setBtnBorrarAutor(JButton btnBorrarAutor) {
+		this.btnBorrarAutor = btnBorrarAutor;
+	}
+	
 	public JButton getBtnAgregarPalabrasClaveDelTrack() {
 		return btnAgregarPalabrasClaveDelTrack;
 	}
@@ -427,6 +453,7 @@ public class EnviarArticuloView {
 			comboBoxSelectorPalabrasDelTrack.addItem(palabra);
 		}
 	}
+
 	
 	// Metodo para limpiar las palabras clave de un track
 	public void limpiarPalabrasClaveTrack() {
@@ -464,4 +491,17 @@ public class EnviarArticuloView {
 	public String getPalabrasClaveArticuloString() {
 		return lblPalabrasDelTrackArticulo.getText();
 	}
+	
+	// Metodo que rellena el jlabel palabras clave del track con un texto con el formato adecuado para reconocerse por el resto de metodos
+	public void setPalabrasClaveTrack(String palabrasClave) {
+		lblPalabrasDelTrackArticulo.setText(palabrasClave);
+	}
+	
+	//Metodo que elimina un autor de la tabla de autores segun la fila pasada por parametro como int
+	public void borrarAutor(int fila) {
+		DefaultTableModel modelo = (DefaultTableModel) tableListaDeAutores.getModel();
+		modelo.removeRow(fila);
+	}
 }
+
+

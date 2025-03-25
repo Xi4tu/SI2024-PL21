@@ -26,12 +26,15 @@ public class ArticuloDTOlite {
     // Fecha en la que se efectuó el envío del artículo
     private String fechaEnvio;
     
+    // Fecha en la que se hizo la ultima modificacion del articulo
+    private String fechaModificacion;
+    
 
     public ArticuloDTOlite() {
     }
 
     public ArticuloDTOlite(int idArticulo, String titulo, String palabrasClave, String resumen, String nombreFichero,
-            List<AutorDTO> autores, String fechaEnvio) {
+            List<AutorDTO> autores, String fechaEnvio, String fechaModificacion) {
         this.idArticulo = idArticulo;
         this.titulo = titulo;
         this.palabrasClave = palabrasClave;
@@ -39,6 +42,7 @@ public class ArticuloDTOlite {
         this.nombreFichero = nombreFichero;
         this.autores = autores;
         this.fechaEnvio = fechaEnvio;
+        this.fechaModificacion = fechaModificacion;
     }
 
     // Getters y setters
@@ -98,18 +102,20 @@ public class ArticuloDTOlite {
     public void setFechaEnvio(String fechaEnvio) {
         this.fechaEnvio = fechaEnvio;
     }
+    
+    public String getFechaModificacion() {
+		return fechaModificacion;
+	}
+    
+    public void setFechaModificacion(String fechaUltimaModificacion) {
+    	this.fechaModificacion = fechaUltimaModificacion;
+    }
 
 
     @Override
     public String toString() {
-        return "ArticuloDTO{" +
-                "id=" + idArticulo +
-                ", titulo='" + titulo + '\'' +
-                ", palabrasClave=" + palabrasClave +
-                ", resumen='" + resumen + '\'' +
-                ", nombreFichero='" + nombreFichero + '\'' +
-                ", autores=" + autores +
-                ", fechaEnvio=" + fechaEnvio +
-                "'}'\njuan.perez@ejemplo.com";
+    			return "ArticuloDTOlite [autores=" + autores + ", fechaEnvio=" + fechaEnvio + ", idArticulo=" + idArticulo
+				+ ", nombreFichero=" + nombreFichero + ", palabrasClave=" + palabrasClave + ", resumen=" + resumen
+				+ ", titulo=" + titulo + "]";
     }
 }

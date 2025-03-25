@@ -6,7 +6,7 @@ import java.util.List;
 public class ArticuloDTO {
 
     // Número único asignado al artículo (se asigna al aceptar el envío)
-    private int id;
+    private int idArticulo;
     
     // Id del track al que pertenece el articulo
     private int idTrack;
@@ -35,17 +35,19 @@ public class ArticuloDTO {
     private List<AutorDTO> autores;
     
     // Fecha en la que se efectuó el envío del artículo
-    private Date fechaEnvio;
+    private String fechaEnvio;
     
-    // Autor que hace el envío (ya registrado en el sistema)
-    private AutorDTO autorEnvio;
+    // Fecha en la que se hizo la ultima modificacion del articulo
+    private String fechaModificacion;
+    
+    
 
     public ArticuloDTO() {
     }
 
-    public ArticuloDTO(int id, int idTrack, String titulo, String palabrasClave, String palabrasClaveTrack, String resumen, String nombreFichero,
-            List<AutorDTO> autores, Date fechaEnvio, AutorDTO autorEnvio) {
-        this.id = id;
+    public ArticuloDTO(int idArticulo, int idTrack, String titulo, String palabrasClave, String palabrasClaveTrack, String resumen, String nombreFichero,
+            List<AutorDTO> autores, String fechaEnvio, String fechaModificacion) {
+        this.idArticulo = idArticulo;
         this.idTrack = idTrack;
         this.titulo = titulo;
         this.palabrasClave = palabrasClave;
@@ -54,17 +56,17 @@ public class ArticuloDTO {
         this.nombreFichero = nombreFichero;
         this.autores = autores;
         this.fechaEnvio = fechaEnvio;
-        this.autorEnvio = autorEnvio;
+        this.fechaModificacion = fechaModificacion;
     }
 
     // Getters y setters
 
-    public int getId() {
-        return id;
+    public int getIdArticulo() {
+        return idArticulo;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdArticulo(int id) {
+        this.idArticulo = id;
     }
 
     public int getIdTrack() {
@@ -123,33 +125,36 @@ public class ArticuloDTO {
         this.autores = autores;
     }
 
-    public Date getFechaEnvio() {
+    public String getFechaEnvio() {
         return fechaEnvio;
     }
 
-    public void setFechaEnvio(Date fechaEnvio) {
+    public void setFechaEnvio(String fechaEnvio) {
         this.fechaEnvio = fechaEnvio;
     }
-
-    public AutorDTO getAutorEnvio() {
-        return autorEnvio;
+    
+    public String getFechaModificacion() {
+    	return fechaModificacion;
     }
+    
+    public void setFechaModificacion(String fechaModificacion) {
+		this.fechaModificacion = fechaModificacion;
+	}
 
-    public void setAutorEnvio(AutorDTO autorEnvio) {
-        this.autorEnvio = autorEnvio;
-    }
+    
+    
 
     @Override
     public String toString() {
         return "ArticuloDTO{" +
-                "id=" + id +
+                "id=" + idArticulo +
                 ", titulo='" + titulo + '\'' +
                 ", palabrasClave=" + palabrasClave +
                 ", resumen='" + resumen + '\'' +
                 ", nombreFichero='" + nombreFichero + '\'' +
                 ", autores=" + autores +
                 ", fechaEnvio=" + fechaEnvio +
-                ", autorEnvio=" + autorEnvio +
+                ", fechaModificacion=" + fechaModificacion +
                 '}';
     }
     
@@ -161,4 +166,14 @@ public class ArticuloDTO {
 			this.palabrasClaveTrackLista = palabrasClaveTrack.split(",");
 		}
 	}
+    
+    // Metodo que separa las palabras clave del track en un array de Strings y lo guarda en la lista que se indique
+    public void separarPalabrasClaveTrack(String lista) {
+   		if (lista.equals("palabrasClave")) {
+    		this.palabrasClaveLista = palabrasClave.split(",");
+		} else if (lista.equals("palabrasClaveTrack")) {
+			this.palabrasClaveTrackLista = palabrasClaveTrack.split(",");
+    	}
+    }
+    
 }
