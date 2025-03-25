@@ -8,8 +8,12 @@ import javax.swing.JOptionPane;
 
 import app.dto.RevisionArticuloRevisorDTO;
 import app.enums.Rol;
+import app.model.GestionarDiscusionesCoordinadorModel;
+import app.model.PedirColaboradorModel;
 import app.model.RevisionArticuloRevisorModel;
 import app.util.UserUtil;
+import app.view.GestionarDiscusionesCoordinadorView;
+import app.view.PedirColaboradorView;
 import app.view.RevisionArticuloRevisorView;
 import giis.demo.util.SwingUtil;
 
@@ -58,7 +62,6 @@ public class RevisionArticuloRevisorController {
 			if (articuloSeleccionado == null || articuloSeleccionado.getId() == 0) {
 				return;
 			}
-
 			// Guarda el id en una variable (objeto Integer)
 			Integer idSeleccionado = articuloSeleccionado.getId();
 
@@ -69,8 +72,17 @@ public class RevisionArticuloRevisorController {
 					articuloSeleccionado.setNombreFichero(art.getNombreFichero());
 				}
 			});
-
+			
 			view.getLblFileName().setText(articuloSeleccionado.getNombreFichero());
+		});
+
+		view.getBtnPedirColaborador().addActionListener(e -> {
+			if (view.getListArticulos().getSelectedValue() == null) {
+				SwingUtil.showMessage("No has seleccionado ningún artículo", "ERROR", JOptionPane.ERROR_MESSAGE);
+			} else {
+				PedirColaboradorController controller = new PedirColaboradorController(
+						new PedirColaboradorModel(), new PedirColaboradorView(), email, view.getListArticulos().getSelectedValue().getId());
+			}
 		});
 
 	}
@@ -153,10 +165,11 @@ public class RevisionArticuloRevisorController {
 		List<RevisionArticuloRevisorDTO> listaDTO = new ArrayList<>();
 		for (RevisionArticuloRevisorDTO articulo : articulos) {
 			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
-					articulo.getNombreFichero());
+					articulo.getNombreFichero(), articulo.getNombre());
+			System.out.println(articulo.getNombre());
+			System.out.println(articulo.getId());
 			listaDTO.add(dto);
 		}
-
 		// Crear un modelo para el JList y agregar los DTOs
 		listModel = new DefaultListModel<>();
 		for (RevisionArticuloRevisorDTO dto : listaDTO) {
