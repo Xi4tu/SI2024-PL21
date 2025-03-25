@@ -137,6 +137,8 @@ public class AppMain {
 		buttons.add(new ButtonProvider("Acceder a discusiones - Revisor", e -> {
 			AccederDiscusionController controller = new AccederDiscusionController(new AccederDiscusionModel(), 
 					new AccederDiscusionView(), textEmail.getText());
+		    controller.initController();
+		}));
 
 		buttons.add(new ButtonProvider("Indicar Preferencias - Revisor", e -> {
 			IndicarPreferenciaArticulosController controller = new IndicarPreferenciaArticulosController(new IndicarPreferenciaArticulosModel(), 
