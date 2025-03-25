@@ -33,6 +33,7 @@ public class RevisionArticuloRevisorView {
 	private JComboBox<String> comboNivelExperto;
 	private JComboBox<String> comboDecision;
 	private JButton btnEnviarRevision;
+	private JButton btnPedirColaborador;
 
 	public RevisionArticuloRevisorView() {
 		initialize();
@@ -128,9 +129,16 @@ public class RevisionArticuloRevisorView {
 
 		// --- Botón para enviar la revisión ---
 		JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		
+		btnPedirColaborador = new JButton("Pedir Colaborador");
+		panelBoton.add(btnPedirColaborador);
+		panelDerecho.add(panelBoton);
+		
 		btnEnviarRevision = new JButton("Enviar Revisión");
 		panelBoton.add(btnEnviarRevision);
 		panelDerecho.add(panelBoton);
+		
+		
 
 	}
 
@@ -165,6 +173,10 @@ public class RevisionArticuloRevisorView {
 
 	public JButton getBtnEnviarRevision() {
 		return this.btnEnviarRevision;
+	}
+	
+	public JButton getBtnPedirColaborador() {
+		return this.btnPedirColaborador;
 	}
 
 }

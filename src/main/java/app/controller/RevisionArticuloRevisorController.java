@@ -8,8 +8,12 @@ import javax.swing.JOptionPane;
 
 import app.dto.RevisionArticuloRevisorDTO;
 import app.enums.Rol;
+import app.model.GestionarDiscusionesCoordinadorModel;
+import app.model.PedirColaboradorModel;
 import app.model.RevisionArticuloRevisorModel;
 import app.util.UserUtil;
+import app.view.GestionarDiscusionesCoordinadorView;
+import app.view.PedirColaboradorView;
 import app.view.RevisionArticuloRevisorView;
 import giis.demo.util.SwingUtil;
 
@@ -58,7 +62,6 @@ public class RevisionArticuloRevisorController {
 			if (articuloSeleccionado == null || articuloSeleccionado.getId() == 0) {
 				return;
 			}
-
 			// Guarda el id en una variable (objeto Integer)
 			Integer idSeleccionado = articuloSeleccionado.getId();
 
@@ -69,14 +72,24 @@ public class RevisionArticuloRevisorController {
 					articuloSeleccionado.setNombreFichero(art.getNombreFichero());
 				}
 			});
-
+			
 			view.getLblFileName().setText(articuloSeleccionado.getNombreFichero());
+		});
+
+		view.getBtnPedirColaborador().addActionListener(e -> {
+			if (view.getListArticulos().getSelectedValue() == null) {
+				SwingUtil.showMessage("No has seleccionado ningún artículo", "ERROR", JOptionPane.ERROR_MESSAGE);
+			} else {
+				PedirColaboradorController controller = new PedirColaboradorController(
+						new PedirColaboradorModel(), new PedirColaboradorView(), email, view.getListArticulos().getSelectedValue().getId());
+				controller.initController();
+			}
 		});
 
 	}
 
 	/*
-	 * Método que se encarga de inicializar la vista
+ * Método que se encarga de inicializar la vista
 	 */
 	public void initView() {
 		view.getFrame().setVisible(true);
@@ -147,6 +160,8 @@ public class RevisionArticuloRevisorController {
 	 */
 	private boolean obtenerArticulosAsignados() {
 		// Llamar al backend para obtener los artículos asignados
+		
+		
 		articulos = model.obtenerArticulosAsignados(email);
 
 		// Convertir cada Articulo a ArticuloDTO
@@ -154,9 +169,10 @@ public class RevisionArticuloRevisorController {
 		for (RevisionArticuloRevisorDTO articulo : articulos) {
 			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
 					articulo.getNombreFichero());
+			System.out.println(articulo.getId());
+			System.out.println(articulo.getId());
 			listaDTO.add(dto);
 		}
-
 		// Crear un modelo para el JList y agregar los DTOs
 		listModel = new DefaultListModel<>();
 		for (RevisionArticuloRevisorDTO dto : listaDTO) {
