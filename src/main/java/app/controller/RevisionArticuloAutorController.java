@@ -32,6 +32,7 @@ public class RevisionArticuloAutorController {
 	private List<RevisionAutorDTO> revisionesDTO;
 	private Map<Integer, List<RevisionAutorDTO>> revisionesArticulos = new HashMap<>();
 	private static final Rol ROL = Rol.AUTOR;
+	private int idArticulo = -1; // Id del articulo a mostrar directamente, -1 si no se ha pasado idArticulo
 
 	/**
 	 * Constructor del controller.
@@ -62,6 +63,17 @@ public class RevisionArticuloAutorController {
 
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
+	}
+	
+	/**
+	 * Constructor del controller incluyendo idArticulo, para mostrarlo directamente elegido en la vista
+	 * @param m
+	 * @param v
+	 * @param email
+	 */
+	public RevisionArticuloAutorController(RevisionArticuloAutorModel m, RevisionArticuloAutorView v, String email, int idArticulo) {
+		this(m, v, email);
+		this.idArticulo = idArticulo;
 	}
 
 	/**
@@ -113,6 +125,18 @@ public class RevisionArticuloAutorController {
 			}
 
 		});
+		
+		
+		// Si se ha pasado un idArticulo, seleccionarlo y mostrarlo directamente
+		if (idArticulo != -1) {
+			// Buscar el articulo con el idArticulo
+			for (int i = 0; i < articulosDTO.size(); i++) {
+				if (articulosDTO.get(i).getIdArticulo() == idArticulo) {
+					view.getListArticulos().setSelectedIndex(i);
+					break;
+				}
+			}
+		}
 
 	}
 

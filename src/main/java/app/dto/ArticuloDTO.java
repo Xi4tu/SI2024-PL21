@@ -40,13 +40,19 @@ public class ArticuloDTO {
     // Fecha en la que se hizo la ultima modificacion del articulo
     private String fechaModificacion;
     
+    // Decision final del articulo
+    private String decisionFinal;
+    
+    // Valoracion global del articulo
+    private String valoracionGlobal;
+    
     
 
     public ArticuloDTO() {
     }
 
     public ArticuloDTO(int idArticulo, int idTrack, String titulo, String palabrasClave, String palabrasClaveTrack, String resumen, String nombreFichero,
-            List<AutorDTO> autores, String fechaEnvio, String fechaModificacion) {
+            List<AutorDTO> autores, String fechaEnvio, String fechaModificacion, String decisionFinal, String valoracionGlobal) {
         this.idArticulo = idArticulo;
         this.idTrack = idTrack;
         this.titulo = titulo;
@@ -57,6 +63,8 @@ public class ArticuloDTO {
         this.autores = autores;
         this.fechaEnvio = fechaEnvio;
         this.fechaModificacion = fechaModificacion;
+        this.decisionFinal = decisionFinal;
+        this.valoracionGlobal = valoracionGlobal;
     }
 
     // Getters y setters
@@ -141,10 +149,23 @@ public class ArticuloDTO {
 		this.fechaModificacion = fechaModificacion;
 	}
 
+    public String getDecisionFinal() {
+    	return decisionFinal;
+    }
     
-    
+    public void setDecisionFinal(String decisionFinal) {
+    	this.decisionFinal = decisionFinal;
+    }
 
-    @Override
+    public String getValoracionGlobal() {
+		return valoracionGlobal;
+	}
+
+	public void setValoracionGlobal(String valoracionGlobal) {
+		this.valoracionGlobal = valoracionGlobal;
+	}
+
+	@Override
     public String toString() {
         return "ArticuloDTO{" +
                 "id=" + idArticulo +
@@ -155,6 +176,8 @@ public class ArticuloDTO {
                 ", autores=" + autores +
                 ", fechaEnvio=" + fechaEnvio +
                 ", fechaModificacion=" + fechaModificacion +
+                ", decisionFinal=" + decisionFinal +
+                ", valoracionGlobal=" + valoracionGlobal +
                 '}';
     }
     
@@ -174,6 +197,5 @@ public class ArticuloDTO {
 		} else if (lista.equals("palabrasClaveTrack")) {
 			this.palabrasClaveTrackLista = palabrasClaveTrack.split(",");
     	}
-    }
-    
+    }    
 }
