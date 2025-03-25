@@ -24,7 +24,7 @@ public class AsignarRevisoresController {
 
 	public AsignarRevisoresController(AsignarRevisoresModel model, AsignarRevisoresView view, String email) {
 	
-		;
+		
 		this.model = model;
 		this.view = view;
 
@@ -157,8 +157,21 @@ public class AsignarRevisoresController {
 		DefaultTableModel modelRevisores = (DefaultTableModel) view.getTableRevisoresDisponibles().getModel();
 		modelRevisores.setRowCount(0); // Limpiar la tabla antes de llenarla
 		for (RevisorDTO revisor : revisores) {
-			modelRevisores.addRow(new Object[] { revisor.getEmail(), revisor.getNombre(), revisor.getOrganizacion(), revisor.getGrupoInvestigacion() });
+		    String preferencia = model.obtenerPreferenciaRevisor(revisor.getEmail(), id);
+
+		    if ("Conflicto".equalsIgnoreCase(preferencia)) {
+		        continue; // 👈 omite revisores con conflicto
+		    }
+
+		    modelRevisores.addRow(new Object[] {
+		        revisor.getEmail(),
+		        revisor.getNombre(),
+		        revisor.getOrganizacion(),
+		        revisor.getGrupoInvestigacion(),
+		        preferencia // 👈 nueva columna "Preferencia"
+		    });
 		}
+
 
 		return true;
 	}

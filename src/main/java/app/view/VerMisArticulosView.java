@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JTable;
@@ -17,6 +19,9 @@ import java.util.List;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.JCheckBox;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class VerMisArticulosView{
 
@@ -28,11 +33,16 @@ public class VerMisArticulosView{
 	private JLabel lblAutorBusqueda;
 	private JLabel lblIdArticulo;
 	private JLabel lblTituloArticulo;
+	private JLabel lblTituloTrackArticulo;
 	private JLabel lblPalabrasClaveArticulo;
+	private JLabel lblPalabrasClaveTrackArticulo;
 	private JLabel lblResumenArticulo;
 	private JLabel lblFicheroArticulo;
 	private JLabel lblFechaEnvioArticulo;
 	private JLabel lblEnviadoPorArticulo;
+	private JLabel lblFechaModificacionArticulo;
+	
+	private JButton btnEditarArticulo;
 	
 	private JCheckBox chckbxSoloEnviadosPorMi;
 
@@ -92,7 +102,7 @@ public class VerMisArticulosView{
 		tableArticulosDelAutor.getColumnModel().getColumn(0).setMinWidth(20);
 		tableArticulosDelAutor.getColumnModel().getColumn(0).setMaxWidth(60);
 		tableArticulosDelAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tableArticulosDelAutor.setBounds(10, 96, 274, 435);
+		tableArticulosDelAutor.setBounds(10, 96, 274, 404);
 		frame.getContentPane().add(tableArticulosDelAutor);
 		
 		JLabel lblId_1 = new JLabel("Id.");
@@ -117,39 +127,39 @@ public class VerMisArticulosView{
 		
 		JLabel lblId_1_1 = new JLabel("Palabras clave:");
 		lblId_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1.setBounds(306, 35, 450, 13);
+		lblId_1_1.setBounds(306, 58, 247, 13);
 		frame.getContentPane().add(lblId_1_1);
 		
 		 lblPalabrasClaveArticulo = new JLabel("");
 		lblPalabrasClaveArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblPalabrasClaveArticulo.setBounds(306, 58, 534, 13);
+		lblPalabrasClaveArticulo.setBounds(306, 81, 247, 13);
 		frame.getContentPane().add(lblPalabrasClaveArticulo);
 		
 		JLabel lblId_1_1_1 = new JLabel("Resumen:");
 		lblId_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1.setBounds(306, 81, 450, 13);
+		lblId_1_1_1.setBounds(306, 104, 450, 13);
 		frame.getContentPane().add(lblId_1_1_1);
 		
 		 lblResumenArticulo = new JLabel("");
 		lblResumenArticulo.setVerticalAlignment(SwingConstants.TOP);
 		lblResumenArticulo.setHorizontalAlignment(SwingConstants.LEFT);
 		lblResumenArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblResumenArticulo.setBounds(306, 104, 534, 75);
+		lblResumenArticulo.setBounds(306, 127, 534, 29);
 		frame.getContentPane().add(lblResumenArticulo);
 		
 		JLabel lblId_1_1_1_1 = new JLabel("Fichero:");
 		lblId_1_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1_1.setBounds(306, 189, 60, 13);
+		lblId_1_1_1_1.setBounds(306, 166, 60, 13);
 		frame.getContentPane().add(lblId_1_1_1_1);
 		
 		 lblFicheroArticulo = new JLabel("");
 		lblFicheroArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFicheroArticulo.setBounds(376, 189, 464, 13);
+		lblFicheroArticulo.setBounds(376, 166, 464, 13);
 		frame.getContentPane().add(lblFicheroArticulo);
 		
 		JLabel lblId_1_1_1_1_1 = new JLabel("Fecha envío:");
 		lblId_1_1_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1_1_1.setBounds(306, 212, 92, 13);
+		lblId_1_1_1_1_1.setBounds(306, 189, 92, 13);
 		frame.getContentPane().add(lblId_1_1_1_1_1);
 		
 		JLabel lblId_1_1_1_1_2 = new JLabel("Enviado por:");
@@ -159,7 +169,7 @@ public class VerMisArticulosView{
 		
 		 lblFechaEnvioArticulo = new JLabel("");
 		lblFechaEnvioArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFechaEnvioArticulo.setBounds(408, 212, 432, 13);
+		lblFechaEnvioArticulo.setBounds(408, 189, 432, 13);
 		frame.getContentPane().add(lblFechaEnvioArticulo);
 		
 		 lblEnviadoPorArticulo = new JLabel("");
@@ -212,6 +222,45 @@ public class VerMisArticulosView{
 		chckbxSoloEnviadosPorMi.setFont(new Font("Tahoma", Font.BOLD, 14));
 		chckbxSoloEnviadosPorMi.setBounds(10, 54, 274, 21);
 		frame.getContentPane().add(chckbxSoloEnviadosPorMi);
+		
+		JLabel lblId_1_1_1_1_1_1 = new JLabel("Última modificación:");
+		lblId_1_1_1_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblId_1_1_1_1_1_1.setBounds(306, 212, 148, 13);
+		frame.getContentPane().add(lblId_1_1_1_1_1_1);
+		
+		lblFechaModificacionArticulo = new JLabel("");
+		lblFechaModificacionArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFechaModificacionArticulo.setBounds(457, 212, 383, 13);
+		frame.getContentPane().add(lblFechaModificacionArticulo);
+		
+		btnEditarArticulo = new JButton("Editar Articulo");
+		btnEditarArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnEditarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnEditarArticulo.setBounds(163, 510, 121, 21);
+		frame.getContentPane().add(btnEditarArticulo);
+		
+		JLabel lblId_1_1_2 = new JLabel("Palabras clave del Track:");
+		lblId_1_1_2.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblId_1_1_2.setBounds(578, 58, 247, 13);
+		frame.getContentPane().add(lblId_1_1_2);
+		
+		lblPalabrasClaveTrackArticulo = new JLabel("");
+		lblPalabrasClaveTrackArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblPalabrasClaveTrackArticulo.setBounds(578, 81, 247, 13);
+		frame.getContentPane().add(lblPalabrasClaveTrackArticulo);
+		
+		JLabel lblTrack = new JLabel("Track:");
+		lblTrack.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblTrack.setBounds(306, 33, 53, 13);
+		frame.getContentPane().add(lblTrack);
+		
+		lblTituloTrackArticulo = new JLabel("");
+		lblTituloTrackArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTituloTrackArticulo.setBounds(360, 33, 480, 13);
+		frame.getContentPane().add(lblTituloTrackArticulo);
 	}
 
 	//Getters y Setters de las tablas
@@ -256,6 +305,14 @@ public class VerMisArticulosView{
 	public void setLblTituloArticulo(JLabel lblTituloArticulo) {
 		this.lblTituloArticulo = lblTituloArticulo;
 	}
+	
+	public JLabel getLblTituloTrackArticulo() {
+		return lblTituloTrackArticulo;
+	}
+	
+	public void setLblTituloTrackArticulo(JLabel lblTituloTrackArticulo) {
+		this.lblTituloTrackArticulo = lblTituloTrackArticulo;
+	}
 
 	public JLabel getLblPalabrasClaveArticulo() {
 		return lblPalabrasClaveArticulo;
@@ -263,6 +320,14 @@ public class VerMisArticulosView{
 
 	public void setLblPalabrasClaveArticulo(JLabel lblPalabrasClaveArticulo) {
 		this.lblPalabrasClaveArticulo = lblPalabrasClaveArticulo;
+	}
+	
+	public JLabel getLblPalabrasClaveTrackArticulo() {
+		return lblPalabrasClaveTrackArticulo;
+	}
+	
+	public void setLblPalabrasClaveTrackArticulo(JLabel lblPalabrasClaveTrackArticulo) {
+		this.lblPalabrasClaveTrackArticulo = lblPalabrasClaveTrackArticulo;
 	}
 
 	public JLabel getLblResumenArticulo() {
@@ -288,6 +353,14 @@ public class VerMisArticulosView{
 	public void setLblFechaEnvioArticulo(JLabel lblFechaEnvioArticulo) {
 		this.lblFechaEnvioArticulo = lblFechaEnvioArticulo;
 	}
+	
+	public JLabel getLblFechaModificacionArticulo() {
+		return lblFechaModificacionArticulo;
+	}
+	
+	public void setLblFechaModificacionArticulo(JLabel lblFechaModificacionArticulo) {
+		this.lblFechaModificacionArticulo = lblFechaModificacionArticulo;
+	}
 
 	public JLabel getLblEnviadoPorArticulo() {
 		return lblEnviadoPorArticulo;
@@ -311,10 +384,17 @@ public class VerMisArticulosView{
 		this.chckbxSoloEnviadosPorMi = chckbxSoloEnviadosPorMi;
 	}
 	
+	public JButton getBtnEditarArticulo() {
+		return btnEditarArticulo;
+	}
+	public void setBtnEditarArticulo(JButton btnEditarArticulo) {
+		this.btnEditarArticulo = btnEditarArticulo;
+	}
+	
 	
 	
 	//Añadir lista de articulos a la tabla de articulos
-	public void agregarArticulo(int id, String titulo, String palabrasClave, String resumen, String nombreFichero) {
+	public void agregarArticulo(int id, String titulo, String palabrasClave, String palabrasClaveTrack, String resumen, String nombreFichero) {
 		DefaultTableModel model = (DefaultTableModel) tableArticulosDelAutor.getModel();
 		//Añade la fila solo con el Id y el titulo
 		model.addRow(new Object[] {id, titulo});		
@@ -338,4 +418,9 @@ public class VerMisArticulosView{
 		DefaultTableModel model = (DefaultTableModel) tableArticulosDelAutor.getModel();
 		model.setRowCount(0);
 	}
+	
+	//Método para mostrar un mensaje de error sencillito
+		public void mostrarMensajeError(String mensaje) {
+			JOptionPane.showMessageDialog(frame, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
+		}
 }

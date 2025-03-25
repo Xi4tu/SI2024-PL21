@@ -94,6 +94,22 @@ public enum DecisionRevisor {
         }
         return null;
     }
+    
+    /**
+     * Retorna la instancia de DecisionRevisor que coincide con el valor numérico proporcionado.
+     * 
+     * @param value Valor numérico de la decisión.
+     * @return Instancia de DecisionRevisor correspondiente o null si no coincide.
+     */
+    public static DecisionRevisor fromValue(int value) {
+        for (DecisionRevisor d : values()) {
+            if (d.getValue() == value) {
+                return d;
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Devuelve la representación en cadena de la decisión.
