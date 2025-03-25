@@ -24,7 +24,7 @@ public class AsignarRevisoresController {
 
 	public AsignarRevisoresController(AsignarRevisoresModel model, AsignarRevisoresView view, String email) {
 	
-		;
+		
 		this.model = model;
 		this.view = view;
 

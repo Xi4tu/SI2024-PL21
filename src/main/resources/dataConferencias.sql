@@ -229,7 +229,10 @@ VALUES
 ('maria.lopez@ejemplo.com', 10),
 ('paquin@ejemplo.com', 11),
 ('carlos.sanchez@ejemplo.com', 12);
+INSERT INTO Preferencia (decision, idArticulo) VALUES ('Lo quiero revisar', 2);
 
+-- luego con ese ID:
+INSERT INTO Usuario_Preferencia (emailUsuario, idPreferencia) VALUES ('maria.lopez@ejemplo.com', 13);
 
 
 
