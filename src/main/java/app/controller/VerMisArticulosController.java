@@ -3,7 +3,7 @@ package app.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.dto.ArticuloDTOlite;
+import app.dto.ArticuloDTO;
 import app.dto.AutorDTO;
 import app.enums.Rol;
 import app.model.EnviarArticuloModel;
@@ -21,9 +21,13 @@ public class VerMisArticulosController {
 		private String email;
 		private static final Rol ROL = Rol.AUTOR;
 		
-		private List<ArticuloDTOlite> articulos;
+		private List<ArticuloDTO> articulos;
 		private AutorDTO enviador;
 		private List<AutorDTO> autores;
+		
+		EnviarArticuloView vistaEdicion = new EnviarArticuloView();
+		EnviarArticuloModel modeloEdicion = new EnviarArticuloModel();
+		ArticuloDTO articulo; // Articulo seleccionado en la tabla de articulos
 		
 		
 		// Constructor del controlador
@@ -40,8 +44,8 @@ public class VerMisArticulosController {
 			// Busco para el email del autor todos los articulos que ha enviado
 			articulos = model.obtenerArticulos(email);
 			// Relleno la tabla de articulos con los articulos encontrados
-			for (ArticuloDTOlite articulo : articulos) {
-				view.agregarArticulo(articulo.getidArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getResumen(), articulo.getNombreFichero());
+			for (ArticuloDTO articulo : articulos) {
+				view.agregarArticulo(articulo.getIdArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getPalabrasClaveTrack(), articulo.getResumen(), articulo.getNombreFichero());
 			}
 			
 			
@@ -57,20 +61,20 @@ public class VerMisArticulosController {
 				if (!view.getChckbxSoloEnviadosPorMi().isSelected()) {
 					view.limpiarTablaArticulos();
 					articulos = model.obtenerArticulos(email);
-					for (ArticuloDTOlite articulo : articulos) {
-						view.agregarArticulo(articulo.getidArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getResumen(), articulo.getNombreFichero());
+					for (ArticuloDTO articulo : articulos) {
+						view.agregarArticulo(articulo.getIdArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getPalabrasClaveTrack(), articulo.getResumen(), articulo.getNombreFichero());
 					}
 				} else { // Si no esta seleccionado, muestra todos los articulos en los que participa el autor
 					view.limpiarTablaArticulos();
 					articulos = model.obtenerArticulosEnviados(email);
-					for (ArticuloDTOlite articulo : articulos) {
-						view.agregarArticulo(articulo.getidArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getResumen(), articulo.getNombreFichero());
+					for (ArticuloDTO articulo : articulos) {
+						view.agregarArticulo(articulo.getIdArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(), articulo.getPalabrasClaveTrack(), articulo.getResumen(), articulo.getNombreFichero());
 					}
 				}
 			});
 			
 			
-			//Cuando se pulsa un articulo de la tabla, se muestra la informacion del articulo
+			//Listener para cuando se selecciona un articulo de la tabla de articulos
 			view.getTableArticulosDelAutor().getSelectionModel().addListSelectionListener(e -> {
 				if (!e.getValueIsAdjusting()) {
 					int fila = view.getTableArticulosDelAutor().getSelectedRow();
@@ -78,14 +82,18 @@ public class VerMisArticulosController {
 						// Obtengo el id del articulo seleccionado
 						int id = (int) view.getTableArticulosDelAutor().getValueAt(fila, 0);
 						// Busco el articulo en la lista de articulos
-						ArticuloDTOlite articulo = articulos.stream().filter(a -> a.getidArticulo() == id).findFirst().get();
+						articulo = articulos.stream().filter(a -> a.getIdArticulo() == id).findFirst().get();
 						// Relleno los campos de la vista con la informacion del articulo
-						view.getLblIdArticulo().setText(String.valueOf(articulo.getidArticulo()));
+						view.getLblIdArticulo().setText(String.valueOf(articulo.getIdArticulo()));
 						view.getLblTituloArticulo().setText(articulo.getTitulo());
 						view.getLblPalabrasClaveArticulo().setText(articulo.getPalabrasClave());
+						view.getLblPalabrasClaveTrackArticulo().setText(articulo.getPalabrasClaveTrack());
 						view.getLblResumenArticulo().setText(articulo.getResumen());
 						view.getLblFicheroArticulo().setText(articulo.getNombreFichero());
 						view.getLblFechaEnvioArticulo().setText(articulo.getFechaEnvio());
+						view.getLblFechaModificacionArticulo().setText(articulo.getFechaModificacion());
+						// Obtengo el id del track del articulo y con ese id obtengo el trackDTO, del que obtengo el nombre y lo muestro en la vista
+						view.getLblTituloTrackArticulo().setText(model.obtenerTrackPorId(articulo.getIdTrack()).getNombre());
 						// Miro QUIEN envio el articulo y lo muestro en la vista
 						enviador = model.quienEnvia(id);
 						view.getLblEnviadoPorArticulo().setText(enviador.getNombre());
@@ -99,6 +107,34 @@ public class VerMisArticulosController {
 					}
 				}
 			});
+			
+			// Listener para cuando se pulsa el boton de editar articulo
+			view.getBtnEditarArticulo().addActionListener(e -> {
+				// Si articulo es null, no se ha seleccionado ningun articulo, asiq error
+				if (articulo == null) {
+					view.mostrarMensajeError("No se ha seleccionado ningún artículo");
+					return;
+				}
+				// Si ha pasado la fecha de deadline, no se puede editar
+				if (!model.fechaAntesDeDeadline(articulo.getIdTrack())) {
+					view.mostrarMensajeError("No se puede editar el artículo. Fuera de fecha de envío.");
+					return;
+				} 
+				// Si el autor actual no es el que envio el articulo, no se puede editar
+				if (!enviador.getEmail().equals(email)) {
+					view.mostrarMensajeError("No se puede editar el artículo. No fue enviado por usted.");
+					return;
+				}
+				else {
+					//Lo primero que hago es cerrar la ventana actual
+					view.getFrame().dispose();
+					//Creo el controlador de EnviarArticulo enviando los datos del articulo
+					EnviarArticuloController controlador = new EnviarArticuloController(modeloEdicion, vistaEdicion, articulo);
+					//Inicializo el controlador
+					controlador.initController();
+				}
+			});
+			
 		}
 		
 		

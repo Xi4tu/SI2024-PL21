@@ -39,6 +39,7 @@ CREATE TABLE "Articulo" (
 	"resumen"	TEXT NOT NULL,
 	"nombreFichero"	TEXT NOT NULL UNIQUE,
 	"fechaEnvio"	TEXT NOT NULL,
+	"fechaModificacion"	TEXT,
 	"decisionFinal"	TEXT DEFAULT 'Pendiente' CHECK("decisionFinal" IN ("Pendiente", "Aceptado", "Rechazado", "Aceptado con cambios")),
 	"valoracionGlobal"	INTEGER DEFAULT NULL,
 	PRIMARY KEY("idArticulo" AUTOINCREMENT),
