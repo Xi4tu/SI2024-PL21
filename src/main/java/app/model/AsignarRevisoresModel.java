@@ -147,7 +147,16 @@ public class AsignarRevisoresModel {
 	    return db.executeQueryPojo(RevisorDTO.class, sql, idArticulo);
 	}
 
-	
+	public String obtenerPreferenciaRevisor(String emailUsuario, int idArticulo) {
+	    String sql = "SELECT p.decision " +
+	                 "FROM Preferencia p " +
+	                 "JOIN Usuario_Preferencia up ON p.idPreferencia = up.idPreferencia " +
+	                 "WHERE p.idArticulo = ? AND up.emailUsuario = ?";
+
+	    List<Object[]> resultado = db.executeQueryArray(sql, idArticulo, emailUsuario);
+	    return resultado.isEmpty() ? "Sin preferencia" : resultado.get(0)[0].toString();
+	}
+
 		
 	
 	

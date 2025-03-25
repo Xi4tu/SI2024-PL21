@@ -47,7 +47,7 @@ public class IndicarPreferenciaArticulosView  {
 		contentPane.add(lblNewLabel_1, "cell 0 2,alignx left");
 		
 		comboBoxPreferencia = new JComboBox<String>();
-		comboBoxPreferencia.setModel(new DefaultComboBoxModel(new String[] {
+		comboBoxPreferencia.setModel(new DefaultComboBoxModel<String>(new String[] {
 			    "-- Selecciona preferencia --",
 			    "Lo quiero revisar",
 			    "No quiero revisar",
