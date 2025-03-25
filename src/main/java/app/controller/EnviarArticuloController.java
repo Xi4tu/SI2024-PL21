@@ -65,7 +65,7 @@ public class EnviarArticuloController {
 	}
 	
 	//Constructor de un controlador para cuando se edita un articulo
-	//Llama al constructor anterior y ademas rellena los campos con los datos del articulo
+	// Rellena los campos con los datos del articulo
 	public EnviarArticuloController(EnviarArticuloModel m, EnviarArticuloView v, ArticuloDTO articulo) {
 		editando = true; //Lo primero: estoy editando, asi que flag a true
 		this.model = m;
@@ -157,11 +157,13 @@ public class EnviarArticuloController {
 		view.getBtnBorrarAutor().addActionListener(e -> SwingUtil.exceptionWrapper(() -> {
 			// Obtengo la fila seleccionada
 			int fila = view.getTableListaDeAutores().getSelectedRow();
-				//Elimino solo si no es el autor principal que envia
-				if (fila != 0) {
+				// Obtengo el email del autor seleccionado
+				String emailAutor = (String) view.getTableListaDeAutores().getValueAt(fila, 0);
+				// Si el autor seleccionado no es el autor principal que envía el artículo, se elimina de la lista de autores
+				if (!emailAutor.equals(autor.getEmail())) {
 					// Elimino el autor de la lista de autores
-					autores.remove(fila);
-					// Elimino la fila seleccionada de la tabla de autores
+					autores.removeIf(a -> a.getEmail().equals(emailAutor));
+					// Elimino el autor de la tabla de autores
 					view.borrarAutor(fila);
 				}
 				else {

@@ -104,7 +104,7 @@ public class AsignarRevisoresView {
 		tableRevisoresDisponibles.setModel(new DefaultTableModel(
 			    new Object[][] {},
 			    new String[] {
-			        "Email", "Nombre", "Organización", "Grupo de Investigación"
+			        "Email", "Nombre", "Organización", "Grupo de Investigación", "Preferencia"
 			    }
 			) {
 		    /**

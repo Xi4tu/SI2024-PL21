@@ -11,6 +11,7 @@ public class AceptarDenegarArticuloDTO {
 	private String comentariosParaAutor;
 	private String comentariosParaCoordinador;
 	private String decisionFinal;
+	private String conCambios;
 	
 	public AceptarDenegarArticuloDTO() {}
 	
@@ -100,5 +101,13 @@ public class AceptarDenegarArticuloDTO {
 	
 	public void setDecisionFinal(String decisionFinal) {
 		this.decisionFinal = decisionFinal;
+	}
+	
+	public String getconCambios() {
+		return conCambios;
+	}
+	
+	public void setconCambios(String conCambios) {
+		this.conCambios = conCambios;
 	}
 }

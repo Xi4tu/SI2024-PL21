@@ -25,6 +25,10 @@ public class VerMisArticulosController {
 		private AutorDTO enviador;
 		private List<AutorDTO> autores;
 		
+		EnviarArticuloView vistaEdicion = new EnviarArticuloView();
+		EnviarArticuloModel modeloEdicion = new EnviarArticuloModel();
+		ArticuloDTO articulo; // Articulo seleccionado en la tabla de articulos
+		
 		
 		// Constructor del controlador
 		public VerMisArticulosController(VerMisArticulosModel m, VerMisArticulosView v, String email) {
@@ -78,7 +82,7 @@ public class VerMisArticulosController {
 						// Obtengo el id del articulo seleccionado
 						int id = (int) view.getTableArticulosDelAutor().getValueAt(fila, 0);
 						// Busco el articulo en la lista de articulos
-						ArticuloDTO articulo = articulos.stream().filter(a -> a.getIdArticulo() == id).findFirst().get();
+						articulo = articulos.stream().filter(a -> a.getIdArticulo() == id).findFirst().get();
 						// Relleno los campos de la vista con la informacion del articulo
 						view.getLblIdArticulo().setText(String.valueOf(articulo.getIdArticulo()));
 						view.getLblTituloArticulo().setText(articulo.getTitulo());
@@ -100,27 +104,37 @@ public class VerMisArticulosController {
 						for (AutorDTO autor : autores) {
 							view.agregarAutor(autor.getEmail(), autor.getNombre(), autor.getOrganizacion(), autor.getGrupoInvestigacion());
 						}
-						
-						//Activo el listener del boton de Editar Articulo
-						view.getBtnEditarArticulo().addActionListener(e2 -> {
-							// Funciona SOLO si la fecha actual es anterior al deadline del track del articulo
-							if (model.fechaAntesDeDeadline(articulo.getIdTrack())) {
-								//Lo primero que hago es cerrar la ventana actual
-								view.getFrame().dispose();
-								//Creo la vista y el modelo de EnviarArticulo
-								EnviarArticuloView vista = new EnviarArticuloView();
-								EnviarArticuloModel modelo = new EnviarArticuloModel();
-								//Creo el controlador de EnviarArticulo enviando los datos del articulo
-								EnviarArticuloController controlador = new EnviarArticuloController(modelo, vista, articulo);
-								//Inicializo el controlador
-								controlador.initController();
-							} else {
-								view.mostrarMensajeError("No se puede editar el artículo. Fuera de fecha de envío.");
-							}
-						});
 					}
 				}
 			});
+			
+			// Listener para cuando se pulsa el boton de editar articulo
+			view.getBtnEditarArticulo().addActionListener(e -> {
+				// Si articulo es null, no se ha seleccionado ningun articulo, asiq error
+				if (articulo == null) {
+					view.mostrarMensajeError("No se ha seleccionado ningún artículo");
+					return;
+				}
+				// Si ha pasado la fecha de deadline, no se puede editar
+				if (!model.fechaAntesDeDeadline(articulo.getIdTrack())) {
+					view.mostrarMensajeError("No se puede editar el artículo. Fuera de fecha de envío.");
+					return;
+				} 
+				// Si el autor actual no es el que envio el articulo, no se puede editar
+				if (!enviador.getEmail().equals(email)) {
+					view.mostrarMensajeError("No se puede editar el artículo. No fue enviado por usted.");
+					return;
+				}
+				else {
+					//Lo primero que hago es cerrar la ventana actual
+					view.getFrame().dispose();
+					//Creo el controlador de EnviarArticulo enviando los datos del articulo
+					EnviarArticuloController controlador = new EnviarArticuloController(modeloEdicion, vistaEdicion, articulo);
+					//Inicializo el controlador
+					controlador.initController();
+				}
+			});
+			
 		}
 		
 		

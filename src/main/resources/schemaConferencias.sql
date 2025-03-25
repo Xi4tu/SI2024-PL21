@@ -40,7 +40,7 @@ CREATE TABLE "Articulo" (
 	"nombreFichero"	TEXT NOT NULL UNIQUE,
 	"fechaEnvio"	TEXT NOT NULL,
 	"fechaModificacion"	TEXT,
-	"decisionFinal"	TEXT DEFAULT 'Pendiente' CHECK("decisionFinal" IN ("Pendiente", "Aceptado", "Rechazado")),
+	"decisionFinal"	TEXT DEFAULT 'Pendiente' CHECK("decisionFinal" IN ("Pendiente", "Aceptado", "Rechazado", "Aceptado con cambios")),
 	"valoracionGlobal"	INTEGER DEFAULT NULL,
 	PRIMARY KEY("idArticulo" AUTOINCREMENT),
 	FOREIGN KEY("idTrack") REFERENCES "Track"("idTrack")
@@ -102,6 +102,7 @@ CREATE TABLE "Preferencia" (
 CREATE TABLE "Usuario_Discusion" (
 	"emailUsuario"	TEXT NOT NULL,
 	"idDiscusion"	INTEGER NOT NULL,
+	"mantenerseFirme"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("emailUsuario","idDiscusion")
 );
 
