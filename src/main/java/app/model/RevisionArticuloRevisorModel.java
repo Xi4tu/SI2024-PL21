@@ -3,9 +3,16 @@ package app.model;
 import java.util.List;
 import java.util.Map;
 
+import app.dto.RevisionArticuloRevisionDTO;
 import app.dto.RevisionArticuloRevisorDTO;
+import app.dto.RevisionAutorDTO;
 import giis.demo.util.Database;
 import giis.demo.util.DbUtil;
+
+import java.util.ArrayList;
+import java.util.Date;
+import giis.demo.util.Util;
+import app.util.UserUtil;
 
 public class RevisionArticuloRevisorModel {
 
@@ -96,5 +103,114 @@ public class RevisionArticuloRevisorModel {
 		// En caso de no obtener resultados, se retorna false
 		return false;
 	}
+	
+	public List<RevisionArticuloRevisorDTO> obtenerArticulosRevisados(String email) {
+	    String sql = "SELECT a.idArticulo AS id, a.titulo AS titulo, a.nombreFichero AS nombreFichero " +
+	                 "FROM Revision r " +
+	                 "JOIN Articulo a ON r.idArticulo = a.idArticulo " +
+	                 "WHERE r.emailUsuario = ? AND r.decisionRevisor IS NOT NULL";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, email);
+	}
+	
+	public RevisionArticuloRevisionDTO obtenerRevision(int idArticulo, String email) {
+	    String sql = "SELECT * FROM Revision WHERE idArticulo = ? AND emailUsuario = ?";
+	    List<RevisionArticuloRevisionDTO> resultado = db.executeQueryPojo(RevisionArticuloRevisionDTO.class, sql, idArticulo, email);
+	    return resultado.isEmpty() ? null : resultado.get(0);
+	}
+	
+	// Para obtener comentarios para autor
+	public RevisionAutorDTO obtenerRevisionAutor(int idArticulo, String email) {
+	    String sql = "SELECT * FROM Revision WHERE idArticulo = ? AND emailUsuario = ?";
+	    List<RevisionAutorDTO> resultado = db.executeQueryPojo(RevisionAutorDTO.class, sql, idArticulo, email);
+	    return resultado.isEmpty() ? null : resultado.get(0);
+	}
+
+	// Para obtener comentarios para coordinador
+	public RevisionArticuloRevisionDTO obtenerRevisionCoordinador(int idArticulo, String email) {
+	    String sql = "SELECT * FROM Revision WHERE idArticulo = ? AND emailUsuario = ?";
+	    List<RevisionArticuloRevisionDTO> resultado = db.executeQueryPojo(RevisionArticuloRevisionDTO.class, sql, idArticulo, email);
+	    return resultado.isEmpty() ? null : resultado.get(0);
+	}
+
+	public boolean periodoRevisionActivo(int idArticulo, String email) {
+	    String sql = "SELECT fechaRevision FROM Revision WHERE idArticulo = ? AND emailUsuario = ?";
+	    List<Object[]> result = db.executeQueryArray(sql, idArticulo, email);
+
+	    if (result.isEmpty() || result.get(0)[0] == null)
+	        return false;
+
+	    try {
+	        String fechaRevisionStr = result.get(0)[0].toString();
+	        String fechaActualStr = UserUtil.getFechaActual(); // yyyy-MM-dd
+
+	        Date fechaRevision = Util.isoStringToDate(fechaRevisionStr);
+	        Date fechaActual = Util.isoStringToDate(fechaActualStr);
+
+	        return !fechaActual.after(fechaRevision); // true si la fecha actual ≤ fechaRevision
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	public void guardarOActualizarRevision(int idArticulo, String email, String comentariosAutor, String comentariosCoord,
+            String nivelExperto, int decision, String fechaActual) {
+	// Verificar si ya hay revisión
+	String sqlCheck = "SELECT COUNT(*) FROM Revision WHERE idArticulo = ? AND emailUsuario = ?";
+	List<Object[]> check = db.executeQueryArray(sqlCheck, idArticulo, email);
+	int existe = Integer.parseInt(check.get(0)[0].toString());
+		
+	if (existe > 0) {
+		// Ya existe → actualizar
+		String sqlUpdate = "UPDATE Revision SET comentariosParaAutor = ?, comentariosParaCoordinador = ?, " +
+		"nivelExperto = ?, decisionRevisor = ?, fechaRevision = ? " +
+		"WHERE idArticulo = ? AND emailUsuario = ?";
+		db.executeUpdate(sqlUpdate, comentariosAutor, comentariosCoord, nivelExperto, decision, fechaActual, idArticulo, email);
+		} else {
+		// No existe → insertar
+		String sqlInsert = "INSERT INTO Revision (idArticulo, emailUsuario, comentariosParaAutor, comentariosParaCoordinador, " +
+		"nivelExperto, decisionRevisor, fechaRevision) " +
+		"VALUES (?, ?, ?, ?, ?, ?, ?)";
+		db.executeUpdate(sqlInsert, idArticulo, email, comentariosAutor, comentariosCoord, nivelExperto, decision, fechaActual);
+	}
+}
+	public List<RevisionArticuloRevisionDTO> obtenerRevisionesDeOtrosRevisores(int idArticulo, String emailActual) {
+	    String sql = "SELECT * FROM Revision WHERE idArticulo = ? AND emailUsuario <> ?";
+	    return db.executeQueryPojo(RevisionArticuloRevisionDTO.class, sql, idArticulo, emailActual);
+	}
+	
+
+	public List<String> obtenerRevisoresDelArticulo(int idArticulo) {
+	    String sql = "SELECT DISTINCT emailUsuario FROM Revision WHERE idArticulo = ?";
+	    List<Object[]> resultados = db.executeQueryArray(sql, idArticulo);
+
+	    List<String> revisores = new ArrayList<>();
+	    for (Object[] fila : resultados) {
+	        if (fila[0] != null)
+	            revisores.add(fila[0].toString());
+	    }
+
+	    System.out.println("🔍 Revisores encontrados para artículo " + idArticulo + ": " + revisores);
+	    return revisores;
+	}
+
+
+	public boolean periodoRevisionActivoPorConferencia(int idArticulo) {
+	    String sql = "SELECT c.deadlineRevision " +
+	                 "FROM Articulo a " +
+	                 "JOIN Track t ON a.idTrack = t.idTrack " +
+	                 "JOIN Conferencia c ON t.idConferencia = c.idConferencia " +
+	                 "WHERE a.idArticulo = ?";
+
+	    List<Object[]> resultado = db.executeQueryArray(sql, idArticulo);
+
+	    if (resultado.isEmpty() || resultado.get(0)[0] == null)
+	        return false;
+
+	    String deadline = resultado.get(0)[0].toString();
+	    String hoy = UserUtil.getFechaActual(); // usa tu método aquí
+
+	    return hoy.compareTo(deadline) <= 0;
+	}
+
 
 }

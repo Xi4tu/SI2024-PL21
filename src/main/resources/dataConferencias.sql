@@ -235,4 +235,9 @@ INSERT INTO Preferencia (decision, idArticulo) VALUES ('Lo quiero revisar', 2);
 INSERT INTO Usuario_Preferencia (emailUsuario, idPreferencia) VALUES ('maria.lopez@ejemplo.com', 13);
 
 
-
+INSERT INTO Revision (idArticulo, emailUsuario, comentariosParaAutor, comentariosParaCoordinador, nivelExperto, decisionRevisor, fechaRevision)
+VALUES 
+(8, 'maria.lopez@ejemplo.com', 
+ 'Este artículo tiene buen enfoque pero debe profundizar más.', 
+ 'Se recomienda revisión por pares.', 
+ 'Medio', 1, '2025-01-04');

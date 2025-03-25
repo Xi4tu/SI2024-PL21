@@ -41,8 +41,11 @@ public class VerMisArticulosView{
 	private JLabel lblFechaEnvioArticulo;
 	private JLabel lblEnviadoPorArticulo;
 	private JLabel lblFechaModificacionArticulo;
+	private JLabel lblEstado;
+	private JLabel lblDecision;
 	
 	private JButton btnEditarArticulo;
+	private JButton btnVerDecision;
 	
 	private JCheckBox chckbxSoloEnviadosPorMi;
 
@@ -164,7 +167,7 @@ public class VerMisArticulosView{
 		
 		JLabel lblId_1_1_1_1_2 = new JLabel("Enviado por:");
 		lblId_1_1_1_1_2.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1_1_2.setBounds(306, 235, 92, 13);
+		lblId_1_1_1_1_2.setBounds(306, 258, 92, 13);
 		frame.getContentPane().add(lblId_1_1_1_1_2);
 		
 		 lblFechaEnvioArticulo = new JLabel("");
@@ -174,12 +177,12 @@ public class VerMisArticulosView{
 		
 		 lblEnviadoPorArticulo = new JLabel("");
 		lblEnviadoPorArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblEnviadoPorArticulo.setBounds(408, 235, 432, 13);
+		lblEnviadoPorArticulo.setBounds(408, 258, 432, 13);
 		frame.getContentPane().add(lblEnviadoPorArticulo);
 		
 		JLabel lblId_1_1_1_2 = new JLabel("Lista de autores:");
 		lblId_1_1_1_2.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1_2.setBounds(306, 258, 450, 13);
+		lblId_1_1_1_2.setBounds(306, 281, 450, 13);
 		frame.getContentPane().add(lblId_1_1_1_2);
 		
 		tableAutoresDelArticulo = new JTable();
@@ -191,25 +194,25 @@ public class VerMisArticulosView{
 			}
 		));
 		tableAutoresDelArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tableAutoresDelArticulo.setBounds(306, 298, 534, 233);
+		tableAutoresDelArticulo.setBounds(306, 402, 534, 129);
 		frame.getContentPane().add(tableAutoresDelArticulo);
 		
 		JLabel lblId_1_1_1_1_3 = new JLabel("Nombre");
 		lblId_1_1_1_1_3.setHorizontalAlignment(SwingConstants.CENTER);
 		lblId_1_1_1_1_3.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1_1_3.setBounds(306, 281, 128, 13);
+		lblId_1_1_1_1_3.setBounds(306, 304, 128, 13);
 		frame.getContentPane().add(lblId_1_1_1_1_3);
 		
 		JLabel lblId_1_1_1_1_3_1 = new JLabel("email");
 		lblId_1_1_1_1_3_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblId_1_1_1_1_3_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1_1_3_1.setBounds(444, 281, 124, 13);
+		lblId_1_1_1_1_3_1.setBounds(444, 304, 124, 13);
 		frame.getContentPane().add(lblId_1_1_1_1_3_1);
 		
 		JLabel lblId_1_1_1_1_3_2 = new JLabel("Organización");
 		lblId_1_1_1_1_3_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblId_1_1_1_1_3_2.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId_1_1_1_1_3_2.setBounds(578, 281, 121, 13);
+		lblId_1_1_1_1_3_2.setBounds(578, 304, 121, 13);
 		frame.getContentPane().add(lblId_1_1_1_1_3_2);
 		
 		JLabel lblId_1_1_1_1_3_3 = new JLabel("Grupo inv.");
@@ -261,6 +264,35 @@ public class VerMisArticulosView{
 		lblTituloTrackArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblTituloTrackArticulo.setBounds(360, 33, 480, 13);
 		frame.getContentPane().add(lblTituloTrackArticulo);
+		
+		JLabel lblId_1_1_1_1_1_1_1 = new JLabel("Estado actual:");
+		lblId_1_1_1_1_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblId_1_1_1_1_1_1_1.setBounds(304, 235, 102, 13);
+		frame.getContentPane().add(lblId_1_1_1_1_1_1_1);
+		
+		 lblEstado = new JLabel("");
+		lblEstado.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblEstado.setBounds(408, 235, 145, 13);
+		frame.getContentPane().add(lblEstado);
+		
+		JLabel lblId_1_1_1_1_1_1_1_1 = new JLabel("Decisión:");
+		lblId_1_1_1_1_1_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblId_1_1_1_1_1_1_1_1.setBounds(563, 235, 67, 13);
+		frame.getContentPane().add(lblId_1_1_1_1_1_1_1_1);
+		
+		 lblDecision = new JLabel("");
+		lblDecision.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblDecision.setBounds(630, 235, 69, 13);
+		frame.getContentPane().add(lblDecision);
+		
+		 btnVerDecision = new JButton("Ver Decisión");
+		btnVerDecision.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnVerDecision.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnVerDecision.setBounds(709, 227, 121, 21);
+		frame.getContentPane().add(btnVerDecision);
 	}
 
 	//Getters y Setters de las tablas
@@ -360,6 +392,30 @@ public class VerMisArticulosView{
 	
 	public void setLblFechaModificacionArticulo(JLabel lblFechaModificacionArticulo) {
 		this.lblFechaModificacionArticulo = lblFechaModificacionArticulo;
+	}
+	
+	public JLabel getLblEstado() {
+		return lblEstado;
+	}
+	
+	public void setLblEstado(JLabel lblEstado) {
+		this.lblEstado = lblEstado;
+	}
+	
+	public JLabel getLblDecision() {
+		return lblDecision;
+	}
+	
+	public void setLblDecision(JLabel lblDecision) {
+		this.lblDecision = lblDecision;
+	}
+	
+	public JButton getBtnVerDecision() {
+		return btnVerDecision;
+	}
+	
+	public void setBtnVerDecision(JButton btnVerDecision) {
+		this.btnVerDecision = btnVerDecision;
 	}
 
 	public JLabel getLblEnviadoPorArticulo() {
