@@ -2,11 +2,10 @@ package app.controller;
 
 import java.util.List;
 
-import javax.swing.JOptionPane;
+
 
 import app.dto.ArticuloRevisionDTO;
 import app.dto.PreferenciaDTO;
-import app.dto.UsuarioPreferenciaDTO;
 import app.enums.Rol;
 import app.model.IndicarPreferenciaArticulosModel;
 import app.util.UserUtil;
