@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import app.dto.RevisionArticuloRevisorDTO;
+import javax.swing.DefaultComboBoxModel;
 
 public class RevisionArticuloRevisorView {
 
@@ -32,6 +33,8 @@ public class RevisionArticuloRevisorView {
 	private JTextArea txtComentariosCoordinadores;
 	private JComboBox<String> comboNivelExperto;
 	private JComboBox<String> comboDecision;
+	private JComboBox<String> comboBoxPendientes;
+	private JComboBox comboBoxRevisor;
 	private JButton btnEnviarRevision;
 
 	public RevisionArticuloRevisorView() {
@@ -61,6 +64,10 @@ public class RevisionArticuloRevisorView {
 
 		JScrollPane scrollArticulos = new JScrollPane(listArticulos);
 		panelIzquierdo.add(scrollArticulos, BorderLayout.CENTER);
+		
+		comboBoxPendientes = new JComboBox<String>();
+		comboBoxPendientes.setModel(new DefaultComboBoxModel<String>(new String[] {"Pendientes", "Ya revisados"}));
+		scrollArticulos.setColumnHeaderView(comboBoxPendientes);
 		panelIzquierdo.setPreferredSize(new Dimension(250, 0));
 		contentPane.add(panelIzquierdo, BorderLayout.WEST);
 
@@ -128,6 +135,12 @@ public class RevisionArticuloRevisorView {
 
 		// --- Botón para enviar la revisión ---
 		JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		
+		JLabel lblNewLabelRevisor = new JLabel("Revisor:");
+		panelBoton.add(lblNewLabelRevisor);
+		
+		comboBoxRevisor = new JComboBox();
+		panelBoton.add(comboBoxRevisor);
 		btnEnviarRevision = new JButton("Enviar Revisión");
 		panelBoton.add(btnEnviarRevision);
 		panelDerecho.add(panelBoton);
@@ -166,5 +179,18 @@ public class RevisionArticuloRevisorView {
 	public JButton getBtnEnviarRevision() {
 		return this.btnEnviarRevision;
 	}
-
+	
+	public JComboBox<String> getComboBoxPendientes() {
+		return this.comboBoxPendientes;
+	}
+	
+	public void setComboBoxPendientes(JComboBox<String> comboBoxPendientes) {
+		this.comboBoxPendientes = comboBoxPendientes;
+	}
+	public JComboBox getComboBoxRevisor() {
+		return comboBoxRevisor;
+	}
+	public void setComboBoxRevisor(JComboBox comboBoxRevisor) {
+		this.comboBoxRevisor = comboBoxRevisor;
+	}
 }

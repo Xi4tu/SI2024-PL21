@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
+import app.dto.RevisionArticuloRevisionDTO;
 import app.dto.RevisionArticuloRevisorDTO;
+import app.dto.RevisionAutorDTO;
 import app.enums.Rol;
 import app.model.RevisionArticuloRevisorModel;
 import app.util.UserUtil;
@@ -49,31 +52,96 @@ public class RevisionArticuloRevisorController {
 	 * Método que se encarga de inicializar el controlador
 	 */
 	public void initController() {
-		// Agrear listener al botón de enviar revisión
-		view.getBtnEnviarRevision().addActionListener(e -> SwingUtil.exceptionWrapper(() -> enviarRevision()));
-		// Cuando se selecciona un artículo, mostrar el nombre del fichero
-		view.getListArticulos().addListSelectionListener(e -> {
-			RevisionArticuloRevisorDTO articuloSeleccionado = view.getListArticulos().getSelectedValue();
-			// Verifica si el objeto o su id son nulos
-			if (articuloSeleccionado == null || articuloSeleccionado.getId() == 0) {
-				return;
-			}
+	    // Listener botón "Enviar Revisión"
+	    view.getBtnEnviarRevision().addActionListener(e ->
+	        SwingUtil.exceptionWrapper(() -> enviarRevision())
+	    );
 
-			// Guarda el id en una variable (objeto Integer)
-			Integer idSeleccionado = articuloSeleccionado.getId();
+	    // Listener al seleccionar un artículo
+	    view.getListArticulos().addListSelectionListener(e -> {
+	        if (!e.getValueIsAdjusting()) {
+	            int index = view.getListArticulos().getSelectedIndex();
+	            if (index >= 0) {
+	                RevisionArticuloRevisorDTO articulo = articulos.get(index);
 
-			articulos.forEach(art -> {
-				// Si art.getId() es primitivo int, conviértelo a Integer para compararlo con
-				// equals
-				if (idSeleccionado.equals(Integer.valueOf(art.getId()))) {
-					articuloSeleccionado.setNombreFichero(art.getNombreFichero());
-				}
-			});
+	                // 🔄 Cargar revisores del artículo al combo
+	                List<String> revisores = model.obtenerRevisoresDelArticulo(articulo.getId());
+	                JComboBox<String> comboRevisor = view.getComboBoxRevisor();
 
-			view.getLblFileName().setText(articuloSeleccionado.getNombreFichero());
-		});
+	                comboRevisor.removeAllItems();
+	                for (String r : revisores) {
+	                    comboRevisor.addItem(r);
+	                }
 
+	                // Seleccionar por defecto al usuario actual
+	                comboRevisor.setSelectedItem(email);
+	            }
+	        }
+	    });
+
+	    // Listener para alternar entre "Pendientes" y "Revisados"
+	    view.getComboBoxPendientes().addItemListener(e -> {
+	        if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+	            String opcion = (String) e.getItem();
+	            boolean esPendientes = opcion.equals("Pendientes");
+
+	            actualizarListaArticulos(esPendientes);
+
+	            // 🧹 Limpiar combo revisores si estamos en "Pendientes"
+	            JComboBox<String> comboRevisor = view.getComboBoxRevisor();
+	            if (esPendientes) {
+	                comboRevisor.removeAllItems();
+	                comboRevisor.setEnabled(false); // 🔒 Desactivar
+	            } else {
+	                comboRevisor.setEnabled(true); // 🔓 Activar solo en "Ya revisados"
+	            }
+	        }
+	    });
+
+	    // Listener al cambiar el revisor seleccionado en el combo
+	    view.getComboBoxRevisor().addActionListener(e -> {
+	        int indexArticulo = view.getListArticulos().getSelectedIndex();
+	        if (indexArticulo < 0) return;
+
+	        RevisionArticuloRevisorDTO articulo = articulos.get(indexArticulo);
+	        String revisorSeleccionado = (String) view.getComboBoxRevisor().getSelectedItem();
+	        if (revisorSeleccionado == null || revisorSeleccionado.isEmpty()) return;
+
+	        // 🔍 Obtener la revisión del revisor seleccionado
+	        RevisionAutorDTO revisionAutor = model.obtenerRevisionAutor(articulo.getId(), revisorSeleccionado);
+	        RevisionArticuloRevisionDTO revisionCoord = model.obtenerRevisionCoordinador(articulo.getId(), revisorSeleccionado);
+
+	        // Cargar comentarios para autor
+	        if (revisionAutor != null) {
+	            view.getTxtComentariosAutores().setText(revisionAutor.getComentariosParaAutor());
+	            view.getComboNivelExperto().setSelectedItem(revisionAutor.getNivelExperto());
+	            view.getComboDecision().setSelectedItem(obtenerTextoDecision(revisionAutor.getDecisionRevisor()));
+	        } else {
+	            view.getTxtComentariosAutores().setText("");
+	            view.getComboNivelExperto().setSelectedIndex(0);
+	            view.getComboDecision().setSelectedIndex(0);
+	        }
+
+	        // Cargar comentarios para coordinador
+	        if (revisionCoord != null) {
+	            view.getTxtComentariosCoordinadores().setText(revisionCoord.getComentariosParaCoordinador());
+	        } else {
+	            view.getTxtComentariosCoordinadores().setText("");
+	        }
+
+	        // 🔒 Activar o desactivar edición según revisor y fecha
+	        boolean esRevisorActual = revisorSeleccionado.equals(email);
+	        boolean periodoAbierto = model.periodoRevisionActivoPorConferencia(articulo.getId());
+	        boolean permitirEdicion = esRevisorActual && periodoAbierto;
+
+	        view.getTxtComentariosAutores().setEnabled(permitirEdicion);
+	        view.getTxtComentariosCoordinadores().setEnabled(permitirEdicion);
+	        view.getComboNivelExperto().setEnabled(permitirEdicion);
+	        view.getComboDecision().setEnabled(permitirEdicion);
+	        view.getBtnEnviarRevision().setEnabled(permitirEdicion);
+	    });
 	}
+
 
 	/*
 	 * Método que se encarga de inicializar la vista
@@ -107,9 +175,13 @@ public class RevisionArticuloRevisorController {
 			int decision = Integer
 					.parseInt(((String) view.getComboDecision().getSelectedItem()).split(" ")[2].split("\\(|\\)")[1]);
 
+			String fechaHoy = UserUtil.getFechaActual();
+			
 			// Llamar al backend para insertar la revisión
 			model.actualizarRevision(idArticulo, email, comentariosAutores, comentariosCoordinadores, nivelExperto,
 					decision);
+			// Guardar o actualizar revisión
+		    model.guardarOActualizarRevision(idArticulo, email, comentariosAutores, comentariosCoordinadores, nivelExperto, decision, fechaHoy);
 			SwingUtil.showMessage("La revisión se ha enviado correctamente", "Información",
 					JOptionPane.INFORMATION_MESSAGE);
 
@@ -119,12 +191,7 @@ public class RevisionArticuloRevisorController {
 			view.getTxtComentariosAutores().setText("");
 			view.getTxtComentariosCoordinadores().setText("");
 			// Comprobar si el listmodel está vacío
-			if (listModel.isEmpty()) {
-				SwingUtil.showMessage("No tienes ningún artículo pendiente de revisión", "Información",
-						JOptionPane.INFORMATION_MESSAGE);
-				view.getFrame().dispose();
-			}
-
+			
 		} else {
 			SwingUtil.showMessage("Debes de rellenar toda la información", "ERROR", JOptionPane.ERROR_MESSAGE);
 		}
@@ -163,14 +230,43 @@ public class RevisionArticuloRevisorController {
 			listModel.addElement(dto);
 		}
 
-		// Si no hay articulos asignados, mostrar un mensaje y cerrar la vista
-		if (articulos.isEmpty()) {
-			SwingUtil.showMessage("No tienes ningún artículo pendiente de revisión", "Información",
-					JOptionPane.INFORMATION_MESSAGE);
-			return false;
-		}
+		
 
 		return true;
 	}
+	private void actualizarListaArticulos(boolean soloPendientes) {
+	    listModel.clear();
+	    List<RevisionArticuloRevisorDTO> nuevaLista;
+
+	    if (soloPendientes) {
+	        nuevaLista = model.obtenerArticulosAsignados(email);
+	    } else {
+	        nuevaLista = model.obtenerArticulosRevisados(email);
+	    }
+
+	    for (RevisionArticuloRevisorDTO dto : nuevaLista) {
+	        listModel.addElement(dto);
+	    }
+
+	    // Actualiza también la lista interna por si se necesita
+	    this.articulos = nuevaLista;
+	}
+	private String obtenerTextoDecision(int decision) {
+	    switch (decision) {
+	        case 2:
+	            return "Aceptar Fuerte (2)";
+	        case 1:
+	            return "Aceptar Débil (1)";
+	        case -1:
+	            return "Rechazar Débil (-1)";
+	        case -2:
+	            return "Rechazar Fuerte (-2)";
+	        default:
+	            return "No asignada";
+	    }
+	}
+
+
+
 
 }
