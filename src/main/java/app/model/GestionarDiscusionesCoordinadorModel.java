@@ -197,4 +197,107 @@ public class GestionarDiscusionesCoordinadorModel {
 	        DbUtils.closeQuietly(conn);
 	    }
 	}
+	
+	/**
+	 * Obtiene una lista de artículos cuya discusión está cerrada.
+	 *
+	 * <p>
+	 * Se seleccionan aquellos artículos que tengan en la tabla Discusion el campo <code>isCerrada</code> con valor 1.
+	 * </p>
+	 *
+	 * @return Lista de objetos {@link ArticuloDiscusionDTO} que representan los artículos con discusión cerrada.
+	 */
+	public List<ArticuloDiscusionDTO> getArticulosCerrados() {
+	    String sql = "SELECT DISTINCT a.idArticulo AS idArticulo, "
+	               + "       a.titulo AS titulo, "
+	               + "       a.valoracionGlobal AS valoracionGlobal "
+	               + "FROM Articulo a "
+	               + "JOIN Discusion d ON a.idArticulo = d.idArticulo "
+	               + "WHERE d.isCerrada = 1";
+	    return db.executeQueryPojo(ArticuloDiscusionDTO.class, sql);
+	}
+	
+	/**
+	 * Marca la discusión de un artículo como cerrada, actualizando el campo isCerrada a 1.
+	 *
+	 * @param idArticulo Identificador del artículo cuya discusión se desea cerrar.
+	 * @return true si se cerró la discusión correctamente; false en caso de error.
+	 */
+	public boolean cerrarDiscusion(int idArticulo) {
+	    Connection conn = null;
+	    try {
+	        // Obtener la conexión de la base de datos.
+	        conn = db.getConnection();
+	        QueryRunner qr = new QueryRunner();
+	        String sql = "UPDATE Discusion SET isCerrada = 1 WHERE idArticulo = ?";
+	        int rows = qr.update(conn, sql, idArticulo);
+	        return rows > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        DbUtils.closeQuietly(conn);
+	    }
+	}
+	
+	/**
+	 * Obtiene una lista de artículos cuya discusión está abierta (isCerrada = 0) y en las que
+	 * todos los revisores asociados se han mantenido firmes (es decir, no existe ningún registro en
+	 * Usuario_Discusion para esa discusión con mantenerseFirme <> 1).
+	 *
+	 * @return Lista de objetos {@link ArticuloDiscusionDTO} que representan los artículos con discusión abierta y revisores firmes.
+	 */
+	public List<ArticuloDiscusionDTO> getDiscusionAbiertaFirmes() {
+	    String sql = "SELECT DISTINCT a.idArticulo AS idArticulo, " +
+	                 "       a.titulo AS titulo, " +
+	                 "       a.valoracionGlobal AS valoracionGlobal " +
+	                 "FROM Articulo a " +
+	                 "JOIN Discusion d ON a.idArticulo = d.idArticulo " +
+	                 "WHERE d.isCerrada = 0 " +
+	                 "  AND NOT EXISTS ( " +
+	                 "       SELECT 1 FROM Usuario_Discusion ud " +
+	                 "       WHERE ud.idDiscusion = d.idDiscusion " +
+	                 "         AND ud.mantenerseFirme <> 1 " +
+	                 "  )";
+	    return db.executeQueryPojo(ArticuloDiscusionDTO.class, sql);
+	}
+	
+	/**
+	 * Obtiene una lista de artículos que tienen discusión abierta (isCerrada = 0).
+	 *
+	 * @return Lista de objetos {@link ArticuloDiscusionDTO} que representan los artículos con discusión abierta.
+	 */
+	public List<ArticuloDiscusionDTO> getDiscusionAbierta() {
+	    String sql = "SELECT DISTINCT a.idArticulo AS idArticulo, "
+	               + "       a.titulo AS titulo, "
+	               + "       a.valoracionGlobal AS valoracionGlobal "
+	               + "FROM Articulo a "
+	               + "JOIN Discusion d ON a.idArticulo = d.idArticulo "
+	               + "WHERE d.isCerrada = 0";
+	    return db.executeQueryPojo(ArticuloDiscusionDTO.class, sql);
+	}
+	
+	/**
+	 * Obtiene una lista de artículos que tienen discusión abierta (isCerrada = 0)
+	 * y cuyo deadline de discusión, definido en la conferencia asociada, ya ha pasado.
+	 *
+	 * Se unen las tablas Articulo, Discusion, Track y Conferencia para acceder al atributo deadlineDiscusion.
+	 * Se utiliza la función date() para comparar la fecha del deadline con la fecha actual (date('now')).
+	 *
+	 * @return Lista de objetos {@link ArticuloDiscusionDTO} que representan los artículos con discusión abierta y deadline pasado.
+	 */
+	public List<ArticuloDiscusionDTO> getDiscusionAbiertaDeadlinePasado() {
+	    String sql = "SELECT DISTINCT a.idArticulo AS idArticulo, "
+	               + "       a.titulo AS titulo, "
+	               + "       a.valoracionGlobal AS valoracionGlobal "
+	               + "FROM Articulo a "
+	               + "JOIN Discusion d ON a.idArticulo = d.idArticulo "
+	               + "JOIN Track t ON a.idTrack = t.idTrack "
+	               + "JOIN Conferencia c ON t.idConferencia = c.idConferencia "
+	               + "WHERE d.isCerrada = 0 "
+	               + "  AND date(c.deadlineDiscusion) < date('now')";
+	    return db.executeQueryPojo(ArticuloDiscusionDTO.class, sql);
+	}
+
+
 }
