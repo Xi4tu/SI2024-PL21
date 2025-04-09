@@ -1,6 +1,5 @@
 package app.model;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -37,28 +36,38 @@ public class ParticiparDiscusionesCoordModel {
     public List<AccederDiscusionDTO> getArticulos(String email, String fecha) {
         String sql = "SELECT a.idArticulo AS idArticulo, " +
                      "       a.titulo AS titulo, " +
-                     "       CAST(r.decisionRevisor AS INT) AS decisionRevisor, " +
-                     "       ud.mantenerseFirme AS mantenerseFirme, " +
-                     "       c.deadlineDiscusion AS deadlineDiscusion " +
+                     "       MIN(CAST(r.decisionRevisor AS INT)) AS decisionRevisor, " +
+                     "       MIN(ud.mantenerseFirme) AS mantenerseFirme, " +
+                     "       MIN(c.deadlineDiscusion) AS deadlineDiscusion " +
                      "FROM Articulo a " +
                      "JOIN Track t ON a.idTrack = t.idTrack " +
                      "JOIN Conferencia c ON t.idConferencia = c.idConferencia " +
                      "JOIN Revision r ON r.idArticulo = a.idArticulo " +
                      "JOIN Discusion d ON d.idArticulo = a.idArticulo " +
                      "JOIN Usuario_Discusion ud ON ud.idDiscusion = d.idDiscusion " +
-                     "WHERE d.isCerrada = 0";
+                     "WHERE d.isCerrada = 0 " +
+                     "GROUP BY a.idArticulo, a.titulo";
         return db.executeQueryPojo(AccederDiscusionDTO.class, sql);
     }
+
 
     /**
      * Obtiene las anotaciones de los artículos en discusión para el coordinador.
      * <p>
-     * Se retorna la lista mapeada a {@link AnotacionesDTO}.
+     * La consulta retorna la lista mapeada a {@link AnotacionesDTO} con los siguientes campos:
+     * <ul>
+     *   <li><code>idArticulo</code>: Identificador del artículo.</li>
+     *   <li><code>emailUsuario</code>: Email del usuario que hizo la anotación.</li>
+     *   <li><code>comentario</code>: Texto de la anotación.</li>
+     *   <li><code>fecha</code>: Fecha de la anotación.</li>
+     *   <li><code>hora</code>: Hora de la anotación.</li>
+     * </ul>
+     * Se ordenan las anotaciones de la más reciente a la más antigua.
      * </p>
      *
-     * @param email Correo del coordinador (no se utiliza en este filtro).
-     * @param fecha Fecha actual.
-     * @return Lista de {@link AnotacionesDTO}.
+     * @param email Correo electrónico del revisor.
+     * @param fecha Fecha actual en formato "yyyy-MM-dd" (ya no se utiliza en este caso).
+     * @return Lista de {@link AnotacionesDTO} con las anotaciones correspondientes.
      */
     public List<AnotacionesDTO> getAnotaciones(String email, String fecha) {
         String sql =
@@ -74,10 +83,10 @@ public class ParticiparDiscusionesCoordModel {
             "JOIN Conferencia c ON c.idConferencia = t.idConferencia " +
             "JOIN Revision r ON r.idArticulo = a.idArticulo " +
             "WHERE r.emailUsuario = ? " +
-            "  AND c.deadlineDiscusion >= ? " +
             "ORDER BY an.fecha DESC, an.hora DESC";
-        return db.executeQueryPojo(AnotacionesDTO.class, sql, email, fecha);
+        return db.executeQueryPojo(AnotacionesDTO.class, sql, email);
     }
+
 
     /**
      * Agrega una anotación al artículo en discusión.
