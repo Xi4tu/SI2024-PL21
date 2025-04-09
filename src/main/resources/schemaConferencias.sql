@@ -49,6 +49,7 @@ CREATE TABLE "Articulo" (
 CREATE TABLE "Discusion" (
 	"idDiscusion"	INTEGER NOT NULL UNIQUE,
 	"idArticulo"	INTEGER NOT NULL,
+	"isCerrada"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("idDiscusion" AUTOINCREMENT)
 );
 
