@@ -84,8 +84,6 @@ public class ParticiparDiscusionesCoordController {
 	 */
 	@SuppressWarnings("serial")
 	public void initController() {
-		// Botón de mantenerse firme.
-		view.getBtnMantenerFirme().addActionListener(e -> mantenerFirme());
 		// Botón de agregar nota.
 		view.getBtnAgregarNota().addActionListener(e -> agregarNota());
 		// Cuando se selecciona un artículo, mostrar anotaciones y la decisión del
@@ -102,15 +100,6 @@ public class ParticiparDiscusionesCoordController {
 			// Mostrar la decisión del revisor en el ComboBox.
 			DecisionRevisor decisionEnum = DecisionRevisor.fromValue(articuloSeleccionado.getDecisionRevisor());
 			view.getComboDecision().setSelectedItem(decisionEnum);
-
-			// Habilitar o deshabilitar controles según si el revisor se ha mantenido firme.
-			if (articuloSeleccionado.getMantenerseFirme() == 1) {
-				view.getComboDecision().setEnabled(false);
-				view.getBtnMantenerFirme().setEnabled(false);
-			} else {
-				view.getComboDecision().setEnabled(true);
-				view.getBtnMantenerFirme().setEnabled(true);
-			}
 
 			// Cargar y mostrar las anotaciones asociadas al artículo.
 			anotacionesDTO = anotacionesArticulos.get(articuloSeleccionado.getIdArticulo());
@@ -182,7 +171,6 @@ public class ParticiparDiscusionesCoordController {
 
 		// Bloquear el ComboBox y el botón de "mantener firme".
 		view.getComboDecision().setEnabled(false);
-		view.getBtnMantenerFirme().setEnabled(false);
 	}
 
 	/**

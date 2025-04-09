@@ -24,192 +24,255 @@ import javax.swing.border.EmptyBorder;
 import app.dto.AccederDiscusionDTO;
 import app.enums.DecisionRevisor;
 
+/**
+ * Vista para la participación del coordinador en discusiones de artículos.
+ * <p>
+ * Permite seleccionar un artículo en discusión y:
+ * <ul>
+ * <li>Modificar la decisión de un revisor elegido (comboRevisor +
+ * comboDecision).</li>
+ * <li>Ver las anotaciones existentes en orden cronológico.</li>
+ * <li>Agregar nuevas anotaciones.</li>
+ * </ul>
+ * </p>
+ */
 public class ParticiparDiscusionesCoordView {
-	
+
 	// -----------------------------------------------------
-    // Atributos de la vista (Componentes de UI)
-    // -----------------------------------------------------
-    private JFrame frame;                       // Marco principal
-    private JPanel contentPane;                 // Panel contenedor principal
+	// Atributos de la vista (Componentes de UI)
+	// -----------------------------------------------------
+	private JFrame frame; // Marco principal
+	private JPanel contentPane; // Panel contenedor principal
 
-    // Lista de artículos en discusión (vacía; el controlador llenará los datos)
-    private JList<AccederDiscusionDTO> listArticulos;
+	// Lista de artículos en discusión
+	private JList<AccederDiscusionDTO> listArticulos;
 
-    // Panel donde se muestran las anotaciones en orden cronológico
-    private JPanel panelAnotaciones;
+	// Panel donde se muestran las anotaciones (en orden cronológico)
+	private JPanel panelAnotaciones;
 
-    // Campo para añadir nueva anotación
-    private JTextArea textNuevaAnotacion;
+	// Campo para añadir nueva anotación
+	private JTextArea textNuevaAnotacion;
 
-    // ComboBox para cambiar la decisión (se llenará con los valores del enum)
-    private JComboBox<DecisionRevisor> comboDecision;
+	// ComboBox para elegir al revisor
+	private JComboBox<String> comboRevisor;
 
-    // Botones
-    private JButton btnAgregarNota;
-    private JButton btnMantenerFirme;
+	// ComboBox para cambiar la decisión del revisor seleccionado
+	private JComboBox<DecisionRevisor> comboDecision;
 
-    // -----------------------------------------------------
-    // Constructor
-    // -----------------------------------------------------
-    public ParticiparDiscusionesCoordView() {
-        initialize();
-    }
+	// Botones
+	private JButton btnAgregarNota;
+	private JButton btnModificarDecision;
 
-    // -----------------------------------------------------
-    // Inicialización de la interfaz gráfica (solo presentación)
-    // -----------------------------------------------------
-    private void initialize() {
-        frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.setTitle("Discusión de Artículos - Revisor");
-        frame.setBounds(100, 100, 900, 500);
+	// -----------------------------------------------------
+	// Constructor
+	// -----------------------------------------------------
+	public ParticiparDiscusionesCoordView() {
+		initialize();
+	}
 
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPane.setLayout(new BorderLayout(10, 10));
-        frame.setContentPane(contentPane);
+	/**
+	 * Inicializa la interfaz gráfica.
+	 * <p>
+	 * Adapta el rectángulo superior para que el coordinador pueda:
+	 * <ul>
+	 * <li>Seleccionar un revisor en el comboRevisor</li>
+	 * <li>Elegir una nueva decisión en comboDecision</li>
+	 * <li>Pulsar "Modificar" para aplicar el cambio</li>
+	 * </ul>
+	 * El resto de la vista permanece igual, con la lista de artículos a la
+	 * izquierda y la sección de anotaciones en la parte central/derecha.
+	 * </p>
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		frame.setTitle("Discusión de Artículos - Coordinador");
+		frame.setBounds(100, 100, 900, 500);
 
-        // -------------------------------------------------------
-        // Panel Izquierdo: Lista de artículos en discusión
-        // -------------------------------------------------------
-        JPanel panelIzquierdo = new JPanel(new BorderLayout());
-        panelIzquierdo.setBorder(BorderFactory.createTitledBorder("Mis Artículos en Discusión"));
-        // La lista se inicializa vacía; el controlador la llenará con datos.
-        listArticulos = new JList<>();
-        listArticulos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scrollArticulos = new JScrollPane(listArticulos);
-        panelIzquierdo.add(scrollArticulos, BorderLayout.CENTER);
-        panelIzquierdo.setPreferredSize(new Dimension(250, 0));
-        contentPane.add(panelIzquierdo, BorderLayout.WEST);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+		contentPane.setLayout(new BorderLayout(10, 10));
+		frame.setContentPane(contentPane);
 
-        // -------------------------------------------------------
-        // Panel Derecho: Detalles de la discusión
-        // -------------------------------------------------------
-        JPanel panelDerecho = new JPanel(new BorderLayout(10, 10));
-        contentPane.add(panelDerecho, BorderLayout.CENTER);
+		// -------------------------------------------------------
+		// Panel Izquierdo: Lista de artículos en discusión
+		// -------------------------------------------------------
+		JPanel panelIzquierdo = new JPanel(new BorderLayout());
+		panelIzquierdo.setBorder(BorderFactory.createTitledBorder("Artículos en Discusión"));
+		listArticulos = new JList<>();
+		listArticulos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scrollArticulos = new JScrollPane(listArticulos);
+		panelIzquierdo.add(scrollArticulos, BorderLayout.CENTER);
+		panelIzquierdo.setPreferredSize(new Dimension(250, 0));
+		contentPane.add(panelIzquierdo, BorderLayout.WEST);
 
-        // Panel Superior: Sección para la decisión del revisor
-        JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        panelSuperior.setBorder(BorderFactory.createTitledBorder("Tu Decisión Actual"));
+		// -------------------------------------------------------
+		// Panel Derecho: Contenido principal (decisiones, anotaciones)
+		// -------------------------------------------------------
+		JPanel panelDerecho = new JPanel(new BorderLayout(10, 10));
+		contentPane.add(panelDerecho, BorderLayout.CENTER);
 
-        JLabel lblDecision = new JLabel("Decisión:");
-        lblDecision.setFont(new Font("SansSerif", Font.BOLD, 12));
-        panelSuperior.add(lblDecision);
+		// -------------------------------------------------------
+		// Panel Superior: Cambiar decisión de un revisor
+		// -------------------------------------------------------
+		JPanel panelCambiarDecision = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+		panelCambiarDecision.setBorder(BorderFactory.createTitledBorder("Cambiar decisión de revisor"));
 
-        // Inicializamos el ComboBox con los valores del enum DecisionRevisor
-        comboDecision = new JComboBox<>();
-        comboDecision.setModel(new DefaultComboBoxModel<>(DecisionRevisor.values()));
-        // Se deja sin selección por defecto para que el controlador lo establezca
-        comboDecision.setSelectedIndex(-1);
-        panelSuperior.add(comboDecision);
+		// Etiqueta y ComboBox de Revisor
+		JLabel lblRevisor = new JLabel("Revisor:");
+		lblRevisor.setFont(new Font("SansSerif", Font.BOLD, 12));
+		panelCambiarDecision.add(lblRevisor);
 
-        // Botón para "mantener firme" la decisión (el controlador asignará el listener)
-        btnMantenerFirme = new JButton("Mantenerme Firme");
-        panelSuperior.add(btnMantenerFirme);
+		comboRevisor = new JComboBox<>();
+		// Se deja vacío inicialmente; el controlador lo llenará según corresponda
+		panelCambiarDecision.add(comboRevisor);
 
-        panelDerecho.add(panelSuperior, BorderLayout.NORTH);
+		// Etiqueta y ComboBox de Decisión
+		JLabel lblDecision = new JLabel("Decisión:");
+		lblDecision.setFont(new Font("SansSerif", Font.BOLD, 12));
+		panelCambiarDecision.add(lblDecision);
 
-        // Panel Central: Anotaciones y campo para nueva anotación
-        JPanel panelCentral = new JPanel(new BorderLayout(5, 5));
+		comboDecision = new JComboBox<>();
+		comboDecision.setModel(new DefaultComboBoxModel<>(DecisionRevisor.values()));
+		comboDecision.setSelectedIndex(-1); // sin selección por defecto
+		panelCambiarDecision.add(comboDecision);
 
-        // Panel con anotaciones (en orden cronológico)
-        panelAnotaciones = new JPanel();
-        panelAnotaciones.setLayout(new BoxLayout(panelAnotaciones, BoxLayout.Y_AXIS));
-        JScrollPane scrollAnotaciones = new JScrollPane(panelAnotaciones);
-        scrollAnotaciones.setBorder(BorderFactory.createTitledBorder("Anotaciones (Orden Cronológico)"));
-        panelCentral.add(scrollAnotaciones, BorderLayout.CENTER);
+		// Botón "Modificar" para cambiar la decisión del revisor
+		btnModificarDecision = new JButton("Modificar");
+		panelCambiarDecision.add(btnModificarDecision);
 
-        // Panel para añadir nueva anotación
-        JPanel panelNuevaAnotacion = new JPanel(new BorderLayout(5, 5));
-        panelNuevaAnotacion.setBorder(BorderFactory.createTitledBorder("Añadir nueva anotación"));
-        textNuevaAnotacion = new JTextArea(3, 30);
-        textNuevaAnotacion.setWrapStyleWord(true);
-        textNuevaAnotacion.setLineWrap(true);
-        JScrollPane scrollNuevaAnotacion = new JScrollPane(textNuevaAnotacion);
-        panelNuevaAnotacion.add(scrollNuevaAnotacion, BorderLayout.CENTER);
-        btnAgregarNota = new JButton("Agregar Nota");
-        panelNuevaAnotacion.add(btnAgregarNota, BorderLayout.SOUTH);
-        panelCentral.add(panelNuevaAnotacion, BorderLayout.SOUTH);
-        panelDerecho.add(panelCentral, BorderLayout.CENTER);
+		// Se añade el panel superior al panel derecho
+		panelDerecho.add(panelCambiarDecision, BorderLayout.NORTH);
 
-        // Nota: El controlador se encargará de habilitar o deshabilitar componentes según el deadline y estado del revisor.
-    }
+		// -------------------------------------------------------
+		// Panel Central: Anotaciones + campo para nueva anotación
+		// -------------------------------------------------------
+		JPanel panelCentral = new JPanel(new BorderLayout(5, 5));
 
-    // -----------------------------------------------------
-    // Métodos auxiliares para la actualización de la UI (para uso del controlador)
-    // -----------------------------------------------------
+		// Panel con anotaciones (orden cronológico)
+		panelAnotaciones = new JPanel();
+		panelAnotaciones.setLayout(new BoxLayout(panelAnotaciones, BoxLayout.Y_AXIS));
+		JScrollPane scrollAnotaciones = new JScrollPane(panelAnotaciones);
+		scrollAnotaciones.setBorder(BorderFactory.createTitledBorder("Anotaciones (Orden Cronológico)"));
+		panelCentral.add(scrollAnotaciones, BorderLayout.CENTER);
 
-    /**
-     * Agrega una "tarjeta" de anotación al panel de anotaciones.
-     *
-     * @param nombreRevisor Nombre del autor de la anotación (p.ej., "Dra. Marta Sanz").
-     * @param fecha         Fecha de la anotación (p.ej., "14/05").
-     * @param hora          Hora de la anotación (p.ej., "10:30am").
-     * @param contenido     Contenido de la anotación.
-     */
-    public void addAnnotationCard(String emailRevisor, String fecha, String hora, String contenido) {
-        // Construimos el texto para el encabezado:
-        // Nombre seguido de la fecha y hora entre paréntesis.
-        String encabezado = emailRevisor + " (" + fecha + " - " + hora + ")";
+		// Panel para añadir nueva anotación
+		JPanel panelNuevaAnotacion = new JPanel(new BorderLayout(5, 5));
+		panelNuevaAnotacion.setBorder(BorderFactory.createTitledBorder("Añadir nueva anotación"));
 
-        JPanel tarjeta = new JPanel(new BorderLayout(5, 5));
-        tarjeta.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
+		textNuevaAnotacion = new JTextArea(3, 30);
+		textNuevaAnotacion.setWrapStyleWord(true);
+		textNuevaAnotacion.setLineWrap(true);
+		JScrollPane scrollNuevaAnotacion = new JScrollPane(textNuevaAnotacion);
+		panelNuevaAnotacion.add(scrollNuevaAnotacion, BorderLayout.CENTER);
 
-        JLabel lblAutor = new JLabel(encabezado);
-        lblAutor.setFont(new Font("SansSerif", Font.BOLD, 12));
-        tarjeta.add(lblAutor, BorderLayout.NORTH);
+		btnAgregarNota = new JButton("Agregar Nota");
+		panelNuevaAnotacion.add(btnAgregarNota, BorderLayout.SOUTH);
 
-        JLabel lblContenido = new JLabel("<html><p style='width:400px'>" + contenido + "</p></html>");
-        tarjeta.add(lblContenido, BorderLayout.CENTER);
+		panelCentral.add(panelNuevaAnotacion, BorderLayout.SOUTH);
+		panelDerecho.add(panelCentral, BorderLayout.CENTER);
+	}
 
-        panelAnotaciones.add(tarjeta);
-        panelAnotaciones.add(Box.createVerticalStrut(10));
-        panelAnotaciones.revalidate();
-    }
+	// -----------------------------------------------------
+	// Métodos auxiliares para la actualización de la UI (para uso del controlador)
+	// -----------------------------------------------------
 
+	/**
+	 * Agrega una "tarjeta" de anotación al panel de anotaciones.
+	 * 
+	 * @param emailRevisor Email o nombre del autor de la anotación (p.ej.
+	 *                     "dra.marta@x.com").
+	 * @param fecha        Fecha de la anotación (p.ej., "2026-03-11").
+	 * @param hora         Hora de la anotación (p.ej., "10:30").
+	 * @param contenido    Contenido de la anotación.
+	 */
+	public void addAnnotationCard(String emailRevisor, String fecha, String hora, String contenido) {
+		String encabezado = emailRevisor + " (" + fecha + " - " + hora + ")";
+		JPanel tarjeta = new JPanel(new BorderLayout(5, 5));
+		tarjeta.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-    /**
-     * Limpia el panel de anotaciones.
-     */
-    public void clearAnnotations() {
-        panelAnotaciones.removeAll();
-        panelAnotaciones.revalidate();
-        panelAnotaciones.repaint();
-    }
+		JLabel lblAutor = new JLabel(encabezado);
+		lblAutor.setFont(new Font("SansSerif", Font.BOLD, 12));
+		tarjeta.add(lblAutor, BorderLayout.NORTH);
 
-    // -----------------------------------------------------
-    // Getters para que el controlador acceda a los componentes
-    // -----------------------------------------------------
+		JLabel lblContenido = new JLabel("<html><p style='width:400px'>" + contenido + "</p></html>");
+		tarjeta.add(lblContenido, BorderLayout.CENTER);
 
-    public JFrame getFrame() {
-        return frame;
-    }
+		panelAnotaciones.add(tarjeta);
+		panelAnotaciones.add(Box.createVerticalStrut(10));
+		panelAnotaciones.revalidate();
+		panelAnotaciones.repaint();
+	}
 
-    public JPanel getContentPane() {
-        return contentPane;
-    }
+	/**
+	 * Limpia todas las anotaciones del panel.
+	 */
+	public void clearAnnotations() {
+		panelAnotaciones.removeAll();
+		panelAnotaciones.revalidate();
+		panelAnotaciones.repaint();
+	}
 
-    public JList<AccederDiscusionDTO> getListArticulos() {
-        return listArticulos;
-    }
+	// -----------------------------------------------------
+	// Getters para que el controlador acceda a los componentes
+	// -----------------------------------------------------
 
-    public JTextArea getTextNuevaAnotacion() {
-        return textNuevaAnotacion;
-    }
+	/**
+	 * @return El frame principal de la vista.
+	 */
+	public JFrame getFrame() {
+		return frame;
+	}
 
-    public JComboBox<DecisionRevisor> getComboDecision() {
-        return comboDecision;
-    }
+	/**
+	 * @return El panel contenedor principal.
+	 */
+	public JPanel getContentPane() {
+		return contentPane;
+	}
 
-    public JButton getBtnAgregarNota() {
-        return btnAgregarNota;
-    }
+	/**
+	 * @return La lista de artículos en discusión que se muestra a la izquierda.
+	 */
+	public JList<AccederDiscusionDTO> getListArticulos() {
+		return listArticulos;
+	}
 
-    public JButton getBtnMantenerFirme() {
-        return btnMantenerFirme;
-    }
+	/**
+	 * @return El área de texto para introducir una nueva anotación.
+	 */
+	public JTextArea getTextNuevaAnotacion() {
+		return textNuevaAnotacion;
+	}
 
+	/**
+	 * @return El comboBox en el que el coordinador elige el revisor.
+	 */
+	public JComboBox<String> getComboRevisor() {
+		return comboRevisor;
+	}
+
+	/**
+	 * @return El comboBox en el que el coordinador elige la nueva decisión para el
+	 *         revisor seleccionado.
+	 */
+	public JComboBox<DecisionRevisor> getComboDecision() {
+		return comboDecision;
+	}
+
+	/**
+	 * @return El botón para agregar una nueva anotación.
+	 */
+	public JButton getBtnAgregarNota() {
+		return btnAgregarNota;
+	}
+
+	/**
+	 * @return El botón para modificar (actualizar) la decisión del revisor
+	 *         seleccionado.
+	 */
+	public JButton getBtnModificarDecision() {
+		return btnModificarDecision;
+	}
 }
