@@ -91,6 +91,11 @@ public class GestionarDiscusionesCoordinadorController {
     public void initController() {
         // Listener para cerrar la ventana.
         view.getBtnCerrar().addActionListener(e -> view.getFrame().dispose());
+        
+        // Listener para el botón "Enviar recordatorio".
+        view.getBtnRecordatorio().addActionListener(e -> {
+            SwingUtil.showMessage("Se ha enviado recordatorio a los revisores", "Información", JOptionPane.INFORMATION_MESSAGE);
+        });
 
         // Listener para el botón "Cerrar Discusión".
         view.getBtnCerrarDiscusion().addActionListener(e -> {
@@ -125,7 +130,7 @@ public class GestionarDiscusionesCoordinadorController {
                         listaActualizada = model.getDiscusionAbiertaDeadlinePasado();
                         break;
                     case "Abiertas sin anotaciones":
-                        // Llamar al método correspondiente, si existe.
+                        listaActualizada = model.getArticulosAbiertasSinAnotaciones();
                         break;
                     default:
                         break;
@@ -238,8 +243,21 @@ public class GestionarDiscusionesCoordinadorController {
                     }
                     view.getListArticulos().setModel(deadlineModel);
                 }
+            } else if ("Abiertas sin anotaciones".equals(selected)) {
+                // Se asume que en el modelo implementaste getArticulosAbiertasSinAnotaciones()
+                List<ArticuloDiscusionDTO> articulosSinAnotaciones = model.getArticulosAbiertasSinAnotaciones();
+                DefaultListModel<ArticuloDiscusionDTO> sinAnotacionesModel = new DefaultListModel<>();
+                if (articulosSinAnotaciones.isEmpty()) {
+                    view.getListArticulos().setModel(sinAnotacionesModel);
+                    view.clearRevisiones();
+                } else {
+                    for (ArticuloDiscusionDTO articulo : articulosSinAnotaciones) {
+                        sinAnotacionesModel.addElement(articulo);
+                    }
+                    view.getListArticulos().setModel(sinAnotacionesModel);
+                }
             }
-            // Se pueden agregar otras ramas para "Abiertas sin anotaciones" si se implementa.
+            
         });
 
         // Listener para el botón "Poner en Discusión".
