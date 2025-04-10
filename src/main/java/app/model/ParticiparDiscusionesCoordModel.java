@@ -81,10 +81,11 @@ public class ParticiparDiscusionesCoordModel {
             "JOIN Articulo a ON a.idArticulo = d.idArticulo " +
             "JOIN Track t ON t.idTrack = a.idTrack " +
             "JOIN Conferencia c ON c.idConferencia = t.idConferencia " +
-            "JOIN Revision r ON r.idArticulo = a.idArticulo " +
-            "WHERE r.emailUsuario = ? " +
+            // Eliminamos el join con Revision r y el filtro "r.emailUsuario = ?"
+            "WHERE d.isCerrada = 0 " + // Opcional, si solo quieres anotaciones de discusiones abiertas
             "ORDER BY an.fecha DESC, an.hora DESC";
-        return db.executeQueryPojo(AnotacionesDTO.class, sql, email);
+        
+        return db.executeQueryPojo(AnotacionesDTO.class, sql);
     }
 
 
