@@ -17,6 +17,7 @@ import app.controller.AceptarDenegarArticuloController;
 import app.controller.AsignarRevisoresController;
 import app.controller.EnviarArticuloController;
 import app.controller.IndicarPreferenciaArticulosController;
+import app.controller.ParticiparDiscusionesCoordController;
 import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
 import app.controller.VerMisArticulosController;
@@ -28,6 +29,7 @@ import app.model.RevisionArticuloAutorModel;
 import app.model.RevisionArticuloRevisorModel;
 import app.model.VerMisArticulosModel;
 import app.model.IndicarPreferenciaArticulosModel;
+import app.model.ParticiparDiscusionesCoordModel;
 import giis.demo.util.Database;
 
 public class AppMain {
@@ -143,6 +145,13 @@ public class AppMain {
 		buttons.add(new ButtonProvider("Indicar Preferencias - Revisor", e -> {
 			IndicarPreferenciaArticulosController controller = new IndicarPreferenciaArticulosController(new IndicarPreferenciaArticulosModel(), 
 					new IndicarPreferenciaArticulosView(), textEmail.getText());
+
+			controller.initController();
+		}));
+		
+		buttons.add(new ButtonProvider("Participar en discusiones - Coordinador", e -> {
+			ParticiparDiscusionesCoordController controller = new ParticiparDiscusionesCoordController(new ParticiparDiscusionesCoordModel(), 
+					new ParticiparDiscusionesCoordView(), textEmail.getText());
 
 			controller.initController();
 		}));
