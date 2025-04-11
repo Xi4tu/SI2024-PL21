@@ -24,22 +24,40 @@ public class IndicarPreferenciaArticulosModel {
 	* @return Lista de ArticuloDTO del track del revisor
 	*/
 	public List<ArticuloRevisionDTO> obtenerArticulosTrackRevisor(String email) {
-	    String sql = "SELECT \r\n"
-	    		+ "    a.idArticulo AS id, \r\n"
-	    		+ "    a.titulo, \r\n"
-	    		+ "    a.palabrasClave, \r\n"
-	    		+ "    a.resumen, \r\n"
-	    		+ "    a.nombreFichero, \r\n"
-	    		+ "    a.fechaEnvio, \r\n"
-	    		+ "    GROUP_CONCAT(u.email, ', ') AS autoresTexto\r\n"
-	    		+ "FROM Articulo a\r\n"
-	    		+ "JOIN Articulo_Usuario au ON a.idArticulo = au.idArticulo\r\n"
-	    		+ "JOIN Usuario u ON au.emailUsuario = u.email\r\n"
-	    		+ "WHERE a.idTrack = (SELECT idTrack FROM Usuario WHERE email = ?)\r\n"
-	    		+ "GROUP BY a.idArticulo;\r\n"
-	    		+ "";
+		String sql = "SELECT " +
+			    "a.idArticulo AS id, " +
+			    "a.titulo, " +
+			    "a.palabrasClave, " +
+			    "a.resumen, " +
+			    "a.nombreFichero, " +
+			    "a.fechaEnvio, " +
+			    "GROUP_CONCAT(u.email, ', ') AS autoresTexto " +
+			"FROM Articulo a " +
+			"JOIN Articulo_Usuario au ON a.idArticulo = au.idArticulo " +
+			"JOIN Usuario u ON au.emailUsuario = u.email " +
+			"WHERE a.idTrack = (SELECT idTrack FROM Usuario WHERE email = ?) " +
+			"AND a.idArticulo NOT IN ( " +
+			"    SELECT au2.idArticulo " +
+			"    FROM Articulo_Usuario au2 " +
+			"    WHERE au2.emailUsuario = ? " +        // excluir artículos donde ya es autor
+			") " +
+			"AND a.idArticulo NOT IN ( " +
+			"    SELECT au3.idArticulo " +
+			"    FROM Articulo_Usuario au3 " +
+			"    JOIN Usuario u2 ON au3.emailUsuario = u2.email " +
+			"    WHERE u2.grupoInvestigacion = ( " +
+			"        SELECT grupoInvestigacion FROM Usuario WHERE email = ? " + // excluir mismos grupos
+			"    ) " +
+			") " +
+			"AND a.idArticulo NOT IN ( " +
+			"    SELECT r.idArticulo " +
+			"    FROM Revision r " +
+			"    WHERE r.emailUsuario = ? " +          // excluir artículos ya revisados
+			") " +
+			"GROUP BY a.idArticulo;";
+
 	    
-	    return db.executeQueryPojo(ArticuloRevisionDTO.class, sql, email);
+	    return db.executeQueryPojo(ArticuloRevisionDTO.class, sql, email, email, email, email);
 	}
 	
 	//metodo para obtener la preferencia del articulo a partir del articulo seleccionado
