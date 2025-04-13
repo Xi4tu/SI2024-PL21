@@ -23,21 +23,11 @@ public class AsignarRevisoresModel {
      * @return Lista de ArticuloDTO sin revisores asignados.
      */
 	public List<ArticuloRevisionDTO> obtenerArticulosSinRevisores() {
-	    String sql = "SELECT \r\n"
-	    		+ "    a.idArticulo AS id, \r\n"
-	    		+ "    a.titulo, \r\n"
-	    		+ "    a.palabrasClave, \r\n"
-	    		+ "    a.resumen, \r\n"
-	    		+ "    a.nombreFichero, \r\n"
-	    		+ "    a.fechaEnvio, \r\n"
-	    		+ "    GROUP_CONCAT(u.email, ', ') AS autoresTexto\r\n"
-	    		+ "FROM Articulo a\r\n"
-	    		+ "LEFT JOIN Revision r ON a.idArticulo = r.idArticulo\r\n"
-	    		+ "JOIN Articulo_Usuario au ON a.idArticulo = au.idArticulo\r\n"
-	    		+ "JOIN Usuario u ON au.emailUsuario = u.email\r\n"
-	    		+ "WHERE r.idArticulo IS NULL\r\n"
-	    		+ "GROUP BY a.idArticulo;\r\n"
-	    		+ "";
+		String sql = "SELECT p.decision AS preferencia, p.idArticulo " +
+	             "FROM Preferencia p " +
+	             "JOIN Usuario_Preferencia up ON p.idPreferencia = up.idPreferencia " +
+	             "WHERE p.idArticulo = ? AND up.emailUsuario = ?";
+
 	    
 
 
