@@ -298,6 +298,24 @@ public class GestionarDiscusionesCoordinadorModel {
 	               + "  AND date(c.deadlineDiscusion) < date('now')";
 	    return db.executeQueryPojo(ArticuloDiscusionDTO.class, sql);
 	}
+	
+	/**
+	 * Obtiene una lista de artículos que tienen discusión abierta (isCerrada = 0)
+	 * y que no tienen ninguna anotación registrada.
+	 *
+	 * @return Lista de objetos {@link ArticuloDiscusionDTO} que representan los artículos sin anotaciones.
+	 */
+	public List<ArticuloDiscusionDTO> getArticulosAbiertasSinAnotaciones() {
+	    String sql = "SELECT DISTINCT a.idArticulo AS idArticulo, " +
+	                 "       a.titulo AS titulo, " +
+	                 "       a.valoracionGlobal AS valoracionGlobal " +
+	                 "FROM Articulo a " +
+	                 "JOIN Discusion d ON a.idArticulo = d.idArticulo " +
+	                 "WHERE d.isCerrada = 0 " +
+	                 "  AND NOT EXISTS (SELECT 1 FROM Anotacion an WHERE an.idDiscusion = d.idDiscusion)";
+	    return db.executeQueryPojo(ArticuloDiscusionDTO.class, sql);
+	}
+
 
 
 }
