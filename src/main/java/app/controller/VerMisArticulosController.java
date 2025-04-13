@@ -65,13 +65,61 @@ public class VerMisArticulosController {
 					view.agregarArticulo(articulo.getIdArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(),
 							articulo.getPalabrasClaveTrack(), articulo.getResumen(), articulo.getNombreFichero());
 				}
-			} else { // Si no esta seleccionado, muestra todos los articulos en los que participa el
-						// autor
+			} else { // Si esta seleccionado, muestra solo los articulos enviados por el autor
 				view.limpiarTablaArticulos();
 				articulos = model.obtenerArticulosEnviados(email);
 				for (ArticuloDTO articulo : articulos) {
 					view.agregarArticulo(articulo.getIdArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(),
 							articulo.getPalabrasClaveTrack(), articulo.getResumen(), articulo.getNombreFichero());
+				}
+			}
+		});
+		
+		// Si se pulsa la checkbox de mostrar solo los articulos con versiones
+		// limpia la tabla y muestra solo los articulos con version
+		view.getChckbxConVersion().addActionListener(e -> {
+			if (!view.getChckbxConVersion().isSelected()) {
+				view.limpiarTablaArticulos();
+				articulos = model.obtenerArticulos(email);
+				for (ArticuloDTO articulo : articulos) {
+					view.agregarArticulo(articulo.getIdArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(),
+							articulo.getPalabrasClaveTrack(), articulo.getResumen(), articulo.getNombreFichero());
+				}
+			} else { // Si esta seleccionado, muestra solo los articulos con version
+				// los articulos con version son aquellos que tienen una entrada en la tabla versionArticulo para su idArticulo
+				view.limpiarTablaArticulos();
+				articulos = model.obtenerArticulosConVersionAutor(email);
+				for (ArticuloDTO articulo : articulos) {
+					view.agregarArticulo(articulo.getIdArticulo(), articulo.getTitulo(), articulo.getPalabrasClave(),
+							articulo.getPalabrasClaveTrack(), articulo.getResumen(), articulo.getNombreFichero());
+				}
+			}
+		});
+		
+		// Listener para el boton de eliminar version, que elimina la version del articulo de la tabla VersionArticulo
+		view.getBtnEliminarVersion().addActionListener(e -> {
+			// Si articulo es null, no se ha seleccionado ningun articulo, asiq error
+			if (articulo == null) {
+				view.mostrarMensajeError("No se ha seleccionado ningún artículo");
+				return;
+			}
+			// Si el autor actual no es el que envio el articulo, no se puede editar
+			if (!enviador.getEmail().equals(email)) {
+				view.mostrarMensajeError("No se puede eliminar la versión del artículo. No fue enviado por usted.");
+				return;
+			}
+			// Si el articulo no tiene version, no se puede eliminar
+			if (!model.tieneVersion(articulo.getIdArticulo())) {
+				view.mostrarMensajeError("Este artículo no tiene versiones para eliminar.");
+				return;
+			} else {
+				// Elimino la version del articulo
+				model.eliminarVersion(articulo.getIdArticulo());
+				// Muestro un mensaje de exito
+				view.mostrarMensajeError("Versión eliminada correctamente");
+				// Elimino el articulo de la tabla SOLO si la opcion de mostrar solo los articulos con versiones esta seleccionada
+				if (view.getChckbxConVersion().isSelected()) {
+					view.eliminarArticulo(articulo.getIdArticulo());
 				}
 			}
 		});
@@ -155,6 +203,30 @@ public class VerMisArticulosController {
 				// Creo el controlador de EnviarArticulo enviando los datos del articulo
 				EnviarArticuloController controlador = new EnviarArticuloController(modeloEdicion, vistaEdicion,
 						articulo);
+				// Inicializo el controlador
+				controlador.initController();
+			}
+		});
+		
+		// Listener para cuando se pulsa el boton de nueva version
+		view.getBtnNuevaVersion().addActionListener(e -> {
+			// Si articulo es null, no se ha seleccionado ningun articulo, asiq error
+			if (articulo == null) {
+				view.mostrarMensajeError("No se ha seleccionado ningún artículo");
+				return;
+			}
+			// Si el autor actual no es el que envio el articulo, no se puede editar, y se menciona el nombre del autor que si envio
+			if (!enviador.getEmail().equals(email)) {
+				// Obtengo el nombre del autor que SI envio el articulo
+				String nombreEnviador = model.quienEnvia(articulo.getIdArticulo()).getNombre();
+				view.mostrarMensajeError("Artículo enviado por " + nombreEnviador + ". No se puede editar.");
+				return;
+			} else {
+				// Lo primero que hago es cerrar la ventana actual
+				view.getFrame().dispose();
+				// Creo el controlador de EnviarArticulo enviando los datos del articulo
+				EnviarArticuloController controlador = new EnviarArticuloController(modeloEdicion, vistaEdicion,
+						articulo, true); // true porque es una nueva version, para elegir el constructor correcto
 				// Inicializo el controlador
 				controlador.initController();
 			}

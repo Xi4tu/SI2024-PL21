@@ -23,7 +23,7 @@ public class VerMisArticulosModel {
 	
 	//Aqui mis metodos
 	
-	//Metodo que devuelve una lista de articulos DTO que ha enviado un autor
+	//Metodo que devuelve una lista de articulos DTO en los que aparezca el autor
 	public List<ArticuloDTO> obtenerArticulos(String email) {
 	    // Consulta SQL con JOIN para obtener los datos de los artículos del usuario
 	    String sql = "SELECT a.* " +
@@ -104,7 +104,38 @@ public class VerMisArticulosModel {
 		return sdf.format(fecha);
 	}
 	
-
+	// Metodo para obtener la lista de articulos que tienen version (osea, cuyo id aparece en la tabla VersionArticulo)
+	public List<ArticuloDTO> obtenerArticulosConVersion() {
+		String sql = "SELECT a.* " +
+					 "FROM Articulo a " +
+					 "JOIN VersionArticulo va ON a.idArticulo = va.idArticulo";
+		List<ArticuloDTO> articulos = db.executeQueryPojo(ArticuloDTO.class, sql);
+		return articulos;
+	}
+	
+	// Metodo para obtener la lista de articulos que tienen version (osea, cuyo id aparece en la tabla VersionArticulo) del autor indicado
+	public List<ArticuloDTO> obtenerArticulosConVersionAutor(String email) {
+		String sql = "SELECT a.* " +
+					 "FROM Articulo a " +
+					 "JOIN VersionArticulo va ON a.idArticulo = va.idArticulo " +
+					 "JOIN Articulo_Usuario au ON a.idArticulo = au.idArticulo " +
+					 "WHERE au.emailUsuario = ?";
+		List<ArticuloDTO> articulos = db.executeQueryPojo(ArticuloDTO.class, sql, email);
+		return articulos;
+	}
+	
+	// Metodo para eliminar una version de un articulo de la tabla VersionArticulo dado el idArticulo
+	public void eliminarVersion(int idArticulo) {
+		String sql = "DELETE FROM VersionArticulo WHERE idArticulo = ?";
+		db.executeUpdate(sql, idArticulo);
+	}
+	
+	// Metodo para comprobar si un articulo tiene version (aparece su id en la tabla VersionArticulo)
+	public boolean tieneVersion(int idArticulo) {
+		String sql = "SELECT * FROM VersionArticulo WHERE idArticulo = ?";
+		List<ArticuloDTO> articulos = db.executeQueryPojo(ArticuloDTO.class, sql, idArticulo);
+		return !articulos.isEmpty();
+	}
 
 	
 }

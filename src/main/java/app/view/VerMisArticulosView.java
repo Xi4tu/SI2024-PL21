@@ -46,8 +46,11 @@ public class VerMisArticulosView{
 	
 	private JButton btnEditarArticulo;
 	private JButton btnVerDecision;
+	private JButton btnNuevaVersion;
+	private JButton btnEliminarVersion;
 	
 	private JCheckBox chckbxSoloEnviadosPorMi;
+	private JCheckBox chckbxConVersion;
 
 	private JFrame frame;
 	
@@ -85,12 +88,12 @@ public class VerMisArticulosView{
 		
 		JLabel lblId = new JLabel("Id.");
 		lblId.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblId.setBounds(10, 81, 39, 13);
+		lblId.setBounds(10, 117, 39, 13);
 		frame.getContentPane().add(lblId);
 		
 		JLabel lblNombre = new JLabel("Título");
 		lblNombre.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNombre.setBounds(55, 81, 60, 13);
+		lblNombre.setBounds(55, 117, 60, 13);
 		frame.getContentPane().add(lblNombre);
 		
 		tableArticulosDelAutor = new JTable();
@@ -105,7 +108,7 @@ public class VerMisArticulosView{
 		tableArticulosDelAutor.getColumnModel().getColumn(0).setMinWidth(20);
 		tableArticulosDelAutor.getColumnModel().getColumn(0).setMaxWidth(60);
 		tableArticulosDelAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tableArticulosDelAutor.setBounds(10, 96, 274, 404);
+		tableArticulosDelAutor.setBounds(10, 140, 274, 284);
 		frame.getContentPane().add(tableArticulosDelAutor);
 		
 		JLabel lblId_1 = new JLabel("Id.");
@@ -194,7 +197,7 @@ public class VerMisArticulosView{
 			}
 		));
 		tableAutoresDelArticulo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tableAutoresDelArticulo.setBounds(306, 402, 534, 129);
+		tableAutoresDelArticulo.setBounds(306, 327, 534, 204);
 		frame.getContentPane().add(tableAutoresDelArticulo);
 		
 		JLabel lblId_1_1_1_1_3 = new JLabel("Nombre");
@@ -221,7 +224,7 @@ public class VerMisArticulosView{
 		lblId_1_1_1_1_3_3.setBounds(709, 281, 131, 13);
 		frame.getContentPane().add(lblId_1_1_1_1_3_3);
 		
-		chckbxSoloEnviadosPorMi = new JCheckBox("Ver solo artículos enviados por mí");
+		chckbxSoloEnviadosPorMi = new JCheckBox("Solo artículos enviados por mí");
 		chckbxSoloEnviadosPorMi.setFont(new Font("Tahoma", Font.BOLD, 14));
 		chckbxSoloEnviadosPorMi.setBounds(10, 54, 274, 21);
 		frame.getContentPane().add(chckbxSoloEnviadosPorMi);
@@ -242,7 +245,7 @@ public class VerMisArticulosView{
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnEditarArticulo.setBounds(163, 510, 121, 21);
+		btnEditarArticulo.setBounds(33, 434, 223, 21);
 		frame.getContentPane().add(btnEditarArticulo);
 		
 		JLabel lblId_1_1_2 = new JLabel("Palabras clave del Track:");
@@ -293,6 +296,25 @@ public class VerMisArticulosView{
 		btnVerDecision.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnVerDecision.setBounds(709, 227, 121, 21);
 		frame.getContentPane().add(btnVerDecision);
+		
+		 btnNuevaVersion = new JButton("Enviar Nueva versión");
+		btnNuevaVersion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnNuevaVersion.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnNuevaVersion.setBounds(33, 465, 223, 21);
+		frame.getContentPane().add(btnNuevaVersion);
+		
+		 btnEliminarVersion = new JButton("Eliminar Versión");
+		btnEliminarVersion.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnEliminarVersion.setBounds(33, 496, 223, 21);
+		frame.getContentPane().add(btnEliminarVersion);
+		
+		 chckbxConVersion = new JCheckBox("Solo artículo con nuevas versiones");
+		chckbxConVersion.setFont(new Font("Tahoma", Font.BOLD, 14));
+		chckbxConVersion.setBounds(10, 81, 274, 21);
+		frame.getContentPane().add(chckbxConVersion);
 	}
 
 	//Getters y Setters de las tablas
@@ -417,6 +439,14 @@ public class VerMisArticulosView{
 	public void setBtnVerDecision(JButton btnVerDecision) {
 		this.btnVerDecision = btnVerDecision;
 	}
+	
+	public JButton getBtnNuevaVersion() {
+		return btnNuevaVersion;
+	}
+	
+	public void setBtnNuevaVersion(JButton btnNuevaVersion) {
+		this.btnNuevaVersion = btnNuevaVersion;
+	}
 
 	public JLabel getLblEnviadoPorArticulo() {
 		return lblEnviadoPorArticulo;
@@ -447,6 +477,23 @@ public class VerMisArticulosView{
 		this.btnEditarArticulo = btnEditarArticulo;
 	}
 	
+	public JButton getBtnEliminarVersion() {
+		return btnEliminarVersion;
+	}
+	
+	public void setBtnEliminarVersion(JButton btnEliminarVersion) {
+		this.btnEliminarVersion = btnEliminarVersion;
+	}
+	
+	public JCheckBox getChckbxConVersion() {
+		return chckbxConVersion;
+	}
+	
+	public void setChckbxConVersion(JCheckBox chckbxConVersion) {
+		this.chckbxConVersion = chckbxConVersion;
+	}
+	
+	
 	
 	
 	//Añadir lista de articulos a la tabla de articulos
@@ -454,6 +501,17 @@ public class VerMisArticulosView{
 		DefaultTableModel model = (DefaultTableModel) tableArticulosDelAutor.getModel();
 		//Añade la fila solo con el Id y el titulo
 		model.addRow(new Object[] {id, titulo});		
+	}
+	
+	// Eliminar un articulo de la tabla de articulos dado su id
+	public void eliminarArticulo(int id) {
+		DefaultTableModel model = (DefaultTableModel) tableArticulosDelAutor.getModel();
+		for (int i = 0; i < model.getRowCount(); i++) {
+			if (model.getValueAt(i, 0).equals(id)) {
+				model.removeRow(i);
+				break;
+			}
+		}
 	}
 
 	// Limpiar la tabla de autores
