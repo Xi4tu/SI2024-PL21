@@ -47,8 +47,10 @@ public class EnviarArticuloView {
 	
 	private JComboBox<String> comboBoxSelectorTrackArticulo;
 	private JComboBox<String> comboBoxSelectorPalabrasDelTrack;
+	private JComboBox<String> combobBusquedaAutor;
 
 	private String estadoInicialLabelPalabrasClaveTrack = "";
+	private JTextField textfBusquedaAutor;
 	
 	public EnviarArticuloView() {
 		initialize();
@@ -168,46 +170,46 @@ public class EnviarArticuloView {
 
 		JLabel lblNombre_1 = new JLabel("Nombre:");
 		lblNombre_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNombre_1.setBounds(176, 379, 100, 17);
+		lblNombre_1.setBounds(311, 379, 100, 17);
 		contentPane.add(lblNombre_1);
 
 		JLabel lblCorreo_1 = new JLabel("Correo:");
 		lblCorreo_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblCorreo_1.setBounds(176, 406, 100, 17);
+		lblCorreo_1.setBounds(311, 406, 100, 17);
 		contentPane.add(lblCorreo_1);
 
 		JLabel lblOrganizacin = new JLabel("Organización:");
 		lblOrganizacin.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblOrganizacin.setBounds(176, 433, 100, 17);
+		lblOrganizacin.setBounds(311, 433, 100, 17);
 		contentPane.add(lblOrganizacin);
 
 		JLabel lblGrupoInvest = new JLabel("Grupo Invest:");
 		lblGrupoInvest.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblGrupoInvest.setBounds(176, 460, 100, 17);
+		lblGrupoInvest.setBounds(311, 460, 100, 17);
 		contentPane.add(lblGrupoInvest);
 
 		textfNombreCoautor = new JTextField();
 		textfNombreCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfNombreCoautor.setColumns(10);
-		textfNombreCoautor.setBounds(274, 378, 588, 19);
+		textfNombreCoautor.setBounds(409, 378, 453, 19);
 		contentPane.add(textfNombreCoautor);
 
 		textfCorreoCoautor = new JTextField();
 		textfCorreoCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfCorreoCoautor.setColumns(10);
-		textfCorreoCoautor.setBounds(274, 407, 588, 19);
+		textfCorreoCoautor.setBounds(409, 407, 453, 19);
 		contentPane.add(textfCorreoCoautor);
 
 		textfOrganizacionCoautor = new JTextField();
 		textfOrganizacionCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfOrganizacionCoautor.setColumns(10);
-		textfOrganizacionCoautor.setBounds(274, 433, 588, 19);
+		textfOrganizacionCoautor.setBounds(409, 433, 453, 19);
 		contentPane.add(textfOrganizacionCoautor);
 
 		textfGrupoInvestigacionCoautor = new JTextField();
 		textfGrupoInvestigacionCoautor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textfGrupoInvestigacionCoautor.setColumns(10);
-		textfGrupoInvestigacionCoautor.setBounds(274, 462, 588, 19);
+		textfGrupoInvestigacionCoautor.setBounds(409, 462, 453, 19);
 		contentPane.add(textfGrupoInvestigacionCoautor);
 
 		btnEnviar = new JButton("Enviar");
@@ -271,6 +273,21 @@ public class EnviarArticuloView {
 		btnAgregarPalabrasClaveDelTrack.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnAgregarPalabrasClaveDelTrack.setBounds(406, 63, 110, 21);
 		contentPane.add(btnAgregarPalabrasClaveDelTrack);
+		
+		JLabel lblBuscarAutor = new JLabel("Buscar autor:");
+		lblBuscarAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblBuscarAutor.setBounds(130, 379, 100, 17);
+		contentPane.add(lblBuscarAutor);
+		
+		textfBusquedaAutor = new JTextField();
+		textfBusquedaAutor.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		textfBusquedaAutor.setColumns(10);
+		textfBusquedaAutor.setBounds(130, 405, 171, 19);
+		contentPane.add(textfBusquedaAutor);
+		
+		combobBusquedaAutor = new JComboBox();
+		combobBusquedaAutor.setBounds(130, 433, 171, 21);
+		contentPane.add(combobBusquedaAutor);
 	}
 
 
@@ -352,6 +369,22 @@ public class EnviarArticuloView {
 
 	public void setTableListaDeAutores(JTable tableListaDeAutores) {
 		this.tableListaDeAutores = tableListaDeAutores;
+	}
+	
+	public JTextField getTextfBusquedaAutor() {
+		return textfBusquedaAutor;
+	}
+	
+	public void setTextfBusquedaAutor(JTextField textfBusquedaAutor) {
+		this.textfBusquedaAutor = textfBusquedaAutor;
+	}
+	
+	public JComboBox getCombobBusquedaAutor() {
+		return combobBusquedaAutor;
+	}
+	
+	public void setCombobBusquedaAutor(JComboBox combobBusquedaAutor) {
+		this.combobBusquedaAutor = combobBusquedaAutor;
 	}
 
 	public JTextField getTextfNombreCoautor() {
@@ -501,6 +534,16 @@ public class EnviarArticuloView {
 	public void borrarAutor(int fila) {
 		DefaultTableModel modelo = (DefaultTableModel) tableListaDeAutores.getModel();
 		modelo.removeRow(fila);
+	}
+	
+	//Metodo que rellena el combobox de autores con los autores que se le pasen por parametro en la lista de AutoresDTO
+	public void setAutores(List<AutorDTO> autores) {
+		combobBusquedaAutor.removeAllItems();
+		//Añade siempre un autor vacio al principio
+		combobBusquedaAutor.addItem("");
+		for (AutorDTO autor : autores) {
+			combobBusquedaAutor.addItem(autor.getNombre());
+		}
 	}
 }
 
