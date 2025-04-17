@@ -1,8 +1,9 @@
 package app.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-
+import java.util.stream.Collectors;
 
 import app.dto.ArticuloRevisionDTO;
 import app.dto.PreferenciaDTO;
@@ -15,6 +16,7 @@ public class IndicarPreferenciaArticulosController {
 	private IndicarPreferenciaArticulosModel model;
 	private IndicarPreferenciaArticulosView view;
 	private List<ArticuloRevisionDTO> articulos;
+	private List<ArticuloRevisionDTO> articulosVisibles;
 	private PreferenciaDTO preferencia;
 	private String email;
 	private static final Rol ROL = Rol.REVISOR;
@@ -34,6 +36,9 @@ public class IndicarPreferenciaArticulosController {
 			// Detener la inicialización si no se pudieron obtener los artículos.
 			return;
 		}
+		// después de obtenerArticulosTrackRevisor(email)
+		this.articulosVisibles = new ArrayList<>(articulos);
+
 		
 		this.initView();
 		this.initController();
@@ -67,6 +72,18 @@ public class IndicarPreferenciaArticulosController {
 		    model.guardarOActualizarPreferencia(articulo.getId(), email, seleccion);
 		});
 		
+		
+		// filtro experto
+		view.getComboBoxExperto().addActionListener(e -> {
+		    String sel = (String) view.getComboBoxExperto().getSelectedItem();
+		    if ("En los que soy experto".equals(sel)) {
+		        filtrarPorExperiencia();
+		    } else {
+		        // "-- Selecciona filtro --" y "Todos los artículos"
+		        cargarComboArticulos(articulos);
+		    }
+		});
+
 	}
 	
 	
@@ -74,17 +91,13 @@ public class IndicarPreferenciaArticulosController {
 	//Metodo para obtener los articulos del track del revisor
 	private boolean obtenerArticulosTrackRevisor(String email) {
 		articulos = model.obtenerArticulosTrackRevisor(email);
-		
+		articulosVisibles = new ArrayList<>(articulos);
 	
 		// Limpiar ComboBox antes de llenarlo
 		view.getComboBoxArticulo().removeAllItems();
 	
 	    // Cargar artículos con ID y palabras clave en el ComboBox
-	    for (ArticuloRevisionDTO articulo : articulos) {
-	        String textoCombo = "ID: " + articulo.getId() + " - " + articulo.getTitulo() + " ("
-	                + articulo.getPalabrasClave() + ")";
-	        view.getComboBoxArticulo().addItem(textoCombo);
-	    }
+		cargarComboArticulos(articulosVisibles);
 	
 	    return true;
 		
@@ -113,8 +126,42 @@ public class IndicarPreferenciaArticulosController {
 	}
 	
 	
-	
-	
+	private void cargarComboArticulos(List<ArticuloRevisionDTO> lista) {
+	    articulosVisibles = lista;
+	    view.getComboBoxArticulo().removeAllItems();
+	    for (ArticuloRevisionDTO art : lista) {
+	    	String kw = art.getPalabrasClaveTrack();
+	    	kw = (kw == null ? "" : kw);
+	    	String texto = "ID: " + art.getId() +
+	    	               " - " + art.getTitulo() +
+	    	               " (" + kw + ")";
+
+	        view.getComboBoxArticulo().addItem(texto);
+	    }
+	}
+
+
+	private void filtrarPorExperiencia() {
+	    List<String> userKw = model.obtenerPalabrasClaveUsuario(email);
+	    if (userKw.isEmpty()) {
+	        cargarComboArticulos(Collections.emptyList());
+	        return;
+	    }
+	    List<ArticuloRevisionDTO> expertos = articulos.stream()
+	        .filter(art -> {
+	            String text = art.getPalabrasClaveTrack();
+	            // <-- nueva comprobación:
+	            if (text == null || text.trim().isEmpty()) return false;
+	            for (String clave : text.split("\\s*,\\s*")) {
+	                if (userKw.contains(clave.trim())) return true;
+	            }
+	            return false;
+	        })
+	        .collect(Collectors.toList());
+	    cargarComboArticulos(expertos);
+	}
+
+
 	
 }
 
