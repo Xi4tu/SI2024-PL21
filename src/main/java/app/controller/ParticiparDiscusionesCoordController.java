@@ -55,6 +55,7 @@ public class ParticiparDiscusionesCoordController {
 	private Map<Integer, List<AnotacionesDTO>> anotacionesArticulos = new HashMap<>();
 	private List<RevisionArticuloRevisionDTO> currentRevisores; // revisores del artículo seleccionado
 	private static final Rol ROL = Rol.COORDINADOR;
+	private Integer defaultIdArticulo;
 
 	/**
 	 * Constructor del controller.
@@ -69,12 +70,13 @@ public class ParticiparDiscusionesCoordController {
 	 *              anotaciones.
 	 * @param email Correo electrónico del coordinador.
 	 */
-	public ParticiparDiscusionesCoordController(ParticiparDiscusionesCoordModel m, ParticiparDiscusionesCoordView v,
-			String email) {
-		this.model = m;
-		this.view = v;
-		this.email = email;
-		this.fecha = UserUtil.getFechaActual();
+	public ParticiparDiscusionesCoordController(ParticiparDiscusionesCoordModel m, 
+	        ParticiparDiscusionesCoordView v, String email, Integer defaultIdArticulo) {
+	    this.model = m;
+	    this.view = v;
+	    this.email = email;
+	    this.fecha = UserUtil.getFechaActual();
+	    this.defaultIdArticulo = defaultIdArticulo;
 
 		// Detener la inicialización si el email es inválido.
 		if (!UserUtil.checkEmail(email, ROL.getNombre(), model.getDbUtil())) {
@@ -185,8 +187,18 @@ public class ParticiparDiscusionesCoordController {
 	 * Inicializa la vista haciéndola visible y asigna el modelo inicial al JList.
 	 */
 	public void initView() {
-		view.getFrame().setVisible(true);
-		view.getListArticulos().setModel(listModel);
+	    view.getFrame().setVisible(true);
+	    view.getListArticulos().setModel(listModel);
+	    // ——> Selección por defecto <——
+	    if (defaultIdArticulo != null) {
+	        for (AccederDiscusionDTO dto : articulosDTO) {
+	        	if (dto.getIdArticulo() == defaultIdArticulo) {
+	        	    view.getListArticulos().setSelectedValue(dto, true);
+	        	    break;
+	        	}
+
+	        }
+	    }
 	}
 
 	/**

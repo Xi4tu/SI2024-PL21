@@ -12,6 +12,9 @@ import app.enums.Rol;
 import app.model.GestionarDiscusionesCoordinadorModel;
 import app.view.GestionarDiscusionesCoordinadorView;
 import giis.demo.util.SwingUtil;
+import app.model.ParticiparDiscusionesCoordModel;
+import app.view.ParticiparDiscusionesCoordView;
+import app.controller.ParticiparDiscusionesCoordController;
 
 /**
  * Controller para la gestión de discusiones a cargo del coordinador.
@@ -258,6 +261,8 @@ public class GestionarDiscusionesCoordinadorController {
                 }
             }
             
+            
+            
         });
 
         // Listener para el botón "Poner en Discusión".
@@ -282,6 +287,57 @@ public class GestionarDiscusionesCoordinadorController {
                 SwingUtil.showMessage("No se ha podido poner en discusión el artículo", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        
+     // Listener para aceptar artículo
+        view.getBtnAceptarArticulo().addActionListener(e -> {
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("No se ha seleccionado ningún artículo", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (model.aceptarArticulo(articulo.getIdArticulo())) {
+                SwingUtil.showMessage("Artículo aceptado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                refreshArticulosCerrados();
+            } else {
+                SwingUtil.showMessage("Error al aceptar el artículo", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // Listener para rechazar artículo
+        view.getBtnRechazarArticulo().addActionListener(e -> {
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("No se ha seleccionado ningún artículo", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (model.rechazarArticulo(articulo.getIdArticulo())) {
+                SwingUtil.showMessage("Artículo rechazado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                refreshArticulosCerrados();
+            } else {
+                SwingUtil.showMessage("Error al rechazar el artículo", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        
+        view.getBtnAccederDiscusion().addActionListener(e -> {
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("Selecciona un artículo con discusión abierta",
+                                      "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ParticiparDiscusionesCoordController controller =
+                new ParticiparDiscusionesCoordController(
+                    new ParticiparDiscusionesCoordModel(),
+                    new ParticiparDiscusionesCoordView(),
+                    this.email,
+                    articulo.getIdArticulo()        
+                );
+            controller.initController();
+        });
+
+
+        
     }
 
     /**
@@ -347,6 +403,7 @@ public class GestionarDiscusionesCoordinadorController {
         view.getBtnRechazarArticulo().setEnabled(false);
         view.getBtnRecordatorio().setEnabled(false);
         view.getBtnCerrarDiscusion().setEnabled(false);
+        view.getBtnAccederDiscusion().setEnabled(false);
         switch (filtro) {
             case "Cerradas":
                 view.getBtnAceptarArticulo().setEnabled(true);
@@ -359,21 +416,40 @@ public class GestionarDiscusionesCoordinadorController {
                 break;
             case "Abiertas":
                 view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
                 break;
             case "Abiertas firmes":
                 view.getBtnCerrarDiscusion().setEnabled(true);
                 view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
                 break;
             case "Abiertas c/ deadline pasado":
                 view.getBtnCerrarDiscusion().setEnabled(true);
                 view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
                 break;
             case "Abiertas sin anotaciones":
                 view.getBtnRecordatorio().setEnabled(true);
                 view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
                 break;
             default:
                 break;
         }
     }
+    
+    /**
+     * Recarga la lista de artículos cerrados en la vista y limpia detalles.
+     */
+    private void refreshArticulosCerrados() {
+        List<ArticuloDiscusionDTO> lista = model.getArticulosCerrados();
+        DefaultListModel<ArticuloDiscusionDTO> m = new DefaultListModel<>();
+        for (ArticuloDiscusionDTO a : lista) {
+            m.addElement(a);
+        }
+        view.getListArticulos().setModel(m);
+        view.clearRevisiones();
+        view.getLblValoracionGlobal().setText("");
+    }
+
 }
