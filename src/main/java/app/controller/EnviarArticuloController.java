@@ -171,6 +171,38 @@ public class EnviarArticuloController {
 				}
 		}));
 		
+		// Listener del textField de busqueda de autores que crea una lista de autores que coincidan en su email/nombre
+		// con lo buscado y que rellena el comboBox de autores con dicha lista de AutorDTO
+		view.getTextfBusquedaAutor().addActionListener(e -> SwingUtil.exceptionWrapper(() -> {
+			// Obtengo el texto del textField
+			String texto = view.getTextfBusquedaAutor().getText();
+			// Si el texto no es nulo o vacío, busco los autores que coincidan con el texto
+			if (texto != null && !texto.isEmpty()) {
+				// Busco los autores que coincidan con el texto
+				List<AutorDTO> autoresFiltrados = model.buscarAutores(texto);
+				// Relleno el comboBox de autores con la lista de autores filtrados
+				view.setAutores(autoresFiltrados);
+			}
+		}));
+		
+		// Listener del comboBox de autores que rellena los campos de texto con los datos del autor seleccionado
+		view.getCombobBusquedaAutor().addActionListener(e -> SwingUtil.exceptionWrapper(() -> {
+			//Primero comprueba que el seleccionado no sea nulo (que por defecto lo sera, mete un autor vacio)
+			if (view.getCombobBusquedaAutor().getSelectedItem() != null) {
+				if (view.getCombobBusquedaAutor().getSelectedItem() != "") {
+					// Obtengo el autor seleccionado (getSelectedItem() devuelve un Object que es SOLO el nombre del autor)
+					String autorSeleccionadoNombre = (String) view.getCombobBusquedaAutor().getSelectedItem();
+					// Busco el autor en la lista de autores
+					AutorDTO autorSeleccionado = model.obtenerAutorPorNombre(autorSeleccionadoNombre);
+					// Relleno los campos de texto con los datos del autor seleccionado
+					view.getTextfCorreoCoautor().setText(autorSeleccionado.getEmail());
+					view.getTextfNombreCoautor().setText(autorSeleccionado.getNombre());
+					view.getTextfOrganizacionCoautor().setText(autorSeleccionado.getOrganizacion());
+					view.getTextfGrupoInvestigacionCoautor().setText(autorSeleccionado.getGrupoInvestigacion());
+				}
+			}
+		}));
+		
 		// Listener del botón de enviar artículo que envía el artículo a la base de datos
 		view.getBtnEnviar().addActionListener(e -> SwingUtil.exceptionWrapper(() -> {
 			// Si los datos del articulo son correctos

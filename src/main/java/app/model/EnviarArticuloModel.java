@@ -189,5 +189,26 @@ public void editarArticulo(int idArticulo, int idTrack, String titulo, String pa
 			List<AutorDTO> listaAutores = db.executeQueryPojo(AutorDTO.class, sql, idArticulo);
 			return listaAutores.get(0);
 		}
+		
+		//Metodo para obtener la lista de autorDTO cuyo nombre/email CONTENGA el texto de busqueda
+		public List<AutorDTO> buscarAutores(String texto) {
+			String sql = "SELECT * FROM Usuario WHERE nombre LIKE ? OR email LIKE ?";
+			List<AutorDTO> listaAutores = db.executeQueryPojo(AutorDTO.class, sql, "%" + texto + "%", "%" + texto + "%");
+			return listaAutores;
+		}
+		
+		//Metodo para obtener el autorDTO por el nombre
+		public AutorDTO obtenerAutorPorNombre(String nombre) {
+			// Si te han pasado un nombre vacio, no se puede buscar, asiq retorna nada
+			if (nombre == null) {
+				return null;
+			} else if (nombre.equals("")) {
+				return null;
+			}
+			String sql = "SELECT * FROM Usuario WHERE nombre = ?";
+			List<AutorDTO> listaAutores = db.executeQueryPojo(AutorDTO.class, sql, nombre);
+			return listaAutores.get(0);
+		}
+
 
 }
