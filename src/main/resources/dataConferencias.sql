@@ -241,3 +241,52 @@ VALUES
  'Este artículo tiene buen enfoque pero debe profundizar más.', 
  'Se recomienda revisión por pares.', 
  'Medio', 1, '2025-01-04');
+ 
+ 
+-- ==============================================
+-- EJEMPLO DE PRUEBA: CERRAR Y DECIDIR ARTÍCULO 5
+-- ==============================================
+
+-- 1) Inserto una discusión cerrada para el artículo id=5
+INSERT INTO Discusion (idArticulo, isCerrada)
+VALUES (5, 1);
+
+-- 2) Asocio a dos revisores ya existentes a esa discusión
+INSERT INTO Usuario_Discusion (emailUsuario, idDiscusion)
+VALUES
+  ('juan.perez@ejemplo.com', last_insert_rowid()),
+  ('maria.lopez@ejemplo.com', last_insert_rowid());
+
+-- 3) Verificación inicial (en consola):
+--    SELECT idArticulo, titulo, decisionFinal
+--      FROM Articulo
+--     WHERE idArticulo = 5;
+--    -- Debe devolver: 'Pendiente'
+
+-- 4) Simulación de model.aceptarArticulo(5):
+UPDATE Articulo
+   SET decisionFinal = 'Aceptado'
+ WHERE idArticulo = 5;
+
+-- 5) Verificar que fue aceptado:
+--    SELECT decisionFinal
+--      FROM Articulo
+--     WHERE idArticulo = 5;
+--    -- Ahora debe devolver: 'Aceptado'
+
+-- 6) Restaurar a 'Pendiente' para probar rechazo:
+UPDATE Articulo
+   SET decisionFinal = 'Pendiente'
+ WHERE idArticulo = 5;
+
+-- 7) Simulación de model.rechazarArticulo(5):
+UPDATE Articulo
+   SET decisionFinal = 'Rechazado'
+ WHERE idArticulo = 5;
+
+-- 8) Verificar que fue rechazado:
+--    SELECT decisionFinal
+--      FROM Articulo
+--     WHERE idArticulo = 5;
+--    -- Ahora debe devolver: 'Rechazado'
+

@@ -316,6 +316,43 @@ public class GestionarDiscusionesCoordinadorModel {
 	    return db.executeQueryPojo(ArticuloDiscusionDTO.class, sql);
 	}
 
+	/**
+	 * Marca el artículo como Aceptado en su campo decisionFinal.
+	 */
+	public boolean aceptarArticulo(int idArticulo) {
+	    Connection conn = null;
+	    try {
+	        conn = db.getConnection();
+	        QueryRunner qr = new QueryRunner();
+	        String sql = "UPDATE Articulo SET decisionFinal = 'Aceptado' WHERE idArticulo = ?";
+	        int rows = qr.update(conn, sql, idArticulo);
+	        return rows > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        DbUtils.closeQuietly(conn);
+	    }
+	}
+
+	/**
+	 * Marca el artículo como Rechazado en su campo decisionFinal.
+	 */
+	public boolean rechazarArticulo(int idArticulo) {
+	    Connection conn = null;
+	    try {
+	        conn = db.getConnection();
+	        QueryRunner qr = new QueryRunner();
+	        String sql = "UPDATE Articulo SET decisionFinal = 'Rechazado' WHERE idArticulo = ?";
+	        int rows = qr.update(conn, sql, idArticulo);
+	        return rows > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        DbUtils.closeQuietly(conn);
+	    }
+	}
 
 
 }

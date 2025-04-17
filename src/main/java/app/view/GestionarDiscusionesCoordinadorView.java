@@ -31,6 +31,7 @@ public class GestionarDiscusionesCoordinadorView {
 	private JButton btnRecordatorio;
 	private JButton btnCerrarDiscusion;
 	private JComboBox<String> comboFiltro;
+	private JButton btnAccederDiscusion;
 
 	// -----------------------------------------------------
 	// Constructor
@@ -122,7 +123,9 @@ public class GestionarDiscusionesCoordinadorView {
 		btnCerrarDiscusion = new JButton("Cerrar discusión");
 		btnPonerEnDiscusion = new JButton("Poner en discusión");
 		btnCerrar = new JButton("Cerrar");
-
+		btnAccederDiscusion = new JButton("Acceder Discusión");
+		
+		panelInferior.add(btnAccederDiscusion);
 		panelInferior.add(btnRecordatorio);
 		panelInferior.add(btnCerrarDiscusion);
 		panelInferior.add(btnPonerEnDiscusion);
@@ -253,4 +256,9 @@ public class GestionarDiscusionesCoordinadorView {
 	public JComboBox<String> getComboFiltro() {
 		return comboFiltro;
 	}
+	
+	public JButton getBtnAccederDiscusion() {
+		return btnAccederDiscusion;
+	}
+	
 }

@@ -151,7 +151,7 @@ public class AppMain {
 		
 		buttons.add(new ButtonProvider("Participar en discusiones - Coordinador", e -> {
 			ParticiparDiscusionesCoordController controller = new ParticiparDiscusionesCoordController(new ParticiparDiscusionesCoordModel(), 
-					new ParticiparDiscusionesCoordView(), textEmail.getText());
+					new ParticiparDiscusionesCoordView(), textEmail.getText(), 0);
 
 			controller.initController();
 		}));
