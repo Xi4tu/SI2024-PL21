@@ -5,7 +5,8 @@ public class RevisorDTO {
     private String nombre;
     private String organizacion;
     private String grupoInvestigacion;
-
+    private String palabrasClave;
+    
     // Constructor vacío
     public RevisorDTO() {}
 
@@ -15,6 +16,13 @@ public class RevisorDTO {
         this.nombre = nombre;
         this.organizacion = organizacion;
         this.grupoInvestigacion = grupoInvestigacion;
+    }
+    public RevisorDTO(String email, String nombre, String organizacion, String grupoInvestigacion, String palabrasClave) {
+        this.email = email;
+        this.nombre = nombre;
+        this.organizacion = organizacion;
+        this.grupoInvestigacion = grupoInvestigacion;
+        this.palabrasClave = palabrasClave;
     }
 
     // Getters y Setters
@@ -48,6 +56,12 @@ public class RevisorDTO {
 
     public void setGrupoInvestigacion(String grupoInvestigacion) {
         this.grupoInvestigacion = grupoInvestigacion;
+    }
+    public String getPalabrasClave() {
+        return palabrasClave;
+    }
+    public void setPalabrasClave(String palabrasClave) {
+        this.palabrasClave = palabrasClave;
     }
 
     // Método toString (opcional, útil para depuración)

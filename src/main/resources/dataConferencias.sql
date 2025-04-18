@@ -40,7 +40,7 @@ VALUES
 
 INSERT INTO Usuario (email, nombre, organizacion, grupoInvestigacion, palabrasClave)
 VALUES
-('maria.lopez@ejemplo.com', 'María López', 'Instituto de Pruebas', 'Grupo Beta', 'Pilas, Robótica');
+('maria.lopez@ejemplo.com', 'María López', 'Instituto de Pruebas', 'Grupo Beta', 'Pilas, Robótica, Tecnología, Edge');
 /***********************************************************************
   3. ROLES Y ASIGNACIÓN (Usuario_Rol)
 ***********************************************************************/
