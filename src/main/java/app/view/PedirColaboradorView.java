@@ -48,7 +48,7 @@ public class PedirColaboradorView {
     	frmColaboradores = new JFrame();
         frmColaboradores.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frmColaboradores.setTitle("Colaboradores");
-        frmColaboradores.setBounds(100, 100, 472, 495);
+        frmColaboradores.setBounds(100, 100, 283, 300);
 
         // Panel principal
         contentPane = new JPanel();

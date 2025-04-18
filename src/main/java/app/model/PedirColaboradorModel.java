@@ -108,4 +108,11 @@ public class PedirColaboradorModel {
 		return false;
 	}
 
+	public List<PedirColaboradorDTO> obtenerRevisoresAsignado(int idArticulo) {
+		String sql =  "SELECT revisorColaborador " +
+					  "FROM Articulo " +
+				      "WHERE idArticulo = ?";
+		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, idArticulo);
+	}
+
 }

@@ -15,6 +15,7 @@ public class PedirColaboradorDTO {
 	private int idTrack;
 	private String emailUsuario;
 	private String decision;
+	private String revisorColaborador;
 
 	public PedirColaboradorDTO() {}
 
@@ -92,6 +93,14 @@ public class PedirColaboradorDTO {
 		this.decision = decision;
 	}
 
+	public String getRevisorColaborador() {
+		return revisorColaborador;
+	}
+	
+	public void setRevisorColaborador(String revisorColaborador) {
+		this.revisorColaborador = revisorColaborador;
+	}
+	
 	@Override
 	public String toString() {
 		return " - " + nombre;

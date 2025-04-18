@@ -56,6 +56,7 @@ public class PedirColaboradorController {
 	private List<PedirColaboradorDTO> articuloRevisor;
 	private List<PedirColaboradorDTO> revisores;
 	private List<PedirColaboradorDTO> decision;
+	private List<PedirColaboradorDTO> revisorAsig;
 	private static final Rol ROL = Rol.COORDINADOR;
 
 	/**
@@ -112,8 +113,6 @@ public class PedirColaboradorController {
 			if (view.getListRevisores().getSelectedValue() != null) {
 				SwingUtil.showMessage("Se ha enviado la petición", "Información",
 						JOptionPane.INFORMATION_MESSAGE);
-				System.out.println("El revisor: " + view.getListRevisores().getSelectedValue().getNombre());
-				System.out.println("El idArticulo: " + idArticulo);
 				model.actualizarRevisor(view.getListRevisores().getSelectedValue().getNombre(), idArticulo);
 				listModel.removeElement(view.getListRevisores().getSelectedValue());
 
@@ -166,7 +165,6 @@ public class PedirColaboradorController {
 		
 		if (trackRevisoresMio.size() > 0) {
 			for (int i = 0; i < trackRevisoresMio.size(); i++) {
-				System.out.println("El mio: " + trackRevisoresMio.get(i).getIdTrack());
 				// Da las personas que tienen uno de los tracks del usuario que además no tienen
 				// el artículo seleccionado
 				revisores = model.obtenerRevisores(trackRevisoresMio.get(i).getIdTrack(), idArticulo);
@@ -175,13 +173,13 @@ public class PedirColaboradorController {
 					trackRevisores = model.obtenerTrack(rev.getEmailUsuario());
 					//imprimir el tamaño de la lista trackRevisores
 					for (PedirColaboradorDTO revTrack : trackRevisores) {
-						System.out.println("Nombre suyo: " + revTrack.getNombre());
-						System.out.println("El suyo: " + revTrack.getIdTrack());
 						if (revTrack.getIdTrack() == trackRevisoresMio.get(i).getIdTrack()) {
 							decision = model.obtenerDeicision(rev.getEmailUsuario(), idArticulo);
 
 							if (decision.size() > 0) {
-								if (decision.get(0).getDecision().equals("Lo quiero revisar") && !listModelContains(listModel, revTrack.getNombre())) {
+								revisorAsig = model.obtenerRevisoresAsignado(idArticulo);
+								if (decision.get(0).getDecision().equals("Lo quiero revisar") && !listModelContains(listModel, revTrack.getNombre())
+										&& !revisorAsig.get(0).getRevisorColaborador().equals(revTrack.getNombre())) {
 									PedirColaboradorDTO dto = new PedirColaboradorDTO(revTrack.getId(), revTrack.getTitulo(),
 											revTrack.getNombreFichero(), revTrack.getNombre(), revTrack.getIdTrack(), revTrack.getEmailUsuario());
 									listaDTO.add(dto);
