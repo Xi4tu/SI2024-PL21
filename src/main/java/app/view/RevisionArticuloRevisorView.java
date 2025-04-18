@@ -17,6 +17,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import app.dto.RevisionArticuloRevisorDTO;
+import javax.swing.DefaultComboBoxModel;
+
 public class RevisionArticuloRevisorView {
 	// Crear las variables de la vista
 	private JFrame frame;
@@ -27,6 +29,8 @@ public class RevisionArticuloRevisorView {
 	private JTextArea txtComentariosCoordinadores;
 	private JComboBox<String> comboNivelExperto;
 	private JComboBox<String> comboDecision;
+	private JComboBox<String> comboBoxPendientes;
+	private JComboBox comboBoxRevisor;
 	private JButton btnEnviarRevision;
 	private JButton btnPedirColaborador;
 
@@ -52,6 +56,10 @@ public class RevisionArticuloRevisorView {
 		listArticulos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollArticulos = new JScrollPane(listArticulos);
 		panelIzquierdo.add(scrollArticulos, BorderLayout.CENTER);
+		
+		comboBoxPendientes = new JComboBox<String>();
+		comboBoxPendientes.setModel(new DefaultComboBoxModel<String>(new String[] {"Pendientes", "Ya revisados"}));
+		scrollArticulos.setColumnHeaderView(comboBoxPendientes);
 		panelIzquierdo.setPreferredSize(new Dimension(250, 0));
 		contentPane.add(panelIzquierdo, BorderLayout.WEST);
 		// ---------------------------------------------------------------------
@@ -111,7 +119,12 @@ public class RevisionArticuloRevisorView {
 		btnPedirColaborador = new JButton("Pedir Colaborador");
 		panelBoton.add(btnPedirColaborador);
 		panelDerecho.add(panelBoton);
-
+		
+		JLabel lblNewLabelRevisor = new JLabel("Revisor:");
+		panelBoton.add(lblNewLabelRevisor);
+		
+		comboBoxRevisor = new JComboBox();
+		panelBoton.add(comboBoxRevisor);
 		btnEnviarRevision = new JButton("Enviar Revisión");
 		panelBoton.add(btnEnviarRevision);
 		panelDerecho.add(panelBoton);
@@ -149,5 +162,18 @@ public class RevisionArticuloRevisorView {
 	public JButton getBtnPedirColaborador() {
 		return this.btnPedirColaborador;
 	}
-
+	
+	public JComboBox<String> getComboBoxPendientes() {
+		return this.comboBoxPendientes;
+	}
+	
+	public void setComboBoxPendientes(JComboBox<String> comboBoxPendientes) {
+		this.comboBoxPendientes = comboBoxPendientes;
+	}
+	public JComboBox getComboBoxRevisor() {
+		return comboBoxRevisor;
+	}
+	public void setComboBoxRevisor(JComboBox comboBoxRevisor) {
+		this.comboBoxRevisor = comboBoxRevisor;
+	}
 }

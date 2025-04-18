@@ -39,6 +39,7 @@ CREATE TABLE "Articulo" (
 	"resumen"	TEXT NOT NULL,
 	"nombreFichero"	TEXT NOT NULL UNIQUE,
 	"fechaEnvio"	TEXT NOT NULL,
+	"fechaModificacion"	TEXT,
 	"decisionFinal"	TEXT DEFAULT 'Pendiente' CHECK("decisionFinal" IN ("Pendiente", "Aceptado", "Rechazado", "Aceptado con cambios")),
 	"valoracionGlobal"	INTEGER DEFAULT NULL,
 	PRIMARY KEY("idArticulo" AUTOINCREMENT),
@@ -48,6 +49,7 @@ CREATE TABLE "Articulo" (
 CREATE TABLE "Discusion" (
 	"idDiscusion"	INTEGER NOT NULL UNIQUE,
 	"idArticulo"	INTEGER NOT NULL,
+	"isCerrada"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("idDiscusion" AUTOINCREMENT)
 );
 
@@ -101,6 +103,7 @@ CREATE TABLE "Preferencia" (
 CREATE TABLE "Usuario_Discusion" (
 	"emailUsuario"	TEXT NOT NULL,
 	"idDiscusion"	INTEGER NOT NULL,
+	"mantenerseFirme"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("emailUsuario","idDiscusion")
 );
 

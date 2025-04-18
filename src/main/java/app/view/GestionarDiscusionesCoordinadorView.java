@@ -6,48 +6,32 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import app.dto.ArticuloDiscusionDTO;
 import app.enums.DecisionRevisor;
 
-import javax.swing.BorderFactory;
-
 public class GestionarDiscusionesCoordinadorView {
-	
+
 	// -----------------------------------------------------
 	// Atributos de la vista
 	// -----------------------------------------------------
-	private JFrame frame;                       // Marco principal
-
-	// Panel contenedor principal
+	private JFrame frame; // Marco principal
 	private JPanel contentPane;
-
-	// Lista de artículos controversiales
 	private JList<ArticuloDiscusionDTO> listArticulos;
-
-	// Etiqueta para mostrar la valoración global
 	private JLabel lblValoracionGlobal;
-
-	// Panel que contendrá las "tarjetas" de revisiones conflictivas
 	private JPanel panelRevisiones;
 	private JScrollPane scrollRevisiones;
-
-	// Botones
 	private JButton btnPonerEnDiscusion;
 	private JButton btnCerrar;
+	private JButton btnAceptarArticulo;
+	private JButton btnRechazarArticulo;
+	private JButton btnRecordatorio;
+	private JButton btnCerrarDiscusion;
+	private JComboBox<String> comboFiltro;
+	private JButton btnAccederDiscusion;
 
 	// -----------------------------------------------------
 	// Constructor
@@ -70,36 +54,57 @@ public class GestionarDiscusionesCoordinadorView {
 		contentPane.setLayout(new BorderLayout(10, 10));
 		frame.setContentPane(contentPane);
 
-		// -----------------------------------------------------
 		// Panel Izquierdo: Lista de artículos
-		// -----------------------------------------------------
-		JPanel panelArticulos = new JPanel(new BorderLayout());
+		JPanel panelArticulos = new JPanel(new BorderLayout(5, 5));
 		panelArticulos.setBorder(BorderFactory.createTitledBorder("Artículos aptos para discusión"));
+
+		comboFiltro = new JComboBox<>();
+		comboFiltro.addItem("Aptas para discusión");
+		comboFiltro.addItem("Abiertas");
+		comboFiltro.addItem("Cerradas");
+		comboFiltro.addItem("Abiertas firmes");
+		comboFiltro.addItem("Abiertas c/ deadline pasado");
+		comboFiltro.addItem("Abiertas sin anotaciones");
+		panelArticulos.add(comboFiltro, BorderLayout.NORTH);
 
 		listArticulos = new JList<>();
 		listArticulos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
 		JScrollPane scrollArticulos = new JScrollPane(listArticulos);
 		panelArticulos.add(scrollArticulos, BorderLayout.CENTER);
 		panelArticulos.setPreferredSize(new Dimension(250, 0));
-
 		contentPane.add(panelArticulos, BorderLayout.WEST);
 
-		// -----------------------------------------------------
 		// Panel Derecho: Detalles del artículo
-		// -----------------------------------------------------
 		JPanel panelDerecho = new JPanel(new BorderLayout(10, 10));
 		contentPane.add(panelDerecho, BorderLayout.CENTER);
 
-		// Panel superior: valoración global
-		JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		panelSuperior.setBorder(BorderFactory.createTitledBorder("Valoración Global"));
+		// Panel superior combinado: Valoración + Botones de acción
+		JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
 
-		lblValoracionGlobal = new JLabel("");
+		// Panel Valoración Global
+		JPanel panelValoracion = new JPanel();
+		panelValoracion.setLayout(new FlowLayout(FlowLayout.CENTER));
+		panelValoracion.setBorder(BorderFactory.createTitledBorder("Valoración Global"));
+		panelValoracion.setPreferredSize(new Dimension(200, 60));
+
+		lblValoracionGlobal = new JLabel("0");
 		lblValoracionGlobal.setFont(new Font("SansSerif", Font.BOLD, 16));
 		lblValoracionGlobal.setHorizontalAlignment(SwingConstants.CENTER);
+		panelValoracion.add(lblValoracionGlobal);
 
-		panelSuperior.add(lblValoracionGlobal);
+		// Panel de acción (aceptar/rechazar)
+		JPanel panelAccion = new JPanel();
+		panelAccion.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		panelAccion.setBorder(BorderFactory.createTitledBorder("Acción sobre el artículo"));
+		panelAccion.setPreferredSize(new Dimension(300, 60));
+
+		btnAceptarArticulo = new JButton("Aceptar artículo");
+		btnRechazarArticulo = new JButton("Rechazar artículo");
+		panelAccion.add(btnAceptarArticulo);
+		panelAccion.add(btnRechazarArticulo);
+
+		panelSuperior.add(panelValoracion);
+		panelSuperior.add(panelAccion);
 		panelDerecho.add(panelSuperior, BorderLayout.NORTH);
 
 		// Panel central: revisiones conflictivas
@@ -107,117 +112,94 @@ public class GestionarDiscusionesCoordinadorView {
 		panelRevisiones.setLayout(new BoxLayout(panelRevisiones, BoxLayout.Y_AXIS));
 
 		scrollRevisiones = new JScrollPane(panelRevisiones);
-		scrollRevisiones.setBorder(BorderFactory.createTitledBorder("Revisiones conflictivas"));
+		scrollRevisiones.setBorder(BorderFactory.createTitledBorder("Revisiones"));
 		scrollRevisiones.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollRevisiones.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
 		panelDerecho.add(scrollRevisiones, BorderLayout.CENTER);
 
 		// Panel inferior: botones
-		JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		btnPonerEnDiscusion = new JButton("Poner en Discusión");
-		panelInferior.add(btnPonerEnDiscusion);
-
+		JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		btnRecordatorio = new JButton("Enviar recordatorio");
+		btnCerrarDiscusion = new JButton("Cerrar discusión");
+		btnPonerEnDiscusion = new JButton("Poner en discusión");
 		btnCerrar = new JButton("Cerrar");
+		btnAccederDiscusion = new JButton("Acceder Discusión");
+		
+		panelInferior.add(btnAccederDiscusion);
+		panelInferior.add(btnRecordatorio);
+		panelInferior.add(btnCerrarDiscusion);
+		panelInferior.add(btnPonerEnDiscusion);
 		panelInferior.add(btnCerrar);
-
 		panelDerecho.add(panelInferior, BorderLayout.SOUTH);
-
-		// Seleccionar el primer artículo por defecto (ejemplo)
-		if (listArticulos.getModel().getSize() > 0) {
-			listArticulos.setSelectedIndex(0);
-		}
 	}
 
 	// -----------------------------------------------------
 	// Métodos de la "lógica de UI" que el controlador puede invocar
 	// -----------------------------------------------------
 
-	/**
-	 * Muestra la ventana principal
-	 */
 	public void showWindow() {
 		this.frame.setVisible(true);
 	}
 
-	/**
-	 * Oculta o cierra la ventana
-	 */
 	public void hideWindow() {
 		this.frame.setVisible(false);
 	}
 
-	/**
-	 * Limpia el panel de revisiones
-	 */
 	public void clearRevisiones() {
 		panelRevisiones.removeAll();
 		panelRevisiones.revalidate();
 		scrollRevisiones.getVerticalScrollBar().setValue(0);
 	}
 
-	/**
-	 * Agrega una "tarjeta" de revisión al panel de revisiones.
-	 * NOTA: Se eliminó la lógica de colorear la decisión.
-	 */
 	public void addRevisionCard(String revisor, String nivel, String decision, String comentario) {
-	    JPanel tarjetaRevision = new JPanel(new BorderLayout(5, 5));
-	    tarjetaRevision.setBorder(BorderFactory.createCompoundBorder(
-	        new EmptyBorder(5, 5, 5, 5),
-	        BorderFactory.createCompoundBorder(
-	            new LineBorder(new Color(200, 200, 200), 1, true),
-	            new EmptyBorder(10, 10, 10, 10)
-	        )
-	    ));
-	    tarjetaRevision.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
-	    tarjetaRevision.setBackground(new Color(250, 250, 250));
+		JPanel tarjetaRevision = new JPanel(new BorderLayout(5, 5));
+		tarjetaRevision.setBorder(BorderFactory.createCompoundBorder(
+				new EmptyBorder(5, 5, 5, 5),
+				BorderFactory.createCompoundBorder(
+						new LineBorder(new Color(200, 200, 200), 1, true),
+						new EmptyBorder(10, 10, 10, 10))));
+		tarjetaRevision.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+		tarjetaRevision.setBackground(new Color(250, 250, 250));
 
-	    // 1. Obtenemos la instancia de DecisionRevisor a partir de la etiqueta 'decision'
-	    DecisionRevisor decisionRevisor = DecisionRevisor.fromLabel(decision);
-	    
-	    // Construimos el encabezado HTML
-	    String encabezadoHtml = String.format("<html><body>"
-	        + "<b>%s</b> | <b>Nivel %s</b> | <b>%s</b>"
-	        + "</body></html>", revisor, nivel, decision);
+		DecisionRevisor decisionRevisor = DecisionRevisor.fromLabel(decision);
 
-	    JLabel lblEncabezado = new JLabel(encabezadoHtml);
-	    lblEncabezado.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		String encabezadoHtml = String.format("<html><body>"
+				+ "<b>%s</b> | <b>Nivel %s</b> | <b>%s</b>"
+				+ "</body></html>", revisor, nivel, decision);
 
-	    // 2. Si el enum existe, aplicamos su color al label de encabezado
-	    if (decisionRevisor != null) {
-	        lblEncabezado.setForeground(decisionRevisor.getColor());
-	    }
+		JLabel lblEncabezado = new JLabel(encabezadoHtml);
+		lblEncabezado.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-	    JPanel panelEncabezado = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-	    panelEncabezado.setOpaque(false);
-	    panelEncabezado.add(lblEncabezado);
+		if (decisionRevisor != null) {
+			lblEncabezado.setForeground(decisionRevisor.getColor());
+		}
 
-	    tarjetaRevision.add(panelEncabezado, BorderLayout.NORTH);
+		JPanel panelEncabezado = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		panelEncabezado.setOpaque(false);
+		panelEncabezado.add(lblEncabezado);
+		tarjetaRevision.add(panelEncabezado, BorderLayout.NORTH);
 
-	    JSeparator separador = new JSeparator();
-	    separador.setForeground(new Color(220, 220, 220));
-	    tarjetaRevision.add(separador, BorderLayout.CENTER);
+		JSeparator separador = new JSeparator();
+		separador.setForeground(new Color(220, 220, 220));
+		tarjetaRevision.add(separador, BorderLayout.CENTER);
 
-	    JPanel panelComentario = new JPanel(new BorderLayout(5, 5));
-	    panelComentario.setOpaque(false);
+		JPanel panelComentario = new JPanel(new BorderLayout(5, 5));
+		panelComentario.setOpaque(false);
 
-	    JLabel lblComentarioTitulo = new JLabel("Comentario:");
-	    lblComentarioTitulo.setFont(new Font("SansSerif", Font.BOLD, 12));
+		JLabel lblComentarioTitulo = new JLabel("Comentario:");
+		lblComentarioTitulo.setFont(new Font("SansSerif", Font.BOLD, 12));
+		JLabel lblComentarioValor = new JLabel("<html><p style='width:400px'>" + comentario + "</p></html>");
 
-	    JLabel lblComentarioValor = new JLabel("<html><p style='width:400px'>" + comentario + "</p></html>");
+		panelComentario.add(lblComentarioTitulo, BorderLayout.NORTH);
+		panelComentario.add(lblComentarioValor, BorderLayout.CENTER);
 
-	    panelComentario.add(lblComentarioTitulo, BorderLayout.NORTH);
-	    panelComentario.add(lblComentarioValor, BorderLayout.CENTER);
+		tarjetaRevision.add(panelComentario, BorderLayout.SOUTH);
+		panelRevisiones.add(tarjetaRevision);
+		panelRevisiones.add(Box.createRigidArea(new Dimension(0, 10)));
 
-	    tarjetaRevision.add(panelComentario, BorderLayout.SOUTH);
-
-	    panelRevisiones.add(tarjetaRevision);
-	    panelRevisiones.add(Box.createRigidArea(new Dimension(0, 10)));
-
-	    panelRevisiones.revalidate();
-	    scrollRevisiones.getVerticalScrollBar().setValue(0);
+		panelRevisiones.revalidate();
+		scrollRevisiones.getVerticalScrollBar().setValue(0);
 	}
-
 
 	// -----------------------------------------------------
 	// Getters y Setters para que el controlador acceda a los componentes
@@ -255,4 +237,28 @@ public class GestionarDiscusionesCoordinadorView {
 		return btnCerrar;
 	}
 
+	public JButton getBtnAceptarArticulo() {
+		return btnAceptarArticulo;
+	}
+
+	public JButton getBtnRechazarArticulo() {
+		return btnRechazarArticulo;
+	}
+
+	public JButton getBtnRecordatorio() {
+		return btnRecordatorio;
+	}
+
+	public JButton getBtnCerrarDiscusion() {
+		return btnCerrarDiscusion;
+	}
+
+	public JComboBox<String> getComboFiltro() {
+		return comboFiltro;
+	}
+	
+	public JButton getBtnAccederDiscusion() {
+		return btnAccederDiscusion;
+	}
+	
 }

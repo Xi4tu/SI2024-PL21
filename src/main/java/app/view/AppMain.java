@@ -11,18 +11,25 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import app.controller.AccederDiscusionController;
 import app.controller.AceptarDenegarArticuloController;
 import app.controller.AsignarRevisoresController;
 import app.controller.EnviarArticuloController;
+import app.controller.IndicarPreferenciaArticulosController;
+import app.controller.ParticiparDiscusionesCoordController;
 import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
 import app.controller.VerMisArticulosController;
+import app.model.AccederDiscusionModel;
 import app.model.AceptarDenegarArticuloModel;
 import app.model.AsignarRevisoresModel;
 import app.model.EnviarArticuloModel;
 import app.model.RevisionArticuloAutorModel;
 import app.model.RevisionArticuloRevisorModel;
 import app.model.VerMisArticulosModel;
+import app.model.IndicarPreferenciaArticulosModel;
+import app.model.ParticiparDiscusionesCoordModel;
 import giis.demo.util.Database;
 
 public class AppMain {
@@ -126,6 +133,26 @@ public class AppMain {
 		buttons.add(new ButtonProvider("Visualizar mis artículos - Autor", e -> {
 			VerMisArticulosController controller = new VerMisArticulosController(new VerMisArticulosModel(), 
 					new VerMisArticulosView(), textEmail.getText());
+			controller.initController();
+		}));
+
+		buttons.add(new ButtonProvider("Acceder a discusiones - Revisor", e -> {
+			AccederDiscusionController controller = new AccederDiscusionController(new AccederDiscusionModel(), 
+					new AccederDiscusionView(), textEmail.getText());
+		    controller.initController();
+		}));
+
+		buttons.add(new ButtonProvider("Indicar Preferencias - Revisor", e -> {
+			IndicarPreferenciaArticulosController controller = new IndicarPreferenciaArticulosController(new IndicarPreferenciaArticulosModel(), 
+					new IndicarPreferenciaArticulosView(), textEmail.getText());
+
+			controller.initController();
+		}));
+		
+		buttons.add(new ButtonProvider("Participar en discusiones - Coordinador", e -> {
+			ParticiparDiscusionesCoordController controller = new ParticiparDiscusionesCoordController(new ParticiparDiscusionesCoordModel(), 
+					new ParticiparDiscusionesCoordView(), textEmail.getText(), 0);
+
 			controller.initController();
 		}));
 

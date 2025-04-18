@@ -1,6 +1,5 @@
 package app.controller;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +12,9 @@ import app.enums.Rol;
 import app.model.GestionarDiscusionesCoordinadorModel;
 import app.view.GestionarDiscusionesCoordinadorView;
 import giis.demo.util.SwingUtil;
+import app.model.ParticiparDiscusionesCoordModel;
+import app.view.ParticiparDiscusionesCoordView;
+import app.controller.ParticiparDiscusionesCoordController;
 
 /**
  * Controller para la gestión de discusiones a cargo del coordinador.
@@ -34,213 +36,420 @@ import giis.demo.util.SwingUtil;
  */
 public class GestionarDiscusionesCoordinadorController {
 
-	// Atributos de la clase
-	private GestionarDiscusionesCoordinadorModel model;
-	private GestionarDiscusionesCoordinadorView view;
-	private String email;
-	private DefaultListModel<ArticuloDiscusionDTO> listModel;
-	private List<ArticuloDiscusionDTO> articulosDTO;
-	private List<RevisionArticuloRevisionDTO> revisionesDTO;
-	private Map<Integer, List<RevisionArticuloRevisionDTO>> revisionesArticulos = new HashMap<>();
-	private static final Rol ROL = Rol.COORDINADOR;
+    // Atributos de la clase
+    private GestionarDiscusionesCoordinadorModel model;
+    private GestionarDiscusionesCoordinadorView view;
+    private String email;
+    private DefaultListModel<ArticuloDiscusionDTO> listModel;
+    private List<ArticuloDiscusionDTO> articulosDTO;
+    private List<RevisionArticuloRevisionDTO> revisionesDTO;
+    private Map<Integer, List<RevisionArticuloRevisionDTO>> revisionesArticulos = new HashMap<>();
+    private static final Rol ROL = Rol.COORDINADOR;
 
-	/**
-	 * Constructor del controller.
-	 *
-	 * <p>
-	 * Inicializa el controlador con el modelo, la vista y el correo del coordinador.
-	 * Llama al backend para cargar los artículos aptos para discusión y sus revisiones asociadas,
-	 * y posteriormente inicializa la vista.
-	 * </p>
-	 *
-	 * @param m     Modelo que maneja la lógica de negocio de las discusiones.
-	 * @param v     Vista que presenta la información de los artículos y revisiones.
-	 * @param email Correo electrónico del coordinador.
-	 */
-	public GestionarDiscusionesCoordinadorController(GestionarDiscusionesCoordinadorModel m,
-			GestionarDiscusionesCoordinadorView v, String email) {
-		this.model = m;
-		this.view = v;
-		this.email = email;
+    /**
+     * Constructor del controller.
+     * <p>
+     * Inicializa el controlador con el modelo, la vista y el correo del coordinador.
+     * Llama al backend para cargar los artículos aptos para discusión y sus revisiones asociadas,
+     * y posteriormente inicializa la vista.
+     * </p>
+     *
+     * @param m     Modelo que maneja la lógica de negocio de las discusiones.
+     * @param v     Vista que presenta la información de los artículos y revisiones.
+     * @param email Correo electrónico del coordinador.
+     */
+    public GestionarDiscusionesCoordinadorController(GestionarDiscusionesCoordinadorModel m,
+            GestionarDiscusionesCoordinadorView v, String email) {
+        this.model = m;
+        this.view = v;
+        this.email = email;
 
-		// Llamar al backend para cargar los artículos aptos para discusión
-		if (!obtenerArticulos()) {
-			return;
-		}
+        // Cargar artículos aptos para discusión.
+        if (!obtenerArticulos()) {
+            return;
+        }
 
-		// Llamar al backend para cargar las revisiones de los artículos cargados
-		// anteriormente
-		if (!obtenerRevisiones()) {
-			return;
-		}
+        // Cargar revisiones asociadas a los artículos.
+        if (!obtenerRevisiones()) {
+            return;
+        }
 
-		// Inicializar la vista una vez que los datos están cargados.
-		this.initView();
-	}
+        // Inicializar la vista.
+        this.initView();
+    }
 
-	/**
-	 * Inicializa el controller configurando los eventos de la vista.
-	 *
-	 * <p>
-	 * Se configuran los listeners para:
-	 * <ul>
-	 *   <li>Cerrar la ventana cuando se pulsa el botón "Cerrar".</li>
-	 *   <li>Mostrar las revisiones asociadas al seleccionar un artículo en la lista.</li>
-	 *   <li>Poner un artículo en discusión al pulsar el botón "Poner en Discusión".</li>
-	 * </ul>
-	 * </p>
-	 */
-	public void initController() {
-		// Botón de cerrar.
-		view.getBtnCerrar().addActionListener(e -> view.getFrame().dispose());
+    /**
+     * Configura los listeners de la vista.
+     * <p>
+     * Se configuran los siguientes listeners:
+     * <ul>
+     *   <li>Cerrar ventana ("Cerrar").</li>
+     *   <li>Cerrar discusión ("Cerrar Discusión").</li>
+     *   <li>Seleccionar un artículo para mostrar sus revisiones.</li>
+     *   <li>Cambiar el filtro (JComboBox).</li>
+     *   <li>Poner en discusión ("Poner en Discusión").</li>
+     * </ul>
+     * </p>
+     */
+    public void initController() {
+        // Listener para cerrar la ventana.
+        view.getBtnCerrar().addActionListener(e -> view.getFrame().dispose());
+        
+        // Listener para el botón "Enviar recordatorio".
+        view.getBtnRecordatorio().addActionListener(e -> {
+            SwingUtil.showMessage("Se ha enviado recordatorio a los revisores", "Información", JOptionPane.INFORMATION_MESSAGE);
+        });
 
-		// Cuando se selecciona un artículo en la lista, mostrar las revisiones asociadas.
-		view.getListArticulos().addListSelectionListener(e -> {
+        // Listener para el botón "Cerrar Discusión".
+        view.getBtnCerrarDiscusion().addActionListener(e -> {
+            // Obtener el artículo seleccionado.
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("No se ha seleccionado ningún artículo", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Marcar discusión como cerrada.
+            if (model.cerrarDiscusion(articulo.getIdArticulo())) {
+                SwingUtil.showMessage("Discusión cerrada correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                
+                // Actualizar listado según el filtro activo.
+                String filtroActual = (String) view.getComboFiltro().getSelectedItem();
+                List<ArticuloDiscusionDTO> listaActualizada = new ArrayList<>();
+                switch (filtroActual) {
+                    case "Cerradas":
+                        listaActualizada = model.getArticulosCerrados();
+                        break;
+                    case "Aptas para discusión":
+                        listaActualizada = model.getArticulosAptosDiscusion();
+                        break;
+                    case "Abiertas":
+                        listaActualizada = model.getDiscusionAbierta();
+                        break;
+                    case "Abiertas firmes":
+                        listaActualizada = model.getDiscusionAbiertaFirmes();
+                        break;
+                    case "Abiertas c/ deadline pasado":
+                        listaActualizada = model.getDiscusionAbiertaDeadlinePasado();
+                        break;
+                    case "Abiertas sin anotaciones":
+                        listaActualizada = model.getArticulosAbiertasSinAnotaciones();
+                        break;
+                    default:
+                        break;
+                }
+                
+                // Crear un nuevo modelo y asignarlo al JList.
+                DefaultListModel<ArticuloDiscusionDTO> nuevoModelo = new DefaultListModel<>();
+                for (ArticuloDiscusionDTO a : listaActualizada) {
+                    nuevoModelo.addElement(a);
+                }
+                view.getListArticulos().setModel(nuevoModelo);
+                
+                // Limpiar revisiones y valoración.
+                view.clearRevisiones();
+                view.getLblValoracionGlobal().setText("");
+            } else {
+                SwingUtil.showMessage("Error al cerrar la discusión", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
-			// Obtener el DTO del artículo seleccionado.
-			ArticuloDiscusionDTO articuloSeleccionado = view.getListArticulos().getSelectedValue();
+        // Listener para la selección de un artículo en el JList.
+        view.getListArticulos().addListSelectionListener(e -> {
+            if (e.getValueIsAdjusting()) return;
+            
+            // Obtener el artículo seleccionado.
+            ArticuloDiscusionDTO articuloSeleccionado = view.getListArticulos().getSelectedValue();
+            if (articuloSeleccionado == null || articuloSeleccionado.getIdArticulo() == 0) {
+                return;
+            }
+            
+            // Limpiar el panel de revisiones.
+            view.getPanelRevisiones().removeAll();
+            
+            // Mostrar la valoración del artículo.
+            view.getLblValoracionGlobal().setText(Integer.toString(articuloSeleccionado.getValoracionGlobal()));
+            
+            // Obtener y mostrar las revisiones asociadas.
+            revisionesDTO = revisionesArticulos.get(articuloSeleccionado.getIdArticulo());
+            if (revisionesDTO != null) {
+                for (RevisionArticuloRevisionDTO r : revisionesDTO) {
+                    String decision = app.enums.DecisionRevisor.getLabelByValue(r.getDecisionRevisor());
+                    view.addRevisionCard(r.getNombre(), r.getNivelExperto(), decision, r.getComentariosParaCoordinador());
+                }
+            } else {
+                view.getPanelRevisiones().removeAll();
+                view.getPanelRevisiones().revalidate();
+                view.getPanelRevisiones().repaint();
+            }
+        });
 
-			// Verifica si el objeto o su id son nulos.
-			if (articuloSeleccionado == null || articuloSeleccionado.getIdArticulo() == 0) {
-				return;
-			}
-			// Limpiar el panel de revisiones antes de agregar las nuevas.
-			view.getPanelRevisiones().removeAll();
+        // Listener para el filtro del JComboBox.
+        view.getComboFiltro().addActionListener(e -> {
+            String selected = (String) view.getComboFiltro().getSelectedItem();
+            
+            // Limpiar revisiones y valoración.
+            view.clearRevisiones();
+            view.getLblValoracionGlobal().setText("");
+            
+            // Actualizar botones según el filtro.
+            updateButtonsState(selected);
+            
+            // Actualizar el listado según el filtro.
+            if ("Cerradas".equals(selected)) {
+                List<ArticuloDiscusionDTO> articulosCerrados = model.getArticulosCerrados();
+                DefaultListModel<ArticuloDiscusionDTO> closedModel = new DefaultListModel<>();
+                if (articulosCerrados.isEmpty()) {
+                    view.getListArticulos().setModel(closedModel);
+                    view.clearRevisiones();	          
+                } else {
+                    for (ArticuloDiscusionDTO articulo : articulosCerrados) {
+                        closedModel.addElement(articulo);
+                    }
+                    view.getListArticulos().setModel(closedModel);
+                }
+            } else if ("Aptas para discusión".equals(selected)) {
+                view.getListArticulos().setModel(listModel);
+            } else if ("Abiertas firmes".equals(selected)) {
+                List<ArticuloDiscusionDTO> articulosFirmes = model.getDiscusionAbiertaFirmes();
+                DefaultListModel<ArticuloDiscusionDTO> firmesModel = new DefaultListModel<>();
+                if (articulosFirmes.isEmpty()) {
+                    view.getListArticulos().setModel(firmesModel);
+                    view.clearRevisiones();
+                } else {
+                    for (ArticuloDiscusionDTO articulo : articulosFirmes) {
+                        firmesModel.addElement(articulo);
+                    }
+                    view.getListArticulos().setModel(firmesModel);
+                }
+            } else if ("Abiertas".equals(selected)) {
+                List<ArticuloDiscusionDTO> articulosAbiertos = model.getDiscusionAbierta();
+                DefaultListModel<ArticuloDiscusionDTO> abiertasModel = new DefaultListModel<>();
+                if (articulosAbiertos.isEmpty()) {
+                    view.getListArticulos().setModel(abiertasModel);
+                    view.clearRevisiones();
+                } else {
+                    for (ArticuloDiscusionDTO articulo : articulosAbiertos) {
+                        abiertasModel.addElement(articulo);
+                    }
+                    view.getListArticulos().setModel(abiertasModel);
+                }
+            } else if ("Abiertas c/ deadline pasado".equals(selected)) {
+                List<ArticuloDiscusionDTO> articulosDeadlinePasado = model.getDiscusionAbiertaDeadlinePasado();
+                DefaultListModel<ArticuloDiscusionDTO> deadlineModel = new DefaultListModel<>();
+                if (articulosDeadlinePasado.isEmpty()) {
+                    view.getListArticulos().setModel(deadlineModel);
+                    view.clearRevisiones();
+                } else {
+                    for (ArticuloDiscusionDTO articulo : articulosDeadlinePasado) {
+                        deadlineModel.addElement(articulo);
+                    }
+                    view.getListArticulos().setModel(deadlineModel);
+                }
+            } else if ("Abiertas sin anotaciones".equals(selected)) {
+                // Se asume que en el modelo implementaste getArticulosAbiertasSinAnotaciones()
+                List<ArticuloDiscusionDTO> articulosSinAnotaciones = model.getArticulosAbiertasSinAnotaciones();
+                DefaultListModel<ArticuloDiscusionDTO> sinAnotacionesModel = new DefaultListModel<>();
+                if (articulosSinAnotaciones.isEmpty()) {
+                    view.getListArticulos().setModel(sinAnotacionesModel);
+                    view.clearRevisiones();
+                } else {
+                    for (ArticuloDiscusionDTO articulo : articulosSinAnotaciones) {
+                        sinAnotacionesModel.addElement(articulo);
+                    }
+                    view.getListArticulos().setModel(sinAnotacionesModel);
+                }
+            }
+            
+            
+            
+        });
 
-			// Mostrar la decisión final del artículo.
-			view.getLblValoracionGlobal().setText(Integer.toString(articuloSeleccionado.getValoracionGlobal()));
+        // Listener para el botón "Poner en Discusión".
+        view.getBtnPonerEnDiscusion().addActionListener(e -> {
+            // Obtener el artículo seleccionado.
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("No se ha seleccionado ningún artículo", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            // Llamar al backend para poner en discusión el artículo seleccionado.
+            if (model.ponerEnDiscusion(articulo.getIdArticulo())) {
+                SwingUtil.showMessage("Artículo puesto en discusión, se ha notificado a los revisores", "Información", JOptionPane.INFORMATION_MESSAGE);
+                
+                // Eliminar el artículo del modelo.
+                listModel.removeElement(articulo);
+                
+                // Limpiar valoraciones y revisiones.
+                view.getLblValoracionGlobal().setText("");
+                view.getPanelRevisiones().removeAll();
+            } else {
+                SwingUtil.showMessage("No se ha podido poner en discusión el artículo", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
+     // Listener para aceptar artículo
+        view.getBtnAceptarArticulo().addActionListener(e -> {
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("No se ha seleccionado ningún artículo", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (model.aceptarArticulo(articulo.getIdArticulo())) {
+                SwingUtil.showMessage("Artículo aceptado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                refreshArticulosCerrados();
+            } else {
+                SwingUtil.showMessage("Error al aceptar el artículo", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
-			// Guardar las revisiones asociadas al artículo seleccionado.
-			revisionesDTO = revisionesArticulos.get(articuloSeleccionado.getIdArticulo());
+        // Listener para rechazar artículo
+        view.getBtnRechazarArticulo().addActionListener(e -> {
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("No se ha seleccionado ningún artículo", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (model.rechazarArticulo(articulo.getIdArticulo())) {
+                SwingUtil.showMessage("Artículo rechazado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                refreshArticulosCerrados();
+            } else {
+                SwingUtil.showMessage("Error al rechazar el artículo", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
-			String decision;
-			// Iterar sobre cada una de las revisiones del artículo seleccionado para mostrarlas.
-			for (RevisionArticuloRevisionDTO r : revisionesDTO) {
-				// Obtener la decisión del revisor usando el enum.
-				decision = app.enums.DecisionRevisor.getLabelByValue(r.getDecisionRevisor());
-				// Agregar la revisión a la vista.
-				view.addRevisionCard(r.getNombre(), r.getNivelExperto(), decision, r.getComentariosParaCoordinador());
-			}
+        
+        view.getBtnAccederDiscusion().addActionListener(e -> {
+            ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
+            if (articulo == null) {
+                SwingUtil.showMessage("Selecciona un artículo con discusión abierta",
+                                      "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ParticiparDiscusionesCoordController controller =
+                new ParticiparDiscusionesCoordController(
+                    new ParticiparDiscusionesCoordModel(),
+                    new ParticiparDiscusionesCoordView(),
+                    this.email,
+                    articulo.getIdArticulo()        
+                );
+            controller.initController();
+        });
 
-		});
 
-		// Botón de poner en discusión.
-		view.getBtnPonerEnDiscusion().addActionListener(e -> {
-			// Obtener el artículo seleccionado.
-			ArticuloDiscusionDTO articulo = view.getListArticulos().getSelectedValue();
-			if (articulo == null) {
-				SwingUtil.showMessage("No se ha seleccionado ningún artículo", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			// Llamar al backend para poner en discusión el artículo seleccionado.
-			if (model.ponerEnDiscusion(articulo.getIdArticulo())) {
-				SwingUtil.showMessage("Artículo puesto en discusión, se ha notificado a los revisores", "Información", JOptionPane.INFORMATION_MESSAGE);
-				
-				// Eliminar del listModel el artículo puesto en discusión.
-				listModel.removeElement(articulo);
-				
-				// Limpiar los campos de texto.
-				view.getLblValoracionGlobal().setText("");
-				view.getPanelRevisiones().removeAll();
-				
-				// Comprobar si el listModel está vacío.
-				if (listModel.isEmpty()) {
-					SwingUtil.showMessage("No hay ningún artículo apto para discusión", "Información",
-							JOptionPane.INFORMATION_MESSAGE);
-					view.getFrame().dispose();
-				}
-				
-			} else {
-				SwingUtil.showMessage("No se ha podido poner en discusión el artículo", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		});
-	}
+        
+    }
 
-	/**
-	 * Inicializa la vista.
-	 *
-	 * <p>
-	 * Hace visible el frame de la vista y establece el modelo de la lista con los artículos aptos para discusión.
-	 * </p>
-	 */
-	public void initView() {
-		view.getFrame().setVisible(true);
-		// Agregar los artículos al JList.
-		view.getListArticulos().setModel(listModel);
-	}
+    /**
+     * Inicializa la vista, haciéndola visible y estableciendo el modelo inicial del JList.
+     */
+    public void initView() {
+    	view.getFrame().setVisible(true);
+        view.getListArticulos().setModel(listModel);
 
-	/**
-	 * Obtiene las revisiones asociadas a los artículos aptos para discusión.
-	 *
-	 * <p>
-	 * Llama al backend para obtener la lista de revisiones y las agrupa en un mapa,
-	 * utilizando el identificador del artículo como clave. Si no se encuentran revisiones,
-	 * se muestra un mensaje informativo.
-	 * </p>
-	 *
-	 * @return <code>true</code> si se obtuvieron las revisiones correctamente; <code>false</code> en caso contrario.
-	 */
-	private boolean obtenerRevisiones() {
-		// Llamar al backend para obtener las revisiones asociadas a los artículos aptos para discusión.
-		List<RevisionArticuloRevisionDTO> revisiones = model.getRevisionesArticulos();
+        // Llama al método para actualizar el estado de los botones
+        String filtroSeleccionado = (String) view.getComboFiltro().getSelectedItem();
+        updateButtonsState(filtroSeleccionado);
+    }
 
-		// Si no se han encontrado revisiones, se muestra un mensaje.
-		if (revisiones.isEmpty()) {
-			SwingUtil.showMessage("No se han encontrado revisiones", "Información", JOptionPane.INFORMATION_MESSAGE);
-			return false;
-		}
+    /**
+     * Obtiene las revisiones asociadas a los artículos aptos para discusión y las agrupa en un mapa
+     * donde la clave es el id del artículo.
+     *
+     * @return true si se obtuvieron las revisiones correctamente; false en caso contrario.
+     */
+    private boolean obtenerRevisiones() {
+        List<RevisionArticuloRevisionDTO> revisiones = model.getRevisionesArticulos();
+        for (RevisionArticuloRevisionDTO r : revisiones) {
+            if (revisionesArticulos.containsKey(r.getIdArticulo())) {
+                revisionesArticulos.get(r.getIdArticulo()).add(r);
+            } else {
+                List<RevisionArticuloRevisionDTO> lista = new ArrayList<>();
+                lista.add(r);
+                revisionesArticulos.put(r.getIdArticulo(), lista);
+            }
+        }
+        return true;
+    }
 
-		// Convertir cada elemento a DTO y almacenarlos en un mapa con el idArticulo como clave.
-		for (RevisionArticuloRevisionDTO r : revisiones) {
-			if (revisionesArticulos.containsKey(r.getIdArticulo())) {
-				revisionesArticulos.get(r.getIdArticulo()).add(r);
-			} else {
-				List<RevisionArticuloRevisionDTO> lista = new ArrayList<>();
-				lista.add(r);
-				revisionesArticulos.put(r.getIdArticulo(), lista);
-			}
-		}
+    /**
+     * Obtiene los artículos aptos para discusión y actualiza el modelo del JList.
+     *
+     * @return true si se obtuvieron los artículos correctamente; false en caso contrario.
+     */
+    private boolean obtenerArticulos() {
+        List<ArticuloDiscusionDTO> articulos = model.getArticulosAptosDiscusion();
+        articulosDTO = new ArrayList<>();
+        for (ArticuloDiscusionDTO e : articulos) {
+            ArticuloDiscusionDTO dto = new ArticuloDiscusionDTO(e.getIdArticulo(), e.getTitulo(), e.getValoracionGlobal());
+            articulosDTO.add(dto);
+        }
+        listModel = new DefaultListModel<>();
+        for (ArticuloDiscusionDTO dto : articulosDTO) {
+            listModel.addElement(dto);
+        }
+        return true;
+    }
 
-		return true;
-	}
+    /**
+     * Actualiza el estado de los botones de la vista en función del filtro activo.
+     *
+     * @param filtro El filtro activo.
+     */
+    private void updateButtonsState(String filtro) {
+        view.getBtnPonerEnDiscusion().setEnabled(false);
+        view.getBtnCerrar().setEnabled(false);
+        view.getBtnAceptarArticulo().setEnabled(false);
+        view.getBtnRechazarArticulo().setEnabled(false);
+        view.getBtnRecordatorio().setEnabled(false);
+        view.getBtnCerrarDiscusion().setEnabled(false);
+        view.getBtnAccederDiscusion().setEnabled(false);
+        switch (filtro) {
+            case "Cerradas":
+                view.getBtnAceptarArticulo().setEnabled(true);
+                view.getBtnRechazarArticulo().setEnabled(true);
+                view.getBtnCerrar().setEnabled(true);
+                break;
+            case "Aptas para discusión":
+                view.getBtnPonerEnDiscusion().setEnabled(true);
+                view.getBtnCerrar().setEnabled(true);
+                break;
+            case "Abiertas":
+                view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
+                break;
+            case "Abiertas firmes":
+                view.getBtnCerrarDiscusion().setEnabled(true);
+                view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
+                break;
+            case "Abiertas c/ deadline pasado":
+                view.getBtnCerrarDiscusion().setEnabled(true);
+                view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
+                break;
+            case "Abiertas sin anotaciones":
+                view.getBtnRecordatorio().setEnabled(true);
+                view.getBtnCerrar().setEnabled(true);
+                view.getBtnAccederDiscusion().setEnabled(true);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    /**
+     * Recarga la lista de artículos cerrados en la vista y limpia detalles.
+     */
+    private void refreshArticulosCerrados() {
+        List<ArticuloDiscusionDTO> lista = model.getArticulosCerrados();
+        DefaultListModel<ArticuloDiscusionDTO> m = new DefaultListModel<>();
+        for (ArticuloDiscusionDTO a : lista) {
+            m.addElement(a);
+        }
+        view.getListArticulos().setModel(m);
+        view.clearRevisiones();
+        view.getLblValoracionGlobal().setText("");
+    }
 
-	/**
-	 * Obtiene los artículos aptos para discusión.
-	 *
-	 * <p>
-	 * Llama al backend para obtener los artículos que cumplen los criterios de aptitud para discusión,
-	 * y actualiza el modelo de la lista en la vista. Si no se encuentran artículos aptos, se muestra un mensaje informativo.
-	 * </p>
-	 *
-	 * @return <code>true</code> si se obtuvieron los artículos correctamente; <code>false</code> en caso contrario.
-	 */
-	private boolean obtenerArticulos() {
-
-		// Llamar al backend para obtener los artículos aptos para discusión.
-		List<ArticuloDiscusionDTO> articulos = model.getArticulosAptosDiscusion();
-
-		// Si no hay artículos asignados, mostrar un mensaje y cerrar la vista.
-		if (articulos.isEmpty()) {
-			SwingUtil.showMessage("No hay ningún artículo apto para discusión", "Información",
-					JOptionPane.INFORMATION_MESSAGE);
-			return false;
-		}
-
-		// Convertir cada elemento a DTO y almacenarlos en una lista.
-		articulosDTO = new ArrayList<>();
-		for (ArticuloDiscusionDTO e : articulos) {
-			ArticuloDiscusionDTO dto = new ArticuloDiscusionDTO(e.getIdArticulo(), e.getTitulo(),
-					e.getValoracionGlobal());
-			articulosDTO.add(dto);
-		}
-
-		// Crear un modelo para el JList y agregar los DTOs.
-		listModel = new DefaultListModel<>();
-		for (ArticuloDiscusionDTO dto : articulosDTO) {
-			listModel.addElement(dto);
-		}
-
-		return true;
-	}
 }
