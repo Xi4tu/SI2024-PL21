@@ -1,6 +1,8 @@
 package app.model;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import app.dto.ArticuloRevisionDTO;
 import app.dto.AutorDTO;
@@ -23,11 +25,18 @@ public class AsignarRevisoresModel {
      * @return Lista de ArticuloDTO sin revisores asignados.
      */
 	public List<ArticuloRevisionDTO> obtenerArticulosSinRevisores() {
-		String sql = "SELECT p.decision AS preferencia, p.idArticulo " +
-	             "FROM Preferencia p " +
-	             "JOIN Usuario_Preferencia up ON p.idPreferencia = up.idPreferencia " +
-	             "WHERE p.idArticulo = ? AND up.emailUsuario = ?";
-
+		String sql =
+		        "SELECT " +
+		        "  a.idArticulo AS id, " +
+		        "  a.titulo, " +
+		        "  a.palabrasClave, " +
+		        "  a.palabrasClaveTrack AS palabrasclaveTrack, " +
+		        "  a.resumen, " +
+		        "  a.nombreFichero, " +
+		        "  a.fechaEnvio " +
+		        "FROM Articulo a " +
+		        "LEFT JOIN Revision r ON a.idArticulo = r.idArticulo " +
+		        "WHERE r.idArticulo IS NULL";
 	    
 
 
@@ -40,21 +49,20 @@ public class AsignarRevisoresModel {
 	 * @return Lista de ArticuloDTO con revisores asignados.
 	 */
 	public List<ArticuloRevisionDTO> obtenerArticulosConRevisores() {
-		  String sql = "SELECT \r\n"
-		    		+ "    a.idArticulo AS id, \r\n"
-		    		+ "    a.titulo, \r\n"
-		    		+ "    a.palabrasClave, \r\n"
-		    		+ "    a.resumen, \r\n"
-		    		+ "    a.nombreFichero, \r\n"
-		    		+ "    a.fechaEnvio, \r\n"
-		    		+ "    GROUP_CONCAT(u.email, ', ') AS autoresTexto\r\n"
-		    		+ "FROM Articulo a\r\n"
-		    		+ "LEFT JOIN Revision r ON a.idArticulo = r.idArticulo\r\n"
-		    		+ "JOIN Articulo_Usuario au ON a.idArticulo = au.idArticulo\r\n"
-		    		+ "JOIN Usuario u ON au.emailUsuario = u.email\r\n"
-		    		+ "WHERE r.idArticulo IS not NULL\r\n"
-		    		+ "GROUP BY a.idArticulo;\r\n"
-		    		+ "";
+		  String sql = "SELECT " +
+			        "  a.idArticulo AS id, " +
+			        "  a.titulo, " +
+			        "  a.palabrasClave, " +
+			        "  a.palabrasClaveTrack AS palabrasclaveTrack, " +
+			        "  a.resumen, " +
+			        "  a.nombreFichero, " +
+			        "  a.fechaEnvio, " +
+			        "  GROUP_CONCAT(u.email, ', ') AS autoresTexto " +
+			        "FROM Articulo a " +
+			        "JOIN Revision r ON a.idArticulo = r.idArticulo " +
+			        "JOIN Articulo_Usuario au ON a.idArticulo = au.idArticulo " +
+			        "JOIN Usuario u ON au.emailUsuario = u.email " +
+			        "GROUP BY a.idArticulo";
 	    return db.executeQueryPojo(ArticuloRevisionDTO.class, sql);
 	}
     /**
@@ -66,7 +74,7 @@ public class AsignarRevisoresModel {
 	public List<RevisorDTO> obtenerRevisoresDisponibles(int idArticulo) {
 	
 	    
-	    String sql = "SELECT u.email, u.nombre, u.organizacion, u.grupoInvestigacion "
+	    String sql = "SELECT u.email, u.nombre, u.organizacion, u.grupoInvestigacion ,u.palabrasClave "
 	            + "FROM Usuario u "
 	            + "JOIN Usuario_Rol ur ON u.email = ur.emailUsuario "
 	            + "JOIN Rol r ON ur.idRol = r.idRol "
@@ -147,6 +155,32 @@ public class AsignarRevisoresModel {
 	    return resultado.isEmpty() ? "Sin preferencia" : resultado.get(0)[0].toString();
 	}
 
+	public List<RevisorDTO> obtenerRevisoresExpertosDeArticulo(int idArticulo) {
+        // 1) Obtenemos el track de palabras clave del artículo
+        String trackSql =
+          "SELECT palabrasClaveTrack FROM Articulo WHERE idArticulo = ?";
+        String palabrasTrack = db
+          .executeQueryArray(trackSql, idArticulo)
+          .get(0)[0]
+          .toString();
+
+        // 2) Partimos en lista y limpiamos espacios
+        List<String> listaTrack = Arrays.stream(palabrasTrack.split(","))
+          .map(String::trim)
+          .collect(Collectors.toList());
+
+        // 3) Recuperamos todos los revisores del artículo
+        List<RevisorDTO> revisores = obtenerRevisoresDeArticulo(idArticulo);
+
+        // 4) Filtramos solo los que tengan al menos una palabra en común
+        return revisores.stream()
+          .filter(r -> {
+              return Arrays.stream(r.getPalabrasClave().split(","))
+                .map(String::trim)
+                .anyMatch(listaTrack::contains);
+          })
+          .collect(Collectors.toList());
+    }
 		
 	
 	
