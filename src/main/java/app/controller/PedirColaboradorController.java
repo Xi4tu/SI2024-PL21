@@ -46,14 +46,16 @@ public class PedirColaboradorController {
 	private PedirColaboradorModel model;
 	private PedirColaboradorView view;
 	private String email;
-	private int id;
+	private int idArticulo;
 	private DefaultListModel<PedirColaboradorDTO> listModel;
 	private List<PedirColaboradorDTO> articulosDTO;
 	private List<PedirColaboradorDTO> revisionesDTO;
 	private Map<Integer, List<PedirColaboradorDTO>> revisionesArticulos = new HashMap<>();
 	private List<PedirColaboradorDTO> trackRevisores;
-	private List<PedirColaboradorDTO> trackRevisores2;
+	private List<PedirColaboradorDTO> trackRevisoresMio;
+	private List<PedirColaboradorDTO> articuloRevisor;
 	private List<PedirColaboradorDTO> revisores;
+	private List<PedirColaboradorDTO> decision;
 	private static final Rol ROL = Rol.COORDINADOR;
 
 	/**
@@ -65,19 +67,19 @@ public class PedirColaboradorController {
 	 * y sus revisiones asociadas, y posteriormente inicializa la vista.
 	 * </p>
 	 *
-	 * @param pedirColaboradorModel Modelo que maneja la lógica de negocio de las
-	 *                              discusiones.
-	 * @param pedirColaboradorView  Vista que presenta la información de los
-	 *                              artículos y revisiones.
-	 * @param email                 Correo electrónico del coordinador.
-	 * @param revisionArticuloRevisorDTO 
+	 * @param pedirColaboradorModel      Modelo que maneja la lógica de negocio de
+	 *                                   las discusiones.
+	 * @param pedirColaboradorView       Vista que presenta la información de los
+	 *                                   artículos y revisiones.
+	 * @param email                      Correo electrónico del coordinador.
+	 * @param revisionArticuloRevisorDTO
 	 */
 	public PedirColaboradorController(PedirColaboradorModel pedirColaboradorModel,
-			PedirColaboradorView pedirColaboradorView, String email, int id) {
+			PedirColaboradorView pedirColaboradorView, String email, int idArticulo) {
 		this.model = pedirColaboradorModel;
 		this.view = pedirColaboradorView;
 		this.email = email;
-		this.id = id;
+		this.idArticulo = idArticulo;
 
 		// Llamar al backend para cargar los artículos aptos para discusión
 		// if (!obtenerArticulos()) {
@@ -106,6 +108,20 @@ public class PedirColaboradorController {
 	 */
 	public void initController() {
 
+		view.getBtnConfirmar().addActionListener(e -> {
+			if (view.getListRevisores().getSelectedValue() != null) {
+				SwingUtil.showMessage("Se ha enviado la petición", "Información",
+						JOptionPane.INFORMATION_MESSAGE);
+				System.out.println("El revisor: " + view.getListRevisores().getSelectedValue().getNombre());
+				System.out.println("El idArticulo: " + idArticulo);
+				model.actualizarRevisor(view.getListRevisores().getSelectedValue().getNombre(), idArticulo);
+				listModel.removeElement(view.getListRevisores().getSelectedValue());
+
+			} else {
+				SwingUtil.showMessage("No has seleccionado a ningún colaborador", "ERROR", JOptionPane.ERROR_MESSAGE);
+			}
+		});
+
 		// Botón de cerrar.
 		// view.getBtnCerrar().addActionListener(e -> view.getFrame().dispose());
 
@@ -124,6 +140,7 @@ public class PedirColaboradorController {
 	 */
 	public void initView() {
 		view.getFrame().setVisible(true);
+		view.getListRevisores().setModel(listModel);
 		// Agregar los artículos al JList.
 		// view.getListArticulos().setModel(listModel);
 	}
@@ -142,39 +159,70 @@ public class PedirColaboradorController {
 	 */
 
 	private boolean obtenerRevisores() {
-		// Llamar al backend para obtener los artículos asignados
-		trackRevisores = model.obtenerTrack(email);
-		//trackRevisores2 = model.obtenerTrackNombre(articulo.getNombre());
-		// Convertir cada Articulo a ArticuloDTO
+		// Consigo el email de los revisores asociados a ese artículo
+		trackRevisoresMio = model.obtenerTrack(email);
+		listModel = new DefaultListModel<>();
+		List<PedirColaboradorDTO> listaDTO = new ArrayList<>();
 		
-		for (int i = 0; i < trackRevisores.size(); i++) {
-			if (trackRevisores.get(i).getIdTrack() == 1) {
-				
+		if (trackRevisoresMio.size() > 0) {
+			for (int i = 0; i < trackRevisoresMio.size(); i++) {
+				System.out.println("El mio: " + trackRevisoresMio.get(i).getIdTrack());
+				// Da las personas que tienen uno de los tracks del usuario que además no tienen
+				// el artículo seleccionado
+				revisores = model.obtenerRevisores(trackRevisoresMio.get(i).getIdTrack(), idArticulo);
+				for (PedirColaboradorDTO rev : revisores) {
+
+					trackRevisores = model.obtenerTrack(rev.getEmailUsuario());
+					//imprimir el tamaño de la lista trackRevisores
+					for (PedirColaboradorDTO revTrack : trackRevisores) {
+						System.out.println("Nombre suyo: " + revTrack.getNombre());
+						System.out.println("El suyo: " + revTrack.getIdTrack());
+						if (revTrack.getIdTrack() == trackRevisoresMio.get(i).getIdTrack()) {
+							decision = model.obtenerDeicision(rev.getEmailUsuario(), idArticulo);
+
+							if (decision.size() > 0) {
+								if (decision.get(0).getDecision().equals("Lo quiero revisar") && !listModelContains(listModel, revTrack.getNombre())) {
+									PedirColaboradorDTO dto = new PedirColaboradorDTO(revTrack.getId(), revTrack.getTitulo(),
+											revTrack.getNombreFichero(), revTrack.getNombre(), revTrack.getIdTrack(), revTrack.getEmailUsuario());
+									listaDTO.add(dto);
+								}
+							}
+						}
+					}
+				}
+				for (PedirColaboradorDTO dto : listaDTO) {
+					if (!listModel.contains(dto)) {
+						listModel.addElement(dto);
+					}
+
+				}
+
 			}
 		}
-		List<PedirColaboradorDTO> listaDTO = new ArrayList<>();
-		for (PedirColaboradorDTO articulo : trackRevisores) {
-			
-			//PedirColaboradorDTO dto = new PedirColaboradorDTO(articulo.getId(), articulo.getTitulo(),
-			//		articulo.getNombreFichero(), articulo.getNombre());
-			System.out.println(articulo.getIdTrack());
-			//listaDTO.add(dto);
-		}
+
+		// Compruebo que track está asociado a estos revisores
+
+		// trackRevisores2 = model.obtenerTrackNombre(articulo.getNombre());
+		// Convertir cada Articulo a ArticuloDTO
 
 		// Crear un modelo para el JList y agregar los DTOs
-		listModel = new DefaultListModel<>();
-		for (PedirColaboradorDTO dto : listaDTO) {
-			listModel.addElement(dto);
-		}
 
 		// Si no hay articulos asignados, mostrar un mensaje y cerrar la vista
-		if (trackRevisores.isEmpty()) {
-			SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
-					JOptionPane.INFORMATION_MESSAGE);
-			return false;
-		}
+		/*
+		 * if (trackRevisores.isEmpty()) {
+		 * SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar",
+		 * "Información", JOptionPane.INFORMATION_MESSAGE); return false; }
+		 */
 
 		return true;
+	}
+	private boolean listModelContains(DefaultListModel<PedirColaboradorDTO> listModel, String nombre) {
+	    for (int i = 0; i < listModel.size(); i++) {
+	        if (listModel.get(i).getNombre().equals(nombre)) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 }

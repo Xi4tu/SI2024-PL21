@@ -16,17 +16,19 @@ public class PedirColaboradorModel {
 		return db;
 	}
 
-	public List<PedirColaboradorDTO> obtenerTrack(String nombreRevisor) {
-		String sql = "SELECT DISTINCT idTrack FROM articulo a " + 
+	public List<PedirColaboradorDTO> obtenerTrack(String emailUsuario) {
+		String sql = "SELECT DISTINCT a.idTrack, u.nombre, r.emailUsuario " +
+	             "FROM articulo a " +
 	             "JOIN revision r ON a.idArticulo = r.idArticulo " +
-	             "WHERE emailUsuario = ? "
+	             "JOIN usuario u ON r.emailUsuario = u.email " +
+	             "WHERE r.emailUsuario = ?;";
 				; // Solo artículos que aún no han sido evaluados
 		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
-		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, nombreRevisor);
-		
-		
+		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, emailUsuario);
+
+
 	}
-	
+
 	public List<PedirColaboradorDTO> obtenerTrackNombre(String nombreRevisor) {
 		String sql = "SELECT DISTINCT idTrack FROM articulo a " + 
 	             "JOIN revision r ON a.idArticulo = r.idArticulo " +
@@ -35,91 +37,47 @@ public class PedirColaboradorModel {
 				; // Solo artículos que aún no han sido evaluados
 		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
 		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, nombreRevisor);
-		
-		
+
+
 	}
-	
-	public List<PedirColaboradorDTO> obtenerRevisores(String nombreArticulo) {
-		String sql = "SELECT u.nombre " + 
-	             "FROM Usuario u " +  
-	             "JOIN Revision r ON r.emailUsuario = u.email " +  
-	             "JOIN Articulo a ON r.idArticulo = a.idArticulo " +  
-	             "WHERE a.titulo = ?";
+
+	public List<PedirColaboradorDTO> obtenerRevisores(int idTrack, int idArticulo) {
+		String sql = "SELECT DISTINCT r.emailUsuario " +
+                "FROM revision r " +
+                "JOIN articulo a ON r.idArticulo = a.idArticulo " +
+                "WHERE a.idTrack = ? " +
+                "AND r.emailUsuario NOT IN ( " +
+                "    SELECT DISTINCT r2.emailUsuario " +
+                "    FROM revision r2 " +
+                "    WHERE r2.idArticulo = ? " +
+                ")";  
 				; // Solo artículos que aún no han sido evaluados
 		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
-		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, nombreArticulo);
-		
-		
+		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, idTrack, idArticulo);
+
+
+	}
+
+	public List<PedirColaboradorDTO> obtenerDeicision(String emailUsuario, int idArticulo) {
+		String sql = "SELECT p.decision " +
+	             "FROM Usuario_Preferencia up " +
+	             "JOIN Preferencia p ON up.idPreferencia = p.idPreferencia " +
+	             "WHERE up.emailUsuario = ? AND p.idArticulo = ?";   
+				; // Solo artículos que aún no han sido evaluados
+		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
+		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, emailUsuario, idArticulo);
 	}
 	
-	public List<AceptarDenegarArticuloDTO> obtenerNivelExperto(String nombreUsuario, String tituloArticulo) {
-	    String sql = "SELECT r.nivelExperto " +
-	                 "FROM Revision r " +
-	                 "JOIN Articulo a ON r.idArticulo = a.idArticulo " +
-	                 "JOIN Usuario u ON r.emailUsuario = u.email " +
-	                 "WHERE u.nombre = ? AND a.titulo = ?";
-
-	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, nombreUsuario, tituloArticulo);
-	}
-
-	public List<AceptarDenegarArticuloDTO> obtenerDecisionRevisor(String nombreUsuario, String tituloArticulo) {
-	    String sql = "SELECT r.decisionRevisor " +
-	                 "FROM Revision r " +
-	                 "JOIN Articulo a ON r.idArticulo = a.idArticulo " +
-	                 "JOIN Usuario u ON r.emailUsuario = u.email " +
-	                 "WHERE u.nombre = ? AND a.titulo = ?";
-
-	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, nombreUsuario, tituloArticulo);
-	}
-
-	public List<AceptarDenegarArticuloDTO> obtenerTodasDecisiones(String tituloArticulo) {
-	    String sql = "SELECT r.decisionRevisor " +
-	                 "FROM Revision r " +
-	                 "JOIN Articulo a ON r.idArticulo = a.idArticulo " +
-	                 "JOIN Usuario u ON r.emailUsuario = u.email " +
-	                 "WHERE a.titulo = ?";
-
-	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, tituloArticulo);
-	}
-	
-	public List<AceptarDenegarArticuloDTO> obtenerComentariosParaAutor(String nombreUsuario, String tituloArticulo) {
-	    String sql = "SELECT r.comentariosParaAutor " +
-	                 "FROM Revision r " +
-	                 "JOIN Articulo a ON r.idArticulo = a.idArticulo " +
-	                 "JOIN Usuario u ON r.emailUsuario = u.email " +
-	                 "WHERE u.nombre = ? AND a.titulo = ?";
-	    
-	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, nombreUsuario, tituloArticulo);
-	}
-	
-	public List<AceptarDenegarArticuloDTO> obtenerComentariosParaCoordinador(String nombreUsuario, String tituloArticulo) {
-	    String sql = "SELECT r.comentariosParaCoordinador " +
-	                 "FROM Revision r " +
-	                 "JOIN Articulo a ON r.idArticulo = a.idArticulo " +
-	                 "JOIN Usuario u ON r.emailUsuario = u.email " +
-	                 "WHERE u.nombre = ? AND a.titulo = ?";
-	    
-	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, nombreUsuario, tituloArticulo);
-	}
-	
-	public void actualizarDecisionFinal(String decisionFinal, String tituloArticulo) {
+	public void actualizarRevisor(String nombre, int idArticulo) {
 		String sql =  "UPDATE Articulo " +
-					  "SET decisionFinal = ? " +
-					  "WHERE titulo = ?";
-	    db.executeUpdate(sql, decisionFinal, tituloArticulo);
+					  "SET revisorColaborador = ? " +
+					  "WHERE idArticulo = ?";
+	    db.executeUpdate(sql, nombre, idArticulo);
 	}
-	
-	public List<AceptarDenegarArticuloDTO> obtenerRevisoresPorTitulo(String tituloArticulo) {
-	    String sql = "SELECT DISTINCT u.nombre " +
-	                 "FROM Articulo a " +
-	                 "JOIN Revision r ON a.idArticulo = r.idArticulo " +
-	                 "JOIN Usuario u ON r.emailUsuario = u.email " +
-	                 "WHERE a.titulo = ?";
-	    
-	    return db.executeQueryPojo(AceptarDenegarArticuloDTO.class, sql, tituloArticulo);
-	}
-	
-	
+
+
+
+
 
 	/**
 	 * Método que se encarga de comprobar si un email está asociado al rol que se le

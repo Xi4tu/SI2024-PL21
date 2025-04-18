@@ -26,6 +26,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import app.dto.PedirColaboradorDTO;
 import app.dto.RevisionArticuloAutorDTO;
 import app.enums.DecisionRevisor;
 
@@ -34,7 +35,7 @@ public class PedirColaboradorView {
     // Variables de instancia
 	private JFrame frmColaboradores;
     private JPanel contentPane;
-    private JList<RevisionArticuloAutorDTO> listRevisores;
+    private JList<PedirColaboradorDTO> listRevisores;
     private JButton btnConfirmar;
 
     // Constructor
@@ -64,12 +65,12 @@ public class PedirColaboradorView {
         // Inicializar lista de artículos sin datos de prueba (se cargará desde el controlador)
         listRevisores = new JList<>(new DefaultListModel<>());
         listRevisores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    
+
         JScrollPane scrollRevisores = new JScrollPane(listRevisores);
         panelRevisores.add(scrollRevisores, BorderLayout.CENTER);
         panelRevisores.setPreferredSize(new Dimension(250, 0));
         contentPane.add(panelRevisores, BorderLayout.WEST);
-        
+
         btnConfirmar = new JButton("Confirmar");
         contentPane.add(btnConfirmar, BorderLayout.SOUTH);
     }
@@ -139,7 +140,7 @@ public class PedirColaboradorView {
     }
 
     // Getters y Setters para los elementos de la vista
-    
+
 	public JFrame getFrame() {
 		return frmColaboradores;
 	}
@@ -148,12 +149,11 @@ public class PedirColaboradorView {
         return contentPane;
     }
 
-    public JList<RevisionArticuloAutorDTO> getListRevisores() {
+    public JList<PedirColaboradorDTO> getListRevisores() {
         return listRevisores;
     }
-    
+
     public JButton getBtnConfirmar() {
     	return btnConfirmar;
     }
 }
-
