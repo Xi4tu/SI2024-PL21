@@ -82,6 +82,7 @@ CREATE TABLE "Usuario" (
 	"nombre"	TEXT NOT NULL,
 	"organizacion"	TEXT NOT NULL,
 	"grupoInvestigacion"	TEXT,
+	"palabrasClave"       TEXT    NOT NULL DEFAULT '',
 	PRIMARY KEY("email")
 );
 

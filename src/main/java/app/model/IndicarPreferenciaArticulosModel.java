@@ -1,6 +1,10 @@
 package app.model;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import app.dto.ArticuloRevisionDTO;
 import app.dto.LastIdDTO;
@@ -28,6 +32,7 @@ public class IndicarPreferenciaArticulosModel {
 			    "a.idArticulo AS id, " +
 			    "a.titulo, " +
 			    "a.palabrasClave, " +
+			    "a.palabrasClaveTrack, " +
 			    "a.resumen, " +
 			    "a.nombreFichero, " +
 			    "a.fechaEnvio, " +
@@ -105,6 +110,24 @@ public class IndicarPreferenciaArticulosModel {
 
 	        System.out.println("✅ Relación creada: " + emailUsuario + " ↔ " + idPreferencia);
 	    }
+	}
+	
+	
+	public List<String> obtenerPalabrasClaveUsuario(String emailUsuario) {
+	    // 1. Consulta la columna palabrasClave (ej. "ML,Visión,IA")
+	    String sql = "SELECT palabrasClave AS pc FROM Usuario WHERE email = ?";
+	    List<Map<String, Object>> rows = db.executeQueryMap(sql, emailUsuario);
+	    if (rows.isEmpty()) {
+	        return Collections.emptyList();
+	    }
+	    // 2. Extrae el texto y parçalela
+	    String texto = (String) rows.get(0).get("pc");
+	    if (texto == null || texto.trim().isEmpty()) {
+	        return Collections.emptyList();
+	    }
+	    return Arrays.stream(texto.split("\\s*,\\s*"))
+	                 .map(String::trim)
+	                 .collect(Collectors.toList());
 	}
 	
 	
