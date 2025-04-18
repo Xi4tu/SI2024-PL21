@@ -20,6 +20,9 @@ public class ArticuloRevisionDTO {
     // Lista de palabras clave
     private String palabrasClave;
     
+    //Lista de palabras clave del track
+    private String palabrasClaveTrack;
+    
     // Resumen del artículo
     private String resumen;
     
@@ -44,6 +47,21 @@ public class ArticuloRevisionDTO {
         this.id = id;
         this.titulo = titulo;
         this.palabrasClave = palabrasClave;
+        this.resumen = resumen;
+        this.nombreFichero = nombreFichero;
+        this.autoresTexto = autoresTexto;
+        setFechaEnvio(fechaEnvio); 
+        
+        
+        this.autorEnvio = autorEnvio;
+    }
+    
+    public ArticuloRevisionDTO(int id, String titulo, String palabrasClave,String palabrasClaveTrack, String resumen, String nombreFichero,
+            String autoresTexto, String fechaEnvio, AutorDTO autorEnvio) {
+        this.id = id;
+        this.titulo = titulo;
+        this.palabrasClave = palabrasClave;
+        this.palabrasClaveTrack= palabrasClaveTrack;
         this.resumen = resumen;
         this.nombreFichero = nombreFichero;
         this.autoresTexto = autoresTexto;
@@ -89,6 +107,15 @@ public class ArticuloRevisionDTO {
         this.palabrasClave = palabrasClave;
     }
 
+    public String getPalabrasClaveTrack() {
+        return palabrasClaveTrack;
+    }
+
+    public void setPalabrasClaveTrack(String palabrasClaveTrack) {
+        this.palabrasClaveTrack = palabrasClaveTrack;
+    }
+
+    
     public String getResumen() {
         return resumen;
     }

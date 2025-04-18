@@ -27,7 +27,6 @@ VALUES
 INSERT INTO Usuario (email, nombre, organizacion, grupoInvestigacion)
 VALUES 
 ('juan.perez@ejemplo.com', 'Juan Pérez', 'Universidad Ejemplo', 'Grupo Alpha'),
-('maria.lopez@ejemplo.com', 'María López', 'Instituto de Pruebas', 'Grupo Beta'),
 ('carlos.sanchez@ejemplo.com', 'Carlos Sánchez', 'Centro de Estudios', 'Grupo Gamma'),
 ('laura.martinez@ejemplo.com', 'Laura Martínez', 'Universidad de la Vida', 'Grupo Delta'),
 ('andres.gomez@ejemplo.com', 'Andrés Gómez', 'Instituto Avanzado', 'Grupo Epsilon'),
@@ -39,6 +38,9 @@ VALUES
 ('carla.torres@ejemplo.com', 'Carla Torres', 'Universidad Nueva', 'Grupo Theta'),
 ('pablo.rodriguez@ejemplo.com', 'Pablo Rodríguez', 'Empresa Innovadora', 'Grupo Kappa');
 
+INSERT INTO Usuario (email, nombre, organizacion, grupoInvestigacion, palabrasClave)
+VALUES
+('maria.lopez@ejemplo.com', 'María López', 'Instituto de Pruebas', 'Grupo Beta', 'Pilas, Robótica');
 /***********************************************************************
   3. ROLES Y ASIGNACIÓN (Usuario_Rol)
 ***********************************************************************/
