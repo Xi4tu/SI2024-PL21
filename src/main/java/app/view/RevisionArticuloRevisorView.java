@@ -128,6 +128,8 @@ public class RevisionArticuloRevisorView {
 		btnEnviarRevision = new JButton("Enviar Revisión");
 		panelBoton.add(btnEnviarRevision);
 		panelDerecho.add(panelBoton);
+		
+		
 
 
 
@@ -158,7 +160,7 @@ public class RevisionArticuloRevisorView {
 	public JButton getBtnEnviarRevision() {
 		return this.btnEnviarRevision;
 	}
-
+	
 	public JButton getBtnPedirColaborador() {
 		return this.btnPedirColaborador;
 	}
