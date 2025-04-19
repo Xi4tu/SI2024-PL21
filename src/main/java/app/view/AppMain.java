@@ -16,6 +16,7 @@ import app.controller.AccederDiscusionController;
 import app.controller.AceptarDenegarArticuloController;
 import app.controller.AsignarRevisoresController;
 import app.controller.EnviarArticuloController;
+import app.controller.GestionarSolicitudesColaboracionController;
 import app.controller.IndicarPreferenciaArticulosController;
 import app.controller.ParticiparDiscusionesCoordController;
 import app.controller.RevisionArticuloAutorController;
@@ -25,6 +26,7 @@ import app.model.AccederDiscusionModel;
 import app.model.AceptarDenegarArticuloModel;
 import app.model.AsignarRevisoresModel;
 import app.model.EnviarArticuloModel;
+import app.model.GestionarSolicitudesColaboracionModel;
 import app.model.RevisionArticuloAutorModel;
 import app.model.RevisionArticuloRevisorModel;
 import app.model.VerMisArticulosModel;
@@ -152,6 +154,13 @@ public class AppMain {
 		buttons.add(new ButtonProvider("Participar en discusiones - Coordinador", e -> {
 			ParticiparDiscusionesCoordController controller = new ParticiparDiscusionesCoordController(new ParticiparDiscusionesCoordModel(), 
 					new ParticiparDiscusionesCoordView(), textEmail.getText(), 0);
+
+			controller.initController();
+		}));
+		
+		buttons.add(new ButtonProvider("Gestionar solicitudes de colaboración - Revisor", e -> {
+			GestionarSolicitudesColaboracionController controller = new GestionarSolicitudesColaboracionController(new GestionarSolicitudesColaboracionModel(), 
+					new GestionarSolicitudesColaboracionView(), textEmail.getText());
 
 			controller.initController();
 		}));
