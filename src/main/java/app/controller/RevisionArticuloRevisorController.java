@@ -1,8 +1,6 @@
 package app.controller;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -11,20 +9,22 @@ import app.dto.RevisionArticuloRevisionDTO;
 import app.dto.RevisionArticuloRevisorDTO;
 import app.dto.RevisionAutorDTO;
 import app.enums.Rol;
+import app.model.GestionarDiscusionesCoordinadorModel;
+import app.model.PedirColaboradorModel;
 import app.model.RevisionArticuloRevisorModel;
 import app.util.UserUtil;
+import app.view.GestionarDiscusionesCoordinadorView;
+import app.view.PedirColaboradorView;
 import app.view.RevisionArticuloRevisorView;
 import giis.demo.util.SwingUtil;
 
 public class RevisionArticuloRevisorController {
-
 	private RevisionArticuloRevisorModel model;
 	private RevisionArticuloRevisorView view;
 	private List<RevisionArticuloRevisorDTO> articulos;
 	DefaultListModel<RevisionArticuloRevisorDTO> listModel;
 	private String email;
 	private static final Rol ROL = Rol.REVISOR;
-
 	/*
 	 * Constructor del controlador
 	 */
@@ -33,21 +33,17 @@ public class RevisionArticuloRevisorController {
 		this.model = m;
 		this.view = v;
 		this.email = email;
-
 		if (!UserUtil.checkEmail(email, ROL.getNombre(), model.getDbUtil())) {
 			// Detener la inicialización si el email es inválido.
 			return;
 		}
-
 		// Llamar al backend para cargar los datos necesarios.
 		if (!obtenerArticulosAsignados()) {
 			return;
 		}
-
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
 	}
-
 	/*
 	 * Método que se encarga de inicializar el controlador
 	 */
@@ -67,17 +63,29 @@ public class RevisionArticuloRevisorController {
 	                // 🔄 Cargar revisores del artículo al combo
 	                List<String> revisores = model.obtenerRevisoresDelArticulo(articulo.getId());
 	                JComboBox<String> comboRevisor = view.getComboBoxRevisor();
-
+	                
 	                comboRevisor.removeAllItems();
 	                for (String r : revisores) {
 	                    comboRevisor.addItem(r);
 	                }
-
-	                // Seleccionar por defecto al usuario actual
+	                
+	             // Seleccionar por defecto al usuario actual
 	                comboRevisor.setSelectedItem(email);
 	            }
 	        }
-	    });
+		});
+
+	                
+
+		view.getBtnPedirColaborador().addActionListener(e -> {
+			if (view.getListArticulos().getSelectedValue() == null) {
+				SwingUtil.showMessage("No has seleccionado ningún artículo", "ERROR", JOptionPane.ERROR_MESSAGE);
+			} else {
+				PedirColaboradorController controller = new PedirColaboradorController(
+						new PedirColaboradorModel(), new PedirColaboradorView(), email, view.getListArticulos().getSelectedValue().getId());
+				controller.initController();
+			}
+		});
 
 	    // Listener para alternar entre "Pendientes" y "Revisados"
 	    view.getComboBoxPendientes().addItemListener(e -> {
@@ -145,14 +153,13 @@ public class RevisionArticuloRevisorController {
 
 	/*
 	 * Método que se encarga de inicializar la vista
+ * Método que se encarga de inicializar la vista
 	 */
 	public void initView() {
 		view.getFrame().setVisible(true);
 		// Asignar el modelo al JList de la vista
 		view.getListArticulos().setModel(listModel);
-
 	}
-
 	/*
 	 * Método que se encarga de enviar la revisión del artículo seleccionado
 	 */
@@ -161,16 +168,12 @@ public class RevisionArticuloRevisorController {
 			// Obtiene el id del artículo seleccionado que viene en el DTO
 			RevisionArticuloRevisorDTO articuloSeleccionado = view.getListArticulos().getSelectedValue();
 			int idArticulo = articuloSeleccionado.getId();
-
 			// Obtiene el comentario de los autores
 			String comentariosAutores = view.getTxtComentariosAutores().getText();
-
 			// Obtiene el comentario de los coordinadores
 			String comentariosCoordinadores = view.getTxtComentariosCoordinadores().getText();
-
 			// Obtiene el nivel de experto y lo convierte a uppercase
 			String nivelExperto = ((String) view.getComboNivelExperto().getSelectedItem());
-
 			// Obtiene la decisión, pero solo el número
 			int decision = Integer
 					.parseInt(((String) view.getComboDecision().getSelectedItem()).split(" ")[2].split("\\(|\\)")[1]);
@@ -184,19 +187,23 @@ public class RevisionArticuloRevisorController {
 		    model.guardarOActualizarRevision(idArticulo, email, comentariosAutores, comentariosCoordinadores, nivelExperto, decision, fechaHoy);
 			SwingUtil.showMessage("La revisión se ha enviado correctamente", "Información",
 					JOptionPane.INFORMATION_MESSAGE);
-
 			// Eliminar del listModel el artículo revisado
 			listModel.removeElement(articuloSeleccionado);
 			// Limpiar los campos de texto
 			view.getTxtComentariosAutores().setText("");
 			view.getTxtComentariosCoordinadores().setText("");
 			// Comprobar si el listmodel está vacío
-			
+			if (listModel.isEmpty()) {
+				SwingUtil.showMessage("No tienes ningún artículo pendiente de revisión", "Información",
+						JOptionPane.INFORMATION_MESSAGE);
+				view.getFrame().dispose();
+			}
+
+		
 		} else {
 			SwingUtil.showMessage("Debes de rellenar toda la información", "ERROR", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
 	/*
 	 * Método que se encarga de validar los datos introducidos en la vista
 	 * 
@@ -208,32 +215,40 @@ public class RevisionArticuloRevisorController {
 				&& view.getComboNivelExperto().getSelectedIndex() != -1
 				&& view.getComboDecision().getSelectedIndex() != -1;
 	}
-
 	/*
 	 * Método que se encarga de obtener los artículos asignados al revisor
 	 */
 	private boolean obtenerArticulosAsignados() {
 		// Llamar al backend para obtener los artículos asignados
+
+
 		articulos = model.obtenerArticulosAsignados(email);
 
 		// Convertir cada Articulo a ArticuloDTO
 		List<RevisionArticuloRevisorDTO> listaDTO = new ArrayList<>();
 		for (RevisionArticuloRevisorDTO articulo : articulos) {
-			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
+			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(), articulo.getNombre(),
 					articulo.getNombreFichero());
 			listaDTO.add(dto);
 		}
-
 		// Crear un modelo para el JList y agregar los DTOs
 		listModel = new DefaultListModel<>();
 		for (RevisionArticuloRevisorDTO dto : listaDTO) {
 			listModel.addElement(dto);
+		}
+		// Si no hay articulos asignados, mostrar un mensaje y cerrar la vista
+		if (articulos.isEmpty()) {
+			SwingUtil.showMessage("No tienes ningún artículo pendiente de revisión", "Información",
+					JOptionPane.INFORMATION_MESSAGE);
+			return false;
 		}
 
 		
 
 		return true;
 	}
+
+
 	private void actualizarListaArticulos(boolean soloPendientes) {
 	    listModel.clear();
 	    List<RevisionArticuloRevisorDTO> nuevaLista;
@@ -270,3 +285,4 @@ public class RevisionArticuloRevisorController {
 
 
 }
+        
