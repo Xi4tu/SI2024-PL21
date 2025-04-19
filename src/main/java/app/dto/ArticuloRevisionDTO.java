@@ -133,6 +133,9 @@ public class ArticuloRevisionDTO {
     }
 
     public List<AutorDTO> getAutores() {
+    	if (autoresTexto == null || autoresTexto.trim().isEmpty()) {
+            this.autores = new ArrayList<>();
+        }
         return autores;
     }
 
@@ -157,6 +160,10 @@ public class ArticuloRevisionDTO {
     }
     
     private void setAutoresFromEmails(String autoresTexto) {
+    	if (autoresTexto == null || autoresTexto.trim().isEmpty()) {
+            this.autores = new ArrayList<>();
+            return;
+        }
 	    // Separamos los emails usando la coma como delimitador
 	    String[] emails = autoresTexto.split(", ");
 	    List<AutorDTO> listaAutores = new ArrayList<>();
