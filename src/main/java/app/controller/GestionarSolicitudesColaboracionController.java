@@ -117,7 +117,6 @@ public class GestionarSolicitudesColaboracionController {
 							&& colaborador.getRevisorColaborador().equals(nombre.get(0).getNombre())) {
 						listaFiltrada.add(colaborador);
 						break;
-
 					}
 				}
 				listModel.clear();
@@ -130,6 +129,10 @@ public class GestionarSolicitudesColaboracionController {
 					}
 				}
 			}
+		});
+		
+		view.getBtnAceptar().addActionListener(e -> {
+			
 		});
 	}
 

@@ -32,9 +32,9 @@ public class GestionarSolicitudesColaboracionView {
 	private JRadioButton rdbtnFiltrarPorPalabrasAsociadas;
 	private JButton btnFiltrar;
 	private JButton btnBorrarFiltro;
-	/**
-	 * Create the frame.
-	 */
+	private JButton btnAceptar;
+	private JButton btnDenegar;
+	
 	
 	public GestionarSolicitudesColaboracionView() {
 		initialize();
@@ -89,11 +89,11 @@ public class GestionarSolicitudesColaboracionView {
 		btnBorrarFiltro.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(btnBorrarFiltro, "cell 3 7");
 		
-		JButton btnAceptar = new JButton("Aceptar");
+		btnAceptar = new JButton("Aceptar");
 		btnAceptar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(btnAceptar, "cell 3 11,grow");
 		
-		JButton btnDenegar = new JButton("Denegar");
+		btnDenegar = new JButton("Denegar");
 		btnDenegar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(btnDenegar, "cell 4 11,grow");
 	}
@@ -128,6 +128,14 @@ public class GestionarSolicitudesColaboracionView {
 	
 	public JButton getBtnBorrarFiltro() {
 		return this.btnBorrarFiltro;
+	}
+	
+	public JButton getBtnAceptar() {
+        return this.btnAceptar;
+    }
+	
+	public JButton getBtnDenegar() {
+		return this.btnDenegar;
 	}
 
 }
