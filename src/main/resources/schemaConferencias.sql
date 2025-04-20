@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS Conferencia;
 DROP TABLE IF EXISTS Track;
 DROP TABLE IF EXISTS Articulo;
+DROP TABLE IF EXISTS VersionArticulo;
 DROP TABLE IF EXISTS Discusion;
 DROP TABLE IF EXISTS Anotacion;
 DROP TABLE IF EXISTS Revision;
@@ -44,6 +45,16 @@ CREATE TABLE "Articulo" (
 	"valoracionGlobal"	INTEGER DEFAULT NULL,
 	PRIMARY KEY("idArticulo" AUTOINCREMENT),
 	FOREIGN KEY("idTrack") REFERENCES "Track"("idTrack")
+);
+
+CREATE TABLE "VersionArticulo" (
+    "idArticulo"    INTEGER NOT NULL,
+    "resumen"       TEXT NOT NULL,
+    "palabrasClave" TEXT NOT NULL,
+    "nombreFichero" TEXT NOT NULL,
+    FOREIGN KEY("idArticulo") REFERENCES "Articulo"("idArticulo")
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY("idArticulo")
 );
 
 CREATE TABLE "Discusion" (

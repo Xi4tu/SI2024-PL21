@@ -210,5 +210,16 @@ public void editarArticulo(int idArticulo, int idTrack, String titulo, String pa
 			return listaAutores.get(0);
 		}
 
+		//Metodo para añadir una nueva entrada a la tabla VersionArticulo
+		public void enviarNuevaVersion(int idArticulo, String resumen, String palabrasClave, String archivo) {
+			// En caso de que ya exista una version para este articulo, la borro
+			String sql = "DELETE FROM VersionArticulo WHERE idArticulo = ?";
+			db.executeUpdate(sql, idArticulo);
+			
+			// Inserto la nueva version
+			sql = "INSERT INTO VersionArticulo (idArticulo, resumen, palabrasClave, nombreFichero) VALUES (?, ?, ?, ?)";
+			db.executeUpdate(sql, idArticulo, resumen, palabrasClave, archivo);
+		}
+		
 
 }

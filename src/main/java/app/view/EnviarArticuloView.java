@@ -52,6 +52,9 @@ public class EnviarArticuloView {
 	private String estadoInicialLabelPalabrasClaveTrack = "";
 	private JTextField textfBusquedaAutor;
 	
+	// Variables para el manejo de la vista
+	private boolean Editando = false;
+	
 	public EnviarArticuloView() {
 		initialize();
 	}
@@ -467,6 +470,17 @@ public class EnviarArticuloView {
 		this.listaDeAutores = listaDeAutores;
 	}
 
+	public boolean isEditando() {
+		return Editando;
+	}
+	
+	public void setEditando(boolean editando) {
+		Editando = editando;
+	}
+	
+	
+	
+	
 	
 	//Método para mostrar un mensaje de error sencillito
 	public void mostrarMensajeError(String mensaje) {

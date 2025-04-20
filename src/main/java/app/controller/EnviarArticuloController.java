@@ -35,6 +35,8 @@ public class EnviarArticuloController {
 	
 	//Flag para saber si he iniciado el controlador con un articulo para editar
 	private boolean editando = false;
+	//Flag parasaber si he iniciado el controlador con un articulo para enviar nueva version
+	private boolean nuevaVersion = false;
 	
 	/*
 	 * Constructor del controlador
@@ -105,6 +107,48 @@ public class EnviarArticuloController {
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
 	}
+	
+	//Constructor de un controlador para cuando se envia una nueva version de un articulo
+		// Rellena los campos con los datos del articulo
+		public EnviarArticuloController(EnviarArticuloModel m, EnviarArticuloView v, ArticuloDTO articulo, boolean nuevaVersion) {
+			this.nuevaVersion = true; //Lo primero: estoy mandando nueva version, asi que flag a true
+			this.model = m;
+			this.view = v;
+			this.articuloEditandose = articulo;
+			
+			// Guardo el autor del articulo
+			this.autor = model.obtenerAutorPorIdArticulo(articulo.getIdArticulo());
+			this.email = autor.getEmail();
+			// Guardo la lista de tracks
+			tracks = model.obtenerTracks();
+			// Inserto los tracks en el comboBox de la vista
+			view.setTracks(tracks);
+			
+			// Relleno los campos con los datos del articulo
+			view.getTextfTituloArticulo().setText(articulo.getTitulo());
+			view.getTextfPalabrasClaveArticulo().setText(articulo.getPalabrasClave());
+			view.getTextfResumenArticulo().setText(articulo.getResumen());
+			view.getTextfArchivoArticulo().setText(articulo.getNombreFichero());
+			
+			// Obtengo el track del articulo
+			TrackDTO track = model.obtenerTrackPorId(articulo.getIdTrack());
+			// Lo marco en el comboBox de tracks
+			view.getComboBoxSelectorTrackArticulo().setSelectedItem(track.getNombre());
+			// Inserto las palabras clave del track marcado en el comboBox de la vista
+			view.setPalabrasClaveTrack(track.getPalabrasClaveLista());
+			// Relleno el label de texto de palabras clave del track del articulo con las palabras clave del track del articulo
+			view.setPalabrasClaveTrack(articulo.getPalabrasClaveTrack());
+			
+			//Relleno la lista de autores con los autores del articulo
+			List<AutorDTO> autoresArticulo = model.obtenerAutoresPorId(articulo.getIdArticulo());
+			for (AutorDTO autor : autoresArticulo) {
+				autores.add(autor);
+				view.agregarAutor(autor.getEmail(), autor.getNombre(), autor.getOrganizacion(), autor.getGrupoInvestigacion());
+			}
+			
+			// Inicializar la vista una vez que los datos están cargados.
+			this.initView();
+		}
 	
 	
 	public void initController() {
@@ -215,17 +259,21 @@ public class EnviarArticuloController {
 				TrackDTO track = obtenerTrackSeleccionado();
 				int idTrack = track.getIdTrack();
 				
-				//PUEDEN PASAR 2 COSAS: QUE ESTE EDITANDO O QUE NO
-				if (!editando) {
-					// si NO estoy editando, envio el articulo normalmente
+				//PUEDEN PASAR 3 COSAS: QUE ESTE ENVIANDO ARTICULO NUEVO
+				// QUE ESTE EDITANDO UN ARTICULO YA EXISTENTE
+				// O QUE ESTE ENVIANDO UNA NUEVA VERSION DE UN ARTICULO YA EXISTENTE
+				if (!editando && !nuevaVersion) {
+					// si NO estoy editando ni enviando nueva version, envio el articulo normalmente
 					model.enviarArticulo(idTrack, view.getTextfTituloArticulo().getText(), view.getTextfPalabrasClaveArticulo().getText(), view.getPalabrasClaveArticuloString(), view.getTextfResumenArticulo().getText(), view.getTextfArchivoArticulo().getText(), autores);
 				}
-				else {
+				else if (editando){
 					// si SI estoy editando, actualizo el articulo
 					model.editarArticulo(articuloEditandose.getIdArticulo(), idTrack, view.getTextfTituloArticulo().getText(), view.getTextfPalabrasClaveArticulo().getText(), view.getPalabrasClaveArticuloString(), view.getTextfResumenArticulo().getText(), view.getTextfArchivoArticulo().getText(), autores);
 				}
-				
-				
+				else if (nuevaVersion) {
+					// si SI estoy enviando nueva version, añado la informacion a la tabla de versionArticulo
+					model.enviarNuevaVersion(articuloEditandose.getIdArticulo(), view.getTextfPalabrasClaveArticulo().getText(), view.getTextfResumenArticulo().getText(), view.getTextfArchivoArticulo().getText());
+				}
 				
 				// Cierro la ventana
 				view.getFrame().dispose();
@@ -262,13 +310,15 @@ public class EnviarArticuloController {
 		}
 		
 		// Si estoy editando, compruebo que no se haya modificado el titulo del articulo porque no se puede modificar, da error
-		if (editando && !titulo.equals(articuloEditandose.getTitulo())) {
+		if ((editando || nuevaVersion) && !titulo.equals(articuloEditandose.getTitulo())) {
 			view.mostrarMensajeError("No se puede modificar el título del artículo");
 			return false;
 		}
 		
+		
+		
 		// Y si NO estoy editando, compruebo que el articulo no exista ya en la base de datos
-		if (!editando && existeArticulo(view.getTextfTituloArticulo().getText())) {
+		if (!editando && !nuevaVersion && existeArticulo(view.getTextfTituloArticulo().getText())) {
 			view.mostrarMensajeError("El artículo ya existe en la base de datos");
 			return false;
 		}	
@@ -298,7 +348,35 @@ public class EnviarArticuloController {
 	
 	private void initView() {
 		view.getFrame().setVisible(true);// TODO Auto-generated method stub
-		
+		// si "nuevaVersion" es true, bloqueo todo lo siguiente:
+		if (nuevaVersion) {
+			// Campo de texto del titulo del articulo
+			view.getTextfTituloArticulo().setEnabled(false);
+			view.getTextfTituloArticulo().setEditable(false);
+			view.getTextfTituloArticulo().setFocusable(false);
+			// ComboBox de tracks
+			view.getComboBoxSelectorTrackArticulo().setEnabled(false);
+			view.getComboBoxSelectorTrackArticulo().setFocusable(false);
+			// Boton de añadir autor
+			view.getBtnAnadirAutor().setEnabled(false);
+			view.getBtnAnadirAutor().setFocusable(false);
+			// Boton de eliminar autor
+			view.getBtnBorrarAutor().setEnabled(false);
+			view.getBtnBorrarAutor().setFocusable(false);
+			// Cuadro de busqueda de autores
+			view.getTextfBusquedaAutor().setEnabled(false);
+			view.getTextfBusquedaAutor().setFocusable(false);
+			// ComboBox de autores
+			view.getCombobBusquedaAutor().setEnabled(false);
+			view.getCombobBusquedaAutor().setFocusable(false);
+			// Combobox de palabras clave del track
+			view.getComboBoxSelectorPalabrasDelTrack().setEnabled(false);
+			view.getComboBoxSelectorPalabrasDelTrack().setFocusable(false);
+			// Boton de agregar palabras clave del track
+			view.getBtnAgregarPalabrasClaveDelTrack().setEnabled(false);
+			view.getBtnAgregarPalabrasClaveDelTrack().setFocusable(false);		
+			
+		}
 	}
 	
 	private void limpiarCampos() {
