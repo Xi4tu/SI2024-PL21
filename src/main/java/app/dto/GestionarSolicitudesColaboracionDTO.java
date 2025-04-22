@@ -7,11 +7,13 @@ public class GestionarSolicitudesColaboracionDTO {
 	private String nombreTrack;
 	private String palabrasClaveTrack;
 	private String nombre;
+	private int idArticulo;
 	
 	public GestionarSolicitudesColaboracionDTO() {
     }
 	
-	public GestionarSolicitudesColaboracionDTO(String titulo, String nombreTrack, String palabrasClaveTrack, String revisorColaborador) {
+	public GestionarSolicitudesColaboracionDTO(int idArticulo, String titulo, String nombreTrack, String palabrasClaveTrack, String revisorColaborador) {
+		this.idArticulo = idArticulo;
 		this.titulo = titulo;
 		this.nombreTrack = nombreTrack;
 		this.palabrasClaveTrack = palabrasClaveTrack;
@@ -58,8 +60,16 @@ public class GestionarSolicitudesColaboracionDTO {
 		this.nombre = nombre;
 	}
 	
+	public int getIdArticulo() {
+		return idArticulo;
+	}
+	
+	public void setIdArticulo(int idArticulo) {
+		this.idArticulo = idArticulo;
+	}
+	
 	@Override
 	public String toString() {
-		return "- " + titulo;
+		return idArticulo + ". - " + titulo;
 	}
 }

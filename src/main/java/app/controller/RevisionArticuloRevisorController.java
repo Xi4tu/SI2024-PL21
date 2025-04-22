@@ -1,4 +1,5 @@
 package app.controller;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -22,9 +23,12 @@ public class RevisionArticuloRevisorController {
 	private RevisionArticuloRevisorModel model;
 	private RevisionArticuloRevisorView view;
 	private List<RevisionArticuloRevisorDTO> articulos;
+	private List<RevisionArticuloRevisorDTO> articulosCoolab;
+	private List<RevisionArticuloRevisorDTO> nombre;
 	DefaultListModel<RevisionArticuloRevisorDTO> listModel;
 	private String email;
 	private static final Rol ROL = Rol.REVISOR;
+
 	/*
 	 * Constructor del controlador
 	 */
@@ -44,122 +48,122 @@ public class RevisionArticuloRevisorController {
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
 	}
+
 	/*
 	 * Método que se encarga de inicializar el controlador
 	 */
 	public void initController() {
-	    // Listener botón "Enviar Revisión"
-	    view.getBtnEnviarRevision().addActionListener(e ->
-	        SwingUtil.exceptionWrapper(() -> enviarRevision())
-	    );
+		// Listener botón "Enviar Revisión"
+		view.getBtnEnviarRevision().addActionListener(e -> SwingUtil.exceptionWrapper(() -> enviarRevision()));
 
-	    // Listener al seleccionar un artículo
-	    view.getListArticulos().addListSelectionListener(e -> {
-	        if (!e.getValueIsAdjusting()) {
-	            int index = view.getListArticulos().getSelectedIndex();
-	            if (index >= 0) {
-	                RevisionArticuloRevisorDTO articulo = articulos.get(index);
+		// Listener al seleccionar un artículo
+		view.getListArticulos().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int index = view.getListArticulos().getSelectedIndex();
+				if (index >= 0) {
+					RevisionArticuloRevisorDTO articulo = articulos.get(index);
 
-	                // 🔄 Cargar revisores del artículo al combo
-	                List<String> revisores = model.obtenerRevisoresDelArticulo(articulo.getId());
-	                JComboBox<String> comboRevisor = view.getComboBoxRevisor();
-	                
-	                comboRevisor.removeAllItems();
-	                for (String r : revisores) {
-	                    comboRevisor.addItem(r);
-	                }
-	                
-	             // Seleccionar por defecto al usuario actual
-	                comboRevisor.setSelectedItem(email);
-	            }
-	        }
+					// 🔄 Cargar revisores del artículo al combo
+					List<String> revisores = model.obtenerRevisoresDelArticulo(articulo.getId());
+					JComboBox<String> comboRevisor = view.getComboBoxRevisor();
+
+					comboRevisor.removeAllItems();
+					for (String r : revisores) {
+						comboRevisor.addItem(r);
+					}
+
+					// Seleccionar por defecto al usuario actual
+					comboRevisor.setSelectedItem(email);
+				}
+			}
 		});
-
-	                
 
 		view.getBtnPedirColaborador().addActionListener(e -> {
 			if (view.getListArticulos().getSelectedValue() == null) {
 				SwingUtil.showMessage("No has seleccionado ningún artículo", "ERROR", JOptionPane.ERROR_MESSAGE);
 			} else {
-				PedirColaboradorController controller = new PedirColaboradorController(
-						new PedirColaboradorModel(), new PedirColaboradorView(), email, view.getListArticulos().getSelectedValue().getId());
+				PedirColaboradorController controller = new PedirColaboradorController(new PedirColaboradorModel(),
+						new PedirColaboradorView(), email, view.getListArticulos().getSelectedValue().getId());
 				controller.initController();
 			}
 		});
 
-	    // Listener para alternar entre "Pendientes" y "Revisados"
-	    view.getComboBoxPendientes().addItemListener(e -> {
-	        if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-	            String opcion = (String) e.getItem();
-	            boolean esPendientes = opcion.equals("Pendientes");
+		// Listener para alternar entre "Pendientes" y "Revisados"
+		view.getComboBoxPendientes().addItemListener(e -> {
+			if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+				String opcion = (String) e.getItem();
+				boolean esPendientes = opcion.equals("Pendientes");
 
-	            actualizarListaArticulos(esPendientes);
+				actualizarListaArticulos(esPendientes);
 
-	            // 🧹 Limpiar combo revisores si estamos en "Pendientes"
-	            JComboBox<String> comboRevisor = view.getComboBoxRevisor();
-	            if (esPendientes) {
-	                comboRevisor.removeAllItems();
-	                comboRevisor.setEnabled(false); // 🔒 Desactivar
-	            } else {
-	                comboRevisor.setEnabled(true); // 🔓 Activar solo en "Ya revisados"
-	            }
-	        }
-	    });
+				// 🧹 Limpiar combo revisores si estamos en "Pendientes"
+				JComboBox<String> comboRevisor = view.getComboBoxRevisor();
+				if (esPendientes) {
+					comboRevisor.removeAllItems();
+					comboRevisor.setEnabled(false); // 🔒 Desactivar
+				} else {
+					comboRevisor.setEnabled(true); // 🔓 Activar solo en "Ya revisados"
+				}
+			}
+		});
 
-	    // Listener al cambiar el revisor seleccionado en el combo
-	    view.getComboBoxRevisor().addActionListener(e -> {
-	        int indexArticulo = view.getListArticulos().getSelectedIndex();
-	        if (indexArticulo < 0) return;
+		// Listener al cambiar el revisor seleccionado en el combo
+		view.getComboBoxRevisor().addActionListener(e -> {
+			int indexArticulo = view.getListArticulos().getSelectedIndex();
+			if (indexArticulo < 0)
+				return;
 
-	        RevisionArticuloRevisorDTO articulo = articulos.get(indexArticulo);
-	        String revisorSeleccionado = (String) view.getComboBoxRevisor().getSelectedItem();
-	        if (revisorSeleccionado == null || revisorSeleccionado.isEmpty()) return;
+			RevisionArticuloRevisorDTO articulo = articulos.get(indexArticulo);
+			String revisorSeleccionado = (String) view.getComboBoxRevisor().getSelectedItem();
+			if (revisorSeleccionado == null || revisorSeleccionado.isEmpty())
+				return;
 
-	        // 🔍 Obtener la revisión del revisor seleccionado
-	        RevisionAutorDTO revisionAutor = model.obtenerRevisionAutor(articulo.getId(), revisorSeleccionado);
-	        RevisionArticuloRevisionDTO revisionCoord = model.obtenerRevisionCoordinador(articulo.getId(), revisorSeleccionado);
+			// 🔍 Obtener la revisión del revisor seleccionado
+			RevisionAutorDTO revisionAutor = model.obtenerRevisionAutor(articulo.getId(), revisorSeleccionado);
+			RevisionArticuloRevisionDTO revisionCoord = model.obtenerRevisionCoordinador(articulo.getId(),
+					revisorSeleccionado);
 
-	        // Cargar comentarios para autor
-	        if (revisionAutor != null) {
-	            view.getTxtComentariosAutores().setText(revisionAutor.getComentariosParaAutor());
-	            view.getComboNivelExperto().setSelectedItem(revisionAutor.getNivelExperto());
-	            view.getComboDecision().setSelectedItem(obtenerTextoDecision(revisionAutor.getDecisionRevisor()));
-	        } else {
-	            view.getTxtComentariosAutores().setText("");
-	            view.getComboNivelExperto().setSelectedIndex(0);
-	            view.getComboDecision().setSelectedIndex(0);
-	        }
+			// Cargar comentarios para autor
+			if (revisionAutor != null) {
+				view.getTxtComentariosAutores().setText(revisionAutor.getComentariosParaAutor());
+				view.getComboNivelExperto().setSelectedItem(revisionAutor.getNivelExperto());
+				view.getComboDecision().setSelectedItem(obtenerTextoDecision(revisionAutor.getDecisionRevisor()));
+			} else {
+				view.getTxtComentariosAutores().setText("");
+				view.getComboNivelExperto().setSelectedIndex(0);
+				view.getComboDecision().setSelectedIndex(0);
+			}
 
-	        // Cargar comentarios para coordinador
-	        if (revisionCoord != null) {
-	            view.getTxtComentariosCoordinadores().setText(revisionCoord.getComentariosParaCoordinador());
-	        } else {
-	            view.getTxtComentariosCoordinadores().setText("");
-	        }
+			// Cargar comentarios para coordinador
+			if (revisionCoord != null) {
+				view.getTxtComentariosCoordinadores().setText(revisionCoord.getComentariosParaCoordinador());
+			} else {
+				view.getTxtComentariosCoordinadores().setText("");
+			}
 
-	        // 🔒 Activar o desactivar edición según revisor y fecha
-	        boolean esRevisorActual = revisorSeleccionado.equals(email);
-	        boolean periodoAbierto = model.periodoRevisionActivoPorConferencia(articulo.getId());
-	        boolean permitirEdicion = esRevisorActual && periodoAbierto;
+			// 🔒 Activar o desactivar edición según revisor y fecha
+			boolean esRevisorActual = revisorSeleccionado.equals(email);
+			boolean periodoAbierto = model.periodoRevisionActivoPorConferencia(articulo.getId());
+			boolean permitirEdicion = esRevisorActual && periodoAbierto;
 
-	        view.getTxtComentariosAutores().setEnabled(permitirEdicion);
-	        view.getTxtComentariosCoordinadores().setEnabled(permitirEdicion);
-	        view.getComboNivelExperto().setEnabled(permitirEdicion);
-	        view.getComboDecision().setEnabled(permitirEdicion);
-	        view.getBtnEnviarRevision().setEnabled(permitirEdicion);
-	    });
+			view.getTxtComentariosAutores().setEnabled(permitirEdicion);
+			view.getTxtComentariosCoordinadores().setEnabled(permitirEdicion);
+			view.getComboNivelExperto().setEnabled(permitirEdicion);
+			view.getComboDecision().setEnabled(permitirEdicion);
+			view.getBtnEnviarRevision().setEnabled(permitirEdicion);
+		});
 	}
 
-
 	/*
-	 * Método que se encarga de inicializar la vista
- * Método que se encarga de inicializar la vista
+	 * Método que se encarga de inicializar la vista Método que se encarga de
+	 * inicializar la vista
 	 */
 	public void initView() {
 		view.getFrame().setVisible(true);
 		// Asignar el modelo al JList de la vista
 		view.getListArticulos().setModel(listModel);
 	}
+
 	/*
 	 * Método que se encarga de enviar la revisión del artículo seleccionado
 	 */
@@ -179,12 +183,13 @@ public class RevisionArticuloRevisorController {
 					.parseInt(((String) view.getComboDecision().getSelectedItem()).split(" ")[2].split("\\(|\\)")[1]);
 
 			String fechaHoy = UserUtil.getFechaActual();
-			
+
 			// Llamar al backend para insertar la revisión
 			model.actualizarRevision(idArticulo, email, comentariosAutores, comentariosCoordinadores, nivelExperto,
 					decision);
 			// Guardar o actualizar revisión
-		    model.guardarOActualizarRevision(idArticulo, email, comentariosAutores, comentariosCoordinadores, nivelExperto, decision, fechaHoy);
+			model.guardarOActualizarRevision(idArticulo, email, comentariosAutores, comentariosCoordinadores,
+					nivelExperto, decision, fechaHoy);
 			SwingUtil.showMessage("La revisión se ha enviado correctamente", "Información",
 					JOptionPane.INFORMATION_MESSAGE);
 			// Eliminar del listModel el artículo revisado
@@ -199,11 +204,11 @@ public class RevisionArticuloRevisorController {
 				view.getFrame().dispose();
 			}
 
-		
 		} else {
 			SwingUtil.showMessage("Debes de rellenar toda la información", "ERROR", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
 	/*
 	 * Método que se encarga de validar los datos introducidos en la vista
 	 * 
@@ -215,22 +220,32 @@ public class RevisionArticuloRevisorController {
 				&& view.getComboNivelExperto().getSelectedIndex() != -1
 				&& view.getComboDecision().getSelectedIndex() != -1;
 	}
+
 	/*
 	 * Método que se encarga de obtener los artículos asignados al revisor
 	 */
 	private boolean obtenerArticulosAsignados() {
 		// Llamar al backend para obtener los artículos asignados
 
-
 		articulos = model.obtenerArticulosAsignados(email);
-
+		articulosCoolab = model.obtenerRevisionesDeOtrosRevisores();
+		nombre = model.obtenerNombreEmail(email);
 		// Convertir cada Articulo a ArticuloDTO
 		List<RevisionArticuloRevisorDTO> listaDTO = new ArrayList<>();
 		for (RevisionArticuloRevisorDTO articulo : articulos) {
-			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(), articulo.getNombre(),
-					articulo.getNombreFichero());
+			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
+					articulo.getNombre(), articulo.getNombreFichero());
 			listaDTO.add(dto);
 		}
+		/*
+		for (RevisionArticuloRevisorDTO articulo : articulosCoolab) {
+			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
+					articulo.getNombre(), articulo.getNombreFichero());
+			if (articulo.getNombre().equals(nombre.get(0).getNombre())) {
+				listaDTO.add(dto);
+			}
+		}
+		*/
 		// Crear un modelo para el JList y agregar los DTOs
 		listModel = new DefaultListModel<>();
 		for (RevisionArticuloRevisorDTO dto : listaDTO) {
@@ -243,46 +258,40 @@ public class RevisionArticuloRevisorController {
 			return false;
 		}
 
-		
-
 		return true;
 	}
 
-
 	private void actualizarListaArticulos(boolean soloPendientes) {
-	    listModel.clear();
-	    List<RevisionArticuloRevisorDTO> nuevaLista;
+		listModel.clear();
+		List<RevisionArticuloRevisorDTO> nuevaLista;
 
-	    if (soloPendientes) {
-	        nuevaLista = model.obtenerArticulosAsignados(email);
-	    } else {
-	        nuevaLista = model.obtenerArticulosRevisados(email);
-	    }
+		if (soloPendientes) {
+			nuevaLista = model.obtenerArticulosAsignados(email);
+		} else {
+			nuevaLista = model.obtenerArticulosRevisados(email);
+		}
 
-	    for (RevisionArticuloRevisorDTO dto : nuevaLista) {
-	        listModel.addElement(dto);
-	    }
+		for (RevisionArticuloRevisorDTO dto : nuevaLista) {
+			listModel.addElement(dto);
+		}
 
-	    // Actualiza también la lista interna por si se necesita
-	    this.articulos = nuevaLista;
+		// Actualiza también la lista interna por si se necesita
+		this.articulos = nuevaLista;
 	}
+
 	private String obtenerTextoDecision(int decision) {
-	    switch (decision) {
-	        case 2:
-	            return "Aceptar Fuerte (2)";
-	        case 1:
-	            return "Aceptar Débil (1)";
-	        case -1:
-	            return "Rechazar Débil (-1)";
-	        case -2:
-	            return "Rechazar Fuerte (-2)";
-	        default:
-	            return "No asignada";
-	    }
+		switch (decision) {
+		case 2:
+			return "Aceptar Fuerte (2)";
+		case 1:
+			return "Aceptar Débil (1)";
+		case -1:
+			return "Rechazar Débil (-1)";
+		case -2:
+			return "Rechazar Fuerte (-2)";
+		default:
+			return "No asignada";
+		}
 	}
-
-
-
 
 }
-        

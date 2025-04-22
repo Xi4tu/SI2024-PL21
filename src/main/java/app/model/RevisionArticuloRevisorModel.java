@@ -178,6 +178,11 @@ public class RevisionArticuloRevisorModel {
 	    return db.executeQueryPojo(RevisionArticuloRevisionDTO.class, sql, idArticulo, emailActual);
 	}
 	
+	public List<RevisionArticuloRevisorDTO> obtenerNombreEmail(String email) {
+	    String sql = "SELECT nombre FROM Usuario WHERE email = ?";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, email);
+	}
+	
 
 	public List<String> obtenerRevisoresDelArticulo(int idArticulo) {
 	    String sql = "SELECT DISTINCT emailUsuario FROM Revision WHERE idArticulo = ?";
@@ -192,6 +197,13 @@ public class RevisionArticuloRevisorModel {
 	    System.out.println("🔍 Revisores encontrados para artículo " + idArticulo + ": " + revisores);
 	    return revisores;
 	}
+	
+	public List<RevisionArticuloRevisorDTO> obtenerRevisionesDeOtrosRevisores() {
+	    String sql = "SELECT nombre, idArticulo, tituloArticulo " +
+		    	        "FROM Subrevisores";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql);
+	}
+	
 
 
 	public boolean periodoRevisionActivoPorConferencia(int idArticulo) {
@@ -210,6 +222,11 @@ public class RevisionArticuloRevisorModel {
 	    String hoy = UserUtil.getFechaActual(); // usa tu método aquí
 
 	    return hoy.compareTo(deadline) <= 0;
+	}
+
+	public List<RevisionArticuloRevisorDTO> obtenerArticulosColaboradores(String email) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

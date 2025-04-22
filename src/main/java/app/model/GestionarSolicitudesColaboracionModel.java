@@ -19,7 +19,8 @@ public class GestionarSolicitudesColaboracionModel {
 		String sql =    "SELECT a.titulo, " +
 	            "       a.revisorColaborador, " +
 	            "       t.nombre            AS nombreTrack, " +
-	            "       t.palabrasClave     AS palabrasClaveTrack " +  // lo añadimos aquí
+	            "       t.palabrasClave     AS palabrasClaveTrack, " +
+	            "		a.idArticulo" +
 	            "  FROM Articulo a " +
 	            " INNER JOIN Track   t ON a.idTrack = t.idTrack"
 				; // Solo artículos que aún no han sido evaluados
@@ -34,6 +35,13 @@ public class GestionarSolicitudesColaboracionModel {
 
 		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
 		return db.executeQueryPojo(GestionarSolicitudesColaboracionDTO.class, sql, email);
+	}
+	
+	public void insertarSubrevisor(String nombre, int idArticulo, String titulo) {
+		String sql = ""
+	            + "INSERT INTO Subrevisores (nombre, idArticulo, tituloArticulo) "
+	            + "VALUES (?, ?, ?)";
+	    db.executeUpdate(sql, nombre, idArticulo, titulo);
 	}
 	
 	public boolean checkRol(String email, String rol) {
