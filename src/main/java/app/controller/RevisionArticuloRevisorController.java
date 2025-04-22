@@ -83,7 +83,7 @@ public class RevisionArticuloRevisorController {
 				SwingUtil.showMessage("No has seleccionado ningún artículo", "ERROR", JOptionPane.ERROR_MESSAGE);
 			} else {
 				PedirColaboradorController controller = new PedirColaboradorController(new PedirColaboradorModel(),
-						new PedirColaboradorView(), email, view.getListArticulos().getSelectedValue().getId());
+						new PedirColaboradorView(), email, view.getListArticulos().getSelectedValue().getId(), view.getListArticulos().getSelectedValue().getTitulo());
 				controller.initController();
 			}
 		});

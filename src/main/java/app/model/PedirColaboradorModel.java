@@ -67,16 +67,11 @@ public class PedirColaboradorModel {
 		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
 		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, emailUsuario, idArticulo);
 	}
-	
-	public void actualizarRevisor(String nombre, int idArticulo) {
-		String sql =  "UPDATE Articulo " +
-					  "SET revisorColaborador = ? " +
-					  "WHERE idArticulo = ?";
-	    db.executeUpdate(sql, nombre, idArticulo);
+
+	public void insertarColaborador(String nombre, String titulo, String estado) {
+	    String sql = "INSERT INTO Colaboradores (nombre, titulo, estado) VALUES (?, ?, ?)";
+	    db.executeUpdate(sql, nombre, titulo, estado);
 	}
-
-
-
 
 
 	/**
@@ -108,11 +103,13 @@ public class PedirColaboradorModel {
 		return false;
 	}
 
-	public List<PedirColaboradorDTO> obtenerRevisoresAsignado(int idArticulo) {
-		String sql =  "SELECT revisorColaborador " +
-					  "FROM Articulo " +
-				      "WHERE idArticulo = ?";
-		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, idArticulo);
+	public List<PedirColaboradorDTO> obtenerRevisoresAsignado(String titulo) {
+		String sql = 
+	            "SELECT " +
+	            "    nombre " +
+	            "FROM Colaboradores " +
+	            "WHERE titulo = ? ";
+		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, titulo);
 	}
 
 }

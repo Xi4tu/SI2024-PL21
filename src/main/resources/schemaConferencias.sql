@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS Usuario_Preferencia;
 DROP TABLE IF EXISTS Usuario_Discusion;
 DROP TABLE IF EXISTS Articulo_Usuario;
 DROP TABLE IF EXISTS Usuario_Rol;
+DROP TABLE IF EXISTS Colaboradores;
 
 
 CREATE TABLE "Conferencia" (
@@ -131,4 +132,10 @@ CREATE TABLE "Usuario_Preferencia" (
 	PRIMARY KEY("emailUsuario","idPreferencia"),
 	FOREIGN KEY("idPreferencia") REFERENCES "Preferencia"("idPreferencia"),
 	FOREIGN KEY("emailUsuario") REFERENCES "Usuario"("email")
+);
+
+CREATE TABLE "Colaboradores" (
+	"nombre"	TEXT NOT NULL,
+	"titulo"	TEXT NOT NULL,
+	"estado"	TEXT NOT NULL DEFAULT 'Pendiente' CHECK("estado" IN ("Pendiente", "Aceptado", "Rechazado"))
 );

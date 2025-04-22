@@ -75,7 +75,7 @@ public class GestionarSolicitudesColaboracionController {
 			view.getTfBuscador().setText("");
 			listModel.clear();
 			for (GestionarSolicitudesColaboracionDTO dto : colaboradores) {
-				if (dto.getRevisorColaborador().equals(nombre.get(0).getNombre())) {
+				if (dto.getNombreColaborador().equals(nombre.get(0).getNombre())) {
 					listModel.addElement(dto);
 				}
 			}
@@ -91,7 +91,7 @@ public class GestionarSolicitudesColaboracionController {
 				List<GestionarSolicitudesColaboracionDTO> listaFiltrada = new ArrayList<>();
 				for (GestionarSolicitudesColaboracionDTO colaborador : colaboradores) {
 					if (colaborador.getNombreTrack().toLowerCase().contains(busqueda.toLowerCase())
-							&& colaborador.getRevisorColaborador().equals(nombre.get(0).getNombre())) {
+							&& colaborador.getNombreColaborador().equals(nombre.get(0).getNombre())) {
 						listaFiltrada.add(colaborador);
 					}
 				}
@@ -114,7 +114,7 @@ public class GestionarSolicitudesColaboracionController {
 				List<GestionarSolicitudesColaboracionDTO> listaFiltrada = new ArrayList<>();
 				for (GestionarSolicitudesColaboracionDTO colaborador : colaboradores) {
 					if (colaborador.getPalabrasClaveTrack().toLowerCase().contains(busqueda.toLowerCase())
-							&& colaborador.getRevisorColaborador().equals(nombre.get(0).getNombre())) {
+							&& colaborador.getNombreColaborador().equals(nombre.get(0).getNombre())) {
 						listaFiltrada.add(colaborador);
 						break;
 					}
@@ -133,22 +133,51 @@ public class GestionarSolicitudesColaboracionController {
 
 		view.getBtnAceptar().addActionListener(e -> {
 			int indice = view.getListColaboradores().getSelectedIndex();
-			model.insertarSubrevisor(view.getListColaboradores().getSelectedValue().getRevisorColaborador(),
-					view.getListColaboradores().getSelectedValue().getIdArticulo(),
-					view.getListColaboradores().getSelectedValue().getTitulo());
-			SwingUtil.showMessage("Artículo aceptado correctamente", "Información",
-					JOptionPane.INFORMATION_MESSAGE);
-			listModel.removeElement(view.getListColaboradores().getSelectedValue());
-			if (indice != 0) {
-				view.getListColaboradores().setSelectedIndex(indice - 1);
+			if (view.getListColaboradores().getSelectedValue() == null) {
+				SwingUtil.showMessage("Selecciona un artículo", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
 			} else {
-				view.getListColaboradores().setSelectedIndex(0);
-			}
-			// Si está vacía se cierra la pantalla
-			if (listModel.isEmpty()) {
-				SwingUtil.showMessage("No tienes ningún artículo pendiente de registrar", "Información",
+				model.actualizarEstadoColaborador("Aceptado", view.getListColaboradores().getSelectedValue().getNombreColaborador(),
+						view.getListColaboradores().getSelectedValue().getTitulo());
+				SwingUtil.showMessage("Artículo aceptado correctamente", "Información",
 						JOptionPane.INFORMATION_MESSAGE);
-				view.getFrame().dispose();
+				listModel.removeElement(view.getListColaboradores().getSelectedValue());
+				if (indice != 0) {
+					view.getListColaboradores().setSelectedIndex(indice - 1);
+				} else {
+					view.getListColaboradores().setSelectedIndex(0);
+				}
+				// Si está vacía se cierra la pantalla
+				if (listModel.isEmpty()) {
+					SwingUtil.showMessage("No tienes ningún artículo pendiente de gestionar", "Información",
+							JOptionPane.INFORMATION_MESSAGE);
+					view.getFrame().dispose();
+				}
+			}
+		});
+		
+		view.getBtnRechazar().addActionListener(e -> {
+			int indice = view.getListColaboradores().getSelectedIndex();
+			if (view.getListColaboradores().getSelectedValue() == null) {
+				SwingUtil.showMessage("Selecciona un artículo", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			} else {
+				model.actualizarEstadoColaborador("Rechazado", view.getListColaboradores().getSelectedValue().getNombreColaborador(),
+						view.getListColaboradores().getSelectedValue().getTitulo());
+				SwingUtil.showMessage("Artículo rechazado correctamente", "Información",
+						JOptionPane.INFORMATION_MESSAGE);
+				listModel.removeElement(view.getListColaboradores().getSelectedValue());
+				if (indice != 0) {
+					view.getListColaboradores().setSelectedIndex(indice - 1);
+				} else {
+					view.getListColaboradores().setSelectedIndex(0);
+				}
+				// Si está vacía se cierra la pantalla
+				if (listModel.isEmpty()) {
+					SwingUtil.showMessage("No tienes ningún artículo pendiente de gestionar", "Información",
+							JOptionPane.INFORMATION_MESSAGE);
+					view.getFrame().dispose();
+				}
 			}
 		});
 	}
@@ -159,13 +188,13 @@ public class GestionarSolicitudesColaboracionController {
 	}
 
 	public boolean obtenerColaboradores() {
-		colaboradores = model.obtenerColaboradores();
+		colaboradores = model.obtenerColaboradores2(nombre.get(0).getNombre());
 		List<GestionarSolicitudesColaboracionDTO> listaDTO = new ArrayList<>();
 		for (GestionarSolicitudesColaboracionDTO colaborador : colaboradores) {
 			GestionarSolicitudesColaboracionDTO dto = new GestionarSolicitudesColaboracionDTO(
 					colaborador.getIdArticulo(), colaborador.getTitulo(), colaborador.getNombreTrack(),
-					colaborador.getPalabrasClaveTrack(), colaborador.getRevisorColaborador());
-			if (dto.getRevisorColaborador().equals(nombre.get(0).getNombre())) {
+					colaborador.getPalabrasClaveTrack(), colaborador.getNombreColaborador());
+			if (dto.getNombreColaborador().equals(nombre.get(0).getNombre())) {
 				listaDTO.add(dto);
 			}
 

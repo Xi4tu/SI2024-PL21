@@ -3,7 +3,7 @@ package app.dto;
 public class GestionarSolicitudesColaboracionDTO {
 
 	private String titulo;
-	private String revisorColaborador;
+	private String nombreColaborador;
 	private String nombreTrack;
 	private String palabrasClaveTrack;
 	private String nombre;
@@ -12,12 +12,12 @@ public class GestionarSolicitudesColaboracionDTO {
 	public GestionarSolicitudesColaboracionDTO() {
     }
 	
-	public GestionarSolicitudesColaboracionDTO(int idArticulo, String titulo, String nombreTrack, String palabrasClaveTrack, String revisorColaborador) {
+	public GestionarSolicitudesColaboracionDTO(int idArticulo, String titulo, String nombreTrack, String palabrasClaveTrack, String nombreColaborador) {
 		this.idArticulo = idArticulo;
 		this.titulo = titulo;
 		this.nombreTrack = nombreTrack;
 		this.palabrasClaveTrack = palabrasClaveTrack;
-		this.revisorColaborador = revisorColaborador;
+		this.nombreColaborador = nombreColaborador;
 	}
 	
 	public String getTitulo() {
@@ -28,12 +28,12 @@ public class GestionarSolicitudesColaboracionDTO {
 		this.titulo = titulo;
 	}
 	
-	public String getRevisorColaborador() {
-		return revisorColaborador;
+	public String getNombreColaborador() {
+		return nombreColaborador;
 	}
 	
-	public void setRevisorColaborador(String revisorColaborador) {
-		this.revisorColaborador = revisorColaborador;
+	public void setNombreColaborador(String revisorColaborador) {
+		this.nombreColaborador = revisorColaborador;
 	}
 	
 	public String getNombreTrack() {

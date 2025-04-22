@@ -46,6 +46,7 @@ public class PedirColaboradorController {
 	private PedirColaboradorModel model;
 	private PedirColaboradorView view;
 	private String email;
+	private String titulo;
 	private int idArticulo;
 	private DefaultListModel<PedirColaboradorDTO> listModel;
 	private List<PedirColaboradorDTO> articulosDTO;
@@ -73,15 +74,16 @@ public class PedirColaboradorController {
 	 * @param pedirColaboradorView       Vista que presenta la información de los
 	 *                                   artículos y revisiones.
 	 * @param email                      Correo electrónico del coordinador.
+	 * @param titulo 
 	 * @param revisionArticuloRevisorDTO
 	 */
 	public PedirColaboradorController(PedirColaboradorModel pedirColaboradorModel,
-			PedirColaboradorView pedirColaboradorView, String email, int idArticulo) {
+			PedirColaboradorView pedirColaboradorView, String email, int idArticulo, String titulo) {
 		this.model = pedirColaboradorModel;
 		this.view = pedirColaboradorView;
 		this.email = email;
-		this.idArticulo = idArticulo;
-
+		this.idArticulo = idArticulo;		
+        this.titulo = titulo;
 		// Llamar al backend para cargar los artículos aptos para discusión
 		// if (!obtenerArticulos()) {
 		// return;
@@ -113,7 +115,8 @@ public class PedirColaboradorController {
 			if (view.getListRevisores().getSelectedValue() != null) {
 				SwingUtil.showMessage("Se ha enviado la petición", "Información",
 						JOptionPane.INFORMATION_MESSAGE);
-				model.actualizarRevisor(view.getListRevisores().getSelectedValue().getNombre(), idArticulo);
+				model.insertarColaborador(view.getListRevisores().getSelectedValue().getNombre(),
+						titulo, "Pendiente");
 				listModel.removeElement(view.getListRevisores().getSelectedValue());
 
 			} else {
@@ -177,9 +180,10 @@ public class PedirColaboradorController {
 							decision = model.obtenerDeicision(rev.getEmailUsuario(), idArticulo);
 
 							if (decision.size() > 0) {
-								revisorAsig = model.obtenerRevisoresAsignado(idArticulo);
+								revisorAsig = model.obtenerRevisoresAsignado(titulo);
 								if (decision.get(0).getDecision().equals("Lo quiero revisar") && !listModelContains(listModel, revTrack.getNombre())
-										&& !revisorAsig.get(0).getRevisorColaborador().equals(revTrack.getNombre())) {
+										&& revisorAsig.isEmpty()) {
+									System.out.println("El titulo es: " + revTrack.getTitulo());
 									PedirColaboradorDTO dto = new PedirColaboradorDTO(revTrack.getId(), revTrack.getTitulo(),
 											revTrack.getNombreFichero(), revTrack.getNombre(), revTrack.getIdTrack(), revTrack.getEmailUsuario());
 									listaDTO.add(dto);

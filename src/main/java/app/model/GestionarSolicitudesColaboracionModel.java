@@ -29,6 +29,24 @@ public class GestionarSolicitudesColaboracionModel {
 		return db.executeQueryPojo(GestionarSolicitudesColaboracionDTO.class, sql);
 	}
 	
+	public List<GestionarSolicitudesColaboracionDTO> obtenerColaboradores2(String nombre) {
+		String sql = 
+			    "SELECT " +
+			    "    c.nombre AS nombreColaborador, " +
+			    "    c.titulo, " +
+			    "    a.idArticulo, " +
+			    "    a.idTrack, " +
+			    "    a.palabrasClaveTrack, " +
+			    "    t.nombre AS nombreTrack " +
+			    "FROM Colaboradores c " +
+			    "JOIN Articulo a ON c.titulo = a.titulo " +
+			    "JOIN Track t ON a.idTrack = t.idTrack " +
+			    "WHERE c.nombre = ? " +
+	            "AND c.estado = 'Pendiente'";
+		
+		return db.executeQueryPojo(GestionarSolicitudesColaboracionDTO.class, sql, nombre);
+	}
+	
 	public List<GestionarSolicitudesColaboracionDTO> obtenerNombre(String email) {
 		String sql = "SELECT nombre " + "  FROM Usuario " + " WHERE email = ?"
 				; // Solo artículos que aún no han sido evaluados
@@ -43,6 +61,12 @@ public class GestionarSolicitudesColaboracionModel {
 	            + "VALUES (?, ?, ?)";
 	    db.executeUpdate(sql, nombre, idArticulo, titulo);
 	}
+	
+	public void actualizarEstadoColaborador(String nuevoEstado, String nombre, String titulo) {
+	    String sql = "UPDATE Colaboradores SET estado = ? WHERE nombre = ? AND titulo = ?";
+	    db.executeUpdate(sql, nuevoEstado, nombre, titulo);
+	}
+
 	
 	public boolean checkRol(String email, String rol) {
 		// Se utiliza un alias "cnt" para facilitar el acceso al valor del COUNT(*)

@@ -33,7 +33,7 @@ public class GestionarSolicitudesColaboracionView {
 	private JButton btnFiltrar;
 	private JButton btnBorrarFiltro;
 	private JButton btnAceptar;
-	private JButton btnDenegar;
+	private JButton btnRechazar;
 	
 	
 	public GestionarSolicitudesColaboracionView() {
@@ -93,9 +93,9 @@ public class GestionarSolicitudesColaboracionView {
 		btnAceptar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(btnAceptar, "cell 3 11,grow");
 		
-		btnDenegar = new JButton("Denegar");
-		btnDenegar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		contentPane.add(btnDenegar, "cell 4 11,grow");
+		btnRechazar = new JButton("Rechazar");
+		btnRechazar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(btnRechazar, "cell 4 11,grow");
 	}
 	
 	public JFrame getFrame() {
@@ -134,8 +134,8 @@ public class GestionarSolicitudesColaboracionView {
         return this.btnAceptar;
     }
 	
-	public JButton getBtnDenegar() {
-		return this.btnDenegar;
+	public JButton getBtnRechazar() {
+		return this.btnRechazar;
 	}
 
 }
