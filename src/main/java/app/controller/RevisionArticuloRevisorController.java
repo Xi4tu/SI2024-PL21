@@ -228,7 +228,6 @@ public class RevisionArticuloRevisorController {
 		// Llamar al backend para obtener los artículos asignados
 
 		articulos = model.obtenerArticulosAsignados(email);
-		articulosCoolab = model.obtenerRevisionesDeOtrosRevisores();
 		nombre = model.obtenerNombreEmail(email);
 		// Convertir cada Articulo a ArticuloDTO
 		List<RevisionArticuloRevisorDTO> listaDTO = new ArrayList<>();

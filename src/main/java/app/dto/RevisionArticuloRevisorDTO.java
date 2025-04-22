@@ -6,6 +6,11 @@ public class RevisionArticuloRevisorDTO {
 	private String titulo;
 	private String nombreFichero;
 	private String nombre;
+	private String estado;
+	private String nombreRevisor;
+	private String comentariosParaAutor;
+	private String comentariosParaCoordinador;
+	private String email;
 	
 	public RevisionArticuloRevisorDTO() {}
 	
@@ -13,6 +18,13 @@ public class RevisionArticuloRevisorDTO {
 		this.id = id;
 		this.titulo = titulo;
 		this.nombre = nombre;
+	}
+
+	public RevisionArticuloRevisorDTO(String nombre, String titulo, String estado, String nombreRevisor) {
+		this.nombre = nombre;
+		this.titulo = titulo;
+		this.estado = estado;
+		this.nombreRevisor = nombreRevisor;
 	}
 
 	// Getters y setters
@@ -46,6 +58,46 @@ public class RevisionArticuloRevisorDTO {
 	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+	
+	public String getEstado() {
+		return estado;
+	}
+	
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+	
+	public String getNombreRevisor() {
+		return nombreRevisor;
+	}
+	
+	public void setNombreRevisor(String nombreRevisor) {
+		this.nombreRevisor = nombreRevisor;
+	}
+	
+	public String getComentariosParaAutor() {
+		return comentariosParaAutor;
+	}
+	
+	public void setComentariosParaAutor(String comentariosParaAutor) {
+		this.comentariosParaAutor = comentariosParaAutor;
+	}
+	
+	public String getComentariosParaCoordinador() {
+		return comentariosParaCoordinador;
+	}
+	
+	public void setComentariosParaCoordinador(String comentariosParaCoordinador) {
+		this.comentariosParaCoordinador = comentariosParaCoordinador;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	@Override

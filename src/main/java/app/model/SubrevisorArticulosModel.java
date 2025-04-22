@@ -14,7 +14,7 @@ import java.util.Date;
 import giis.demo.util.Util;
 import app.util.UserUtil;
 
-public class RevisionArticuloRevisorModel {
+public class SubrevisorArticulosModel {
 
 	private Database db = new Database();
 
@@ -183,6 +183,11 @@ public class RevisionArticuloRevisorModel {
 	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, email);
 	}
 	
+	public List<RevisionArticuloRevisorDTO> obtenerEmailNombre(String nombre) {
+	    String sql = "SELECT email FROM Usuario WHERE nombre = ?";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, nombre);
+	}
+	
 
 	public List<String> obtenerRevisoresDelArticulo(int idArticulo) {
 	    String sql = "SELECT DISTINCT emailUsuario FROM Revision WHERE idArticulo = ?";
@@ -221,6 +226,36 @@ public class RevisionArticuloRevisorModel {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
+	
+	public List<RevisionArticuloRevisorDTO> obtenerCooperadores(String email) {
+		String sql = "SELECT A.idArticulo AS id, A.titulo " +
+                "FROM Articulo A " +
+                "JOIN Colaboradores C ON A.titulo = C.titulo " +
+                "WHERE C.nombre = ?";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, email);
+	}
+	
+	public List<RevisionArticuloRevisorDTO> obtenerComentarios(int idArticulo, String email) {
+		String sql = "SELECT comentariosParaAutor, comentariosParaCoordinador " +
+	               "FROM Revision " +
+	               "WHERE idArticulo = ? AND emailUsuario = ?";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, idArticulo, email);
+	}
+	
+	public List<RevisionArticuloRevisorDTO> obtenerNombreRevisor(String nombre) {
+		String sql = "SELECT nombreRevisor AS nombre " +
+	            "FROM Colaboradores c " +
+	            "WHERE c.nombre = ?";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, nombre);
+	}
+	
+	public void actualizarViejo(String comentariosParaAutor, String comentariosParaCoordinadorint, int id, String email) {
+		String sqlUpdate = "UPDATE Revision " +
+                "SET comentariosParaAutor = ?, " +
+                "comentariosParaCoordinador = ? " +
+                "WHERE idArticulo = ? " +
+                "AND emailUsuario = ?";
+	             ;
+	    db.executeUpdate(sqlUpdate, comentariosParaAutor, comentariosParaCoordinadorint, id, email);
+	}
 }

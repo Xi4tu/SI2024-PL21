@@ -21,6 +21,7 @@ import app.controller.IndicarPreferenciaArticulosController;
 import app.controller.ParticiparDiscusionesCoordController;
 import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
+import app.controller.SubrevisorArticulosController;
 import app.controller.VerMisArticulosController;
 import app.model.AccederDiscusionModel;
 import app.model.AceptarDenegarArticuloModel;
@@ -32,6 +33,7 @@ import app.model.RevisionArticuloRevisorModel;
 import app.model.VerMisArticulosModel;
 import app.model.IndicarPreferenciaArticulosModel;
 import app.model.ParticiparDiscusionesCoordModel;
+import app.model.SubrevisorArticulosModel;
 import giis.demo.util.Database;
 
 public class AppMain {
@@ -161,6 +163,13 @@ public class AppMain {
 		buttons.add(new ButtonProvider("Gestionar solicitudes de colaboración - Revisor", e -> {
 			GestionarSolicitudesColaboracionController controller = new GestionarSolicitudesColaboracionController(new GestionarSolicitudesColaboracionModel(), 
 					new GestionarSolicitudesColaboracionView(), textEmail.getText());
+
+			controller.initController();
+		}));
+		
+		buttons.add(new ButtonProvider("Revision como subrevisor - Revisor", e -> {
+			SubrevisorArticulosController controller = new SubrevisorArticulosController(new SubrevisorArticulosModel(), 
+					new SubrevisorArticulosView(), textEmail.getText());
 
 			controller.initController();
 		}));

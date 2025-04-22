@@ -25,8 +25,14 @@ public class PedirColaboradorModel {
 				; // Solo artículos que aún no han sido evaluados
 		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
 		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, emailUsuario);
-
-
+	}
+	
+	public List<PedirColaboradorDTO> obtenerNombreRevisor(String email) {
+		String sql = "SELECT nombre FROM usuario " +
+	             "WHERE email = ?;"; // Solo artículos que aún no han sido evaluados";
+				; // Solo artículos que aún no han sido evaluados
+		// Ejecutamos la consulta asegurándonos de filtrar por el email del revisor.
+		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, email);
 	}
 
 	public List<PedirColaboradorDTO> obtenerTrackNombre(String nombreRevisor) {
@@ -68,9 +74,9 @@ public class PedirColaboradorModel {
 		return db.executeQueryPojo(PedirColaboradorDTO.class, sql, emailUsuario, idArticulo);
 	}
 
-	public void insertarColaborador(String nombre, String titulo, String estado) {
-	    String sql = "INSERT INTO Colaboradores (nombre, titulo, estado) VALUES (?, ?, ?)";
-	    db.executeUpdate(sql, nombre, titulo, estado);
+	public void insertarColaborador(String nombre, String titulo, String estado, String nombreRevisor) {
+	    String sql = "INSERT INTO Colaboradores (nombre, titulo, estado, nombreRevisor) VALUES (?, ?, ?, ?)";
+	    db.executeUpdate(sql, nombre, titulo, estado, nombreRevisor);
 	}
 
 

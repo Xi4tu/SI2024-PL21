@@ -58,6 +58,7 @@ public class PedirColaboradorController {
 	private List<PedirColaboradorDTO> revisores;
 	private List<PedirColaboradorDTO> decision;
 	private List<PedirColaboradorDTO> revisorAsig;
+	private List<PedirColaboradorDTO> nombreRevisor;
 	private static final Rol ROL = Rol.COORDINADOR;
 
 	/**
@@ -115,8 +116,9 @@ public class PedirColaboradorController {
 			if (view.getListRevisores().getSelectedValue() != null) {
 				SwingUtil.showMessage("Se ha enviado la petición", "Información",
 						JOptionPane.INFORMATION_MESSAGE);
+				nombreRevisor = model.obtenerNombreRevisor(email);
 				model.insertarColaborador(view.getListRevisores().getSelectedValue().getNombre(),
-						titulo, "Pendiente");
+						titulo, "Pendiente", nombreRevisor.get(0).getNombre());
 				listModel.removeElement(view.getListRevisores().getSelectedValue());
 
 			} else {

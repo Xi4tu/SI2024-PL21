@@ -148,5 +148,6 @@ CREATE TABLE "Usuario_Preferencia" (
 CREATE TABLE "Colaboradores" (
 	"nombre"	TEXT NOT NULL,
 	"titulo"	TEXT NOT NULL,
-	"estado"	TEXT NOT NULL DEFAULT 'Pendiente' CHECK("estado" IN ("Pendiente", "Aceptado", "Rechazado"))
+	"estado"	TEXT NOT NULL DEFAULT 'Pendiente' CHECK("estado" IN ("Pendiente", "Aceptado", "Rechazado")),
+	"nombreRevisor"	TEXT NOT NULL
 );
