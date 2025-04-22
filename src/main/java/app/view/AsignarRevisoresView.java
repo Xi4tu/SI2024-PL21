@@ -30,6 +30,7 @@ public class AsignarRevisoresView {
 	private JTable tableRevisoresSeleccionados;
 	private JComboBox<String> comboBoxAticulosAsignadosoNo;
 	private JButton btnEliminar;
+	private JComboBox<String> comboBoxExperto;
 	/**
 	 * Create the frame.
 	 */
@@ -48,7 +49,7 @@ public class AsignarRevisoresView {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		frame.setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[::250px,grow][grow]", "[][][grow][100px:100px:150px,grow][][100px:100px:150px,grow][][][100px:100px:150px,grow][]"));
+		contentPane.setLayout(new MigLayout("", "[::250px,grow][grow]", "[][][grow][100px:100px:150px,grow][][][100px:100px:150px,grow][][][100px:100px:150px,grow][]"));
 		
 		comboBoxAticulosAsignadosoNo = new JComboBox<String>();
 		comboBoxAticulosAsignadosoNo.setMaximumRowCount(2);
@@ -94,17 +95,25 @@ public class AsignarRevisoresView {
 		tableAutores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane_LA.setViewportView(tableAutores);
 		
+		comboBoxExperto = new JComboBox<String>();
+		comboBoxExperto.setModel(new DefaultComboBoxModel<String>(new String[] {
+			    "-- Selecciona filtro --",
+			    "Todos los revisores",
+			    "Revisores expertos"
+			}));
+		contentPane.add(comboBoxExperto, "cell 1 5,alignx left");
+		
 		JLabel lblLRD = new JLabel("Lista de revisores disponibles:");
-		contentPane.add(lblLRD, "cell 0 5,alignx trailing,aligny top");
+		contentPane.add(lblLRD, "cell 0 6,alignx trailing,aligny top");
 		
 		JScrollPane scrollPane_LRD = new JScrollPane();
-		contentPane.add(scrollPane_LRD, "cell 1 5,grow");
+		contentPane.add(scrollPane_LRD, "cell 1 6,grow");
 		
 		tableRevisoresDisponibles = new JTable();
 		tableRevisoresDisponibles.setModel(new DefaultTableModel(
 			    new Object[][] {},
 			    new String[] {
-			        "Email", "Nombre", "Organización", "Grupo de Investigación", "Preferencia"
+			        "Email", "Nombre", "Organización", "Grupo de Investigación", "Preferencia", "Nº de palabras clave"
 			    }
 			) {
 		    /**
@@ -122,14 +131,14 @@ public class AsignarRevisoresView {
 		
 		// --- Botón para anyadir revisor ---
 		btnAsignarRevisor = new JButton("Añadir");
-		contentPane.add(btnAsignarRevisor, "cell 1 6");
+		contentPane.add(btnAsignarRevisor, "cell 1 7");
 		//---------------------------------------------------------------------
 		
 		JLabel lblLRS = new JLabel("Lista de revisores es seleccionados:");
-		contentPane.add(lblLRS, "cell 0 8,alignx trailing,aligny top");
+		contentPane.add(lblLRS, "cell 0 9,alignx trailing,aligny top");
 		
 		JScrollPane scrollPane_LRS = new JScrollPane();
-		contentPane.add(scrollPane_LRS, "cell 1 8,grow");
+		contentPane.add(scrollPane_LRS, "cell 1 9,grow");
 		
 		tableRevisoresSeleccionados = new JTable();
 		tableRevisoresSeleccionados.setModel(new DefaultTableModel(
@@ -151,7 +160,7 @@ public class AsignarRevisoresView {
 		scrollPane_LRS.setViewportView(tableRevisoresSeleccionados);
 		
 		btnEliminar = new JButton("Eliminar");
-		contentPane.add(btnEliminar, "cell 1 9");
+		contentPane.add(btnEliminar, "cell 1 10");
 		
 		
 		
@@ -248,7 +257,11 @@ public class AsignarRevisoresView {
 		this.btnEliminar = btnEliminar;
 	}
 	
-	
+	public JComboBox<String> getComboBoxExperto() {
+	    return comboBoxExperto;
+	}	public void setComboBoxExperto(JComboBox<String> comboBoxExperto) {
+	    this.comboBoxExperto = comboBoxExperto;
+	}
 	
 	
 }
