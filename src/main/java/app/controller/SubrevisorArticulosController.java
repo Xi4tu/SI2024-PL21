@@ -62,9 +62,7 @@ public class SubrevisorArticulosController {
 
 		// Listener al seleccionar un artículo
 		view.getListArticulos().addListSelectionListener(e -> {
-			System.out.println(nombre.get(0).getNombre());
 			nombreRevisor = model.obtenerNombreRevisor(nombre.get(0).getNombre());
-			System.out.println("Nombre revisor: " + nombreRevisor.get(0).getNombre());
 			emailSuyo = model.obtenerEmailNombre(nombreRevisor.get(0).getNombre());
 			comentarios = model.obtenerComentarios(view.getListArticulos().getSelectedValue().getId(),
 					emailSuyo.get(0).getEmail());

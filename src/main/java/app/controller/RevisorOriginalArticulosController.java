@@ -73,7 +73,6 @@ public class RevisorOriginalArticulosController {
 
 		// Listener al seleccionar un artículo
 		view.getListArticulos().addListSelectionListener(e -> {
-			System.out.println(nombre.get(0).getNombre());
 			nombreRevisor = model.obtenerNombreEmail(email);
 			nombreSubrevisor = view.getListArticulos().getSelectedValue().getNombre();
 			emailSuyo = model.obtenerEmailNombre(nombreRevisor.get(0).getNombre());
@@ -120,11 +119,6 @@ public class RevisorOriginalArticulosController {
 	 * Método que se encarga de enviar la revisión del artículo seleccionado
 	 */
 	private void enviarRevision() {
-		System.out.println("DEPURACIÓN");
-		System.out.println(view.getTxtComentariosAutores().getText());
-		System.out.println(view.getTxtComentariosCoordinadores().getText());
-		System.out.println(view.getListArticulos().getSelectedValue().getId());
-		System.out.println(nombreRevisor.get(0).getNombre());
 		model.actualizarViejo(view.getTxtComentariosAutores().getText(),
 				view.getTxtComentariosCoordinadores().getText(), view.getListArticulos().getSelectedValue().getId(),
 				emailSuyo.get(0).getEmail());
