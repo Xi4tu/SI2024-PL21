@@ -13,31 +13,36 @@ import app.enums.Rol;
 import app.model.GestionarDiscusionesCoordinadorModel;
 import app.model.PedirColaboradorModel;
 import app.model.RevisionArticuloRevisorModel;
+import app.model.RevisorOriginalArticulosModel;
 import app.model.SubrevisorArticulosModel;
 import app.util.UserUtil;
 import app.view.GestionarDiscusionesCoordinadorView;
 import app.view.PedirColaboradorView;
 import app.view.RevisionArticuloRevisorView;
+import app.view.RevisorOriginalArticulosView;
 import app.view.SubrevisorArticulosView;
 import giis.demo.util.SwingUtil;
 
-public class SubrevisorArticulosController {
-	private SubrevisorArticulosModel model;
-	private SubrevisorArticulosView view;
+public class RevisorOriginalArticulosController {
+	private RevisorOriginalArticulosModel model;
+	private RevisorOriginalArticulosView view;
 	private List<RevisionArticuloRevisorDTO> articulos;
 	private List<RevisionArticuloRevisorDTO> articulosCoolab;
 	private List<RevisionArticuloRevisorDTO> nombre;
 	private List<RevisionArticuloRevisorDTO> nombreRevisor;
+	private String nombreSubrevisor;
 	private List<RevisionArticuloRevisorDTO> emailSuyo;
 	private List<RevisionArticuloRevisorDTO> comentarios;
 	DefaultListModel<RevisionArticuloRevisorDTO> listModel;
+	DefaultListModel<RevisionArticuloRevisorDTO> listModelPendientes;
+	private List<RevisionArticuloRevisorDTO> pendientes;
 	private String email;
 	private static final Rol ROL = Rol.REVISOR;
 
 	/*
 	 * Constructor del controlador
 	 */
-	public SubrevisorArticulosController(SubrevisorArticulosModel m, SubrevisorArticulosView v, String email) {
+	public RevisorOriginalArticulosController(RevisorOriginalArticulosModel m, RevisorOriginalArticulosView v, String email) {
 		this.model = m;
 		this.view = v;
 		this.email = email;
@@ -46,9 +51,15 @@ public class SubrevisorArticulosController {
 			return;
 		}
 		// Llamar al backend para cargar los datos necesarios.
+		
+		if (!obtenerArticulosAsignadosPendientes()) {
+			return;
+		}
+		
 		if (!obtenerArticulosAsignados()) {
 			return;
 		}
+		
 		// Inicializar la vista una vez que los datos están cargados.
 		this.initView();
 	}
@@ -63,8 +74,8 @@ public class SubrevisorArticulosController {
 		// Listener al seleccionar un artículo
 		view.getListArticulos().addListSelectionListener(e -> {
 			System.out.println(nombre.get(0).getNombre());
-			nombreRevisor = model.obtenerNombreRevisor(nombre.get(0).getNombre());
-			System.out.println("Nombre revisor: " + nombreRevisor.get(0).getNombre());
+			nombreRevisor = model.obtenerNombreEmail(email);
+			nombreSubrevisor = view.getListArticulos().getSelectedValue().getNombre();
 			emailSuyo = model.obtenerEmailNombre(nombreRevisor.get(0).getNombre());
 			comentarios = model.obtenerComentarios(view.getListArticulos().getSelectedValue().getId(),
 					emailSuyo.get(0).getEmail());
@@ -82,13 +93,12 @@ public class SubrevisorArticulosController {
 		view.getBtnEnviarChat().addActionListener(e -> {
 		    String mensaje = view.getInputChat().getText().trim();
 		    if (!mensaje.isEmpty()) {
-		    	model.chatMensajes(view.getListArticulos().getSelectedValue().getId(), nombre.get(0).getNombre(), nombreRevisor.get(0).getNombre(), mensaje);  // Guarda el mensaje
+		    	model.chatMensajes(view.getListArticulos().getSelectedValue().getId(), nombreRevisor.get(0).getNombre(), nombreSubrevisor, mensaje);  // Guarda el mensaje
 	            view.getInputChat().setText("");  // Limpia campo de texto
 	            cargarMensajesChat();
-
 		    }
+		    
 		});
-
 		// Listener para alternar entre "Pendientes" y "Revisados"
 
 		// Listener al cambiar el revisor seleccionado en el combo
@@ -103,12 +113,18 @@ public class SubrevisorArticulosController {
 		view.getFrame().setVisible(true);
 		// Asignar el modelo al JList de la vista
 		view.getListArticulos().setModel(listModel);
+		view.getListArticulosPendientes().setModel(listModelPendientes);
 	}
 
 	/*
 	 * Método que se encarga de enviar la revisión del artículo seleccionado
 	 */
 	private void enviarRevision() {
+		System.out.println("DEPURACIÓN");
+		System.out.println(view.getTxtComentariosAutores().getText());
+		System.out.println(view.getTxtComentariosCoordinadores().getText());
+		System.out.println(view.getListArticulos().getSelectedValue().getId());
+		System.out.println(nombreRevisor.get(0).getNombre());
 		model.actualizarViejo(view.getTxtComentariosAutores().getText(),
 				view.getTxtComentariosCoordinadores().getText(), view.getListArticulos().getSelectedValue().getId(),
 				emailSuyo.get(0).getEmail());
@@ -125,6 +141,20 @@ public class SubrevisorArticulosController {
 				&& view.getComboNivelExperto().getSelectedIndex() != -1
 				&& view.getComboDecision().getSelectedIndex() != -1;
 	}
+	
+	private void cargarMensajesChat() {
+	    List<RevisionArticuloRevisorDTO> mensajes = model.obtenerMensajesChat(view.getListArticulos().getSelectedValue().getId(), nombreRevisor.get(0).getNombre(), nombreSubrevisor);
+
+	    StringBuilder textoChat = new StringBuilder();
+	    for (RevisionArticuloRevisorDTO msg : mensajes) {
+	        textoChat.append("[").append(msg.getNumeroMensaje()).append("] ");
+	        textoChat.append(msg.getRemitente()).append(": ");
+	        textoChat.append(msg.getMensaje()).append("\n");
+	    }
+
+	    view.getChatArea().setText(textoChat.toString());
+	}
+	
 
 	/*
 	 * Método que se encarga de obtener los artículos asignados al revisor
@@ -137,7 +167,7 @@ public class SubrevisorArticulosController {
 		List<RevisionArticuloRevisorDTO> listaDTO = new ArrayList<>();
 		for (RevisionArticuloRevisorDTO articulo : articulos) {
 			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
-					articulo.getEstado(), articulo.getNombreRevisor());
+					articulo.getEstado(), articulo.getNombre());
 			listaDTO.add(dto);
 		}
 		/*
@@ -154,7 +184,7 @@ public class SubrevisorArticulosController {
 			listModel.addElement(dto);
 		}
 		// Si no hay articulos asignados, mostrar un mensaje y cerrar la vista
-		if (articulos.isEmpty()) {
+		if (listModel.isEmpty() && listModelPendientes.isEmpty()) {
 			SwingUtil.showMessage("No tienes ningún artículo pendiente de revisión", "Información",
 					JOptionPane.INFORMATION_MESSAGE);
 			return false;
@@ -162,20 +192,36 @@ public class SubrevisorArticulosController {
 
 		return true;
 	}
-
-	private void cargarMensajesChat() {
-	    List<RevisionArticuloRevisorDTO> mensajes = model.obtenerMensajesChat(view.getListArticulos().getSelectedValue().getId(), nombre.get(0).getNombre(), nombreRevisor.get(0).getNombre());
-
-	    StringBuilder textoChat = new StringBuilder();
-	    for (RevisionArticuloRevisorDTO msg : mensajes) {
-	        textoChat.append("[").append(msg.getNumeroMensaje()).append("] ");
-	        textoChat.append(msg.getRemitente()).append(": ");
-	        textoChat.append(msg.getMensaje()).append("\n");
-	    }
-
-	    view.getChatArea().setText(textoChat.toString());
-	}
 	
+	private boolean obtenerArticulosAsignadosPendientes() {
+		// Llamar al backend para obtener los artículos asignados
+		nombre = model.obtenerNombreEmail(email);
+		pendientes = model.obtenerRevisoresPendientes(nombre.get(0).getNombre());
+		// Convertir cada Articulo a ArticuloDTO
+		List<RevisionArticuloRevisorDTO> listaDTO = new ArrayList<>();
+		for (RevisionArticuloRevisorDTO pendiente : pendientes) {
+			RevisionArticuloRevisorDTO dto = new RevisionArticuloRevisorDTO(pendiente.getId(), pendiente.getTitulo(),
+					pendiente.getEstado(), pendiente.getNombre());
+			listaDTO.add(dto);
+		}
+		/*
+		 * for (RevisionArticuloRevisorDTO articulo : articulosCoolab) {
+		 * RevisionArticuloRevisorDTO dto = new
+		 * RevisionArticuloRevisorDTO(articulo.getId(), articulo.getTitulo(),
+		 * articulo.getNombre(), articulo.getNombreFichero()); if
+		 * (articulo.getNombre().equals(nombre.get(0).getNombre())) { listaDTO.add(dto);
+		 * } }
+		 */
+		// Crear un modelo para el JList y agregar los DTOs
+		listModelPendientes = new DefaultListModel<>();
+		for (RevisionArticuloRevisorDTO dto : listaDTO) {
+			listModelPendientes.addElement(dto);
+		}
+		// Si no hay articulos asignados, mostrar un mensaje y cerrar la vista
+
+		return true;
+	}
+
 	private void actualizarListaArticulos(boolean soloPendientes) {
 		listModel.clear();
 		List<RevisionArticuloRevisorDTO> nuevaLista;

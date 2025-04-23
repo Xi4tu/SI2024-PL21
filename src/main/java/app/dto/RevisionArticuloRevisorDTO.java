@@ -11,6 +11,10 @@ public class RevisionArticuloRevisorDTO {
 	private String comentariosParaAutor;
 	private String comentariosParaCoordinador;
 	private String email;
+	private int numeroMensaje;
+	private String remitente;
+	private String mensaje;
+	private String destinatario;
 	
 	public RevisionArticuloRevisorDTO() {}
 	
@@ -98,6 +102,38 @@ public class RevisionArticuloRevisorDTO {
 	
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public int getNumeroMensaje() {
+		return numeroMensaje;
+	}
+	
+	public void setNumeroMensaje(int numeroMensaje) {
+		this.numeroMensaje = numeroMensaje;
+	}
+	
+	public String getRemitente() {
+		return remitente;
+	}
+	
+	public void setRemitente(String remitente) {
+		this.remitente = remitente;
+	}
+	
+	public String getMensaje() {
+		return mensaje;
+	}
+	
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
+	}
+	
+	public String getDestinatario() {
+		return destinatario;
+	}
+	
+	public void setDestinatario(String destinatario) {
+		this.destinatario = destinatario;
 	}
 
 	@Override

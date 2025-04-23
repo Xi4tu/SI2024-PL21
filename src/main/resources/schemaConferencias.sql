@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS Usuario_Discusion;
 DROP TABLE IF EXISTS Articulo_Usuario;
 DROP TABLE IF EXISTS Usuario_Rol;
 DROP TABLE IF EXISTS Colaboradores;
+DROP TABLE IF EXISTS ChatMensajes;
 
 
 CREATE TABLE "Conferencia" (
@@ -150,4 +151,12 @@ CREATE TABLE "Colaboradores" (
 	"titulo"	TEXT NOT NULL,
 	"estado"	TEXT NOT NULL DEFAULT 'Pendiente' CHECK("estado" IN ("Pendiente", "Aceptado", "Rechazado")),
 	"nombreRevisor"	TEXT NOT NULL
+);
+
+CREATE TABLE "ChatMensajes" (
+	"idArticulo"	INTEGER,
+	"remitente"	TEXT,
+	"destinatario"	TEXT,
+	"mensaje"	TEXT,
+	"numeroMensaje"	INTEGER
 );

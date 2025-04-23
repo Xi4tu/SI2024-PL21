@@ -14,7 +14,7 @@ import java.util.Date;
 import giis.demo.util.Util;
 import app.util.UserUtil;
 
-public class SubrevisorArticulosModel {
+public class RevisorOriginalArticulosModel {
 
 	private Database db = new Database();
 
@@ -228,10 +228,11 @@ public class SubrevisorArticulosModel {
 	}
 	
 	public List<RevisionArticuloRevisorDTO> obtenerCooperadores(String email) {
-		String sql = "SELECT A.idArticulo AS id, A.titulo " +
+		String sql = "SELECT A.idArticulo AS id, A.titulo, c.nombre " +
                 "FROM Articulo A " +
                 "JOIN Colaboradores C ON A.titulo = C.titulo " +
-                "WHERE C.nombre = ?";
+                "WHERE C.nombreRevisor = ? " + 
+                "AND C.estado = 'Aceptado'";
 	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, email);
 	}
 	
@@ -246,6 +247,13 @@ public class SubrevisorArticulosModel {
 		String sql = "SELECT nombreRevisor AS nombre " +
 	            "FROM Colaboradores c " +
 	            "WHERE c.nombre = ?";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, nombre);
+	}
+	
+	public List<RevisionArticuloRevisorDTO> obtenerNombreSubrevisor(String nombre) {
+		String sql = "SELECT nombre AS nombre " +
+	            "FROM Colaboradores c " +
+	            "WHERE c.nombreRevisor = ?";
 	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, nombre);
 	}
 	
@@ -280,4 +288,13 @@ public class SubrevisorArticulosModel {
 	                 "ORDER BY numeroMensaje ASC";
 	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, idArticulo, remitente, destinatario, destinatario, remitente);
 	}
+	
+	public List<RevisionArticuloRevisorDTO> obtenerRevisoresPendientes(String nombreRevisor) {
+		String sql = "SELECT c.nombre, c.titulo, a.idArticulo AS id " +
+	             "FROM Colaboradores c " +
+	             "JOIN Articulo a ON c.titulo = a.titulo " +
+	             "WHERE c.nombreRevisor = ? AND c.estado = 'Pendiente'";
+	    return db.executeQueryPojo(RevisionArticuloRevisorDTO.class, sql, nombreRevisor);
+	}
+
 }

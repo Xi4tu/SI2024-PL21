@@ -21,6 +21,7 @@ import app.controller.IndicarPreferenciaArticulosController;
 import app.controller.ParticiparDiscusionesCoordController;
 import app.controller.RevisionArticuloAutorController;
 import app.controller.RevisionArticuloRevisorController;
+import app.controller.RevisorOriginalArticulosController;
 import app.controller.SubrevisorArticulosController;
 import app.controller.VerMisArticulosController;
 import app.model.AccederDiscusionModel;
@@ -30,6 +31,7 @@ import app.model.EnviarArticuloModel;
 import app.model.GestionarSolicitudesColaboracionModel;
 import app.model.RevisionArticuloAutorModel;
 import app.model.RevisionArticuloRevisorModel;
+import app.model.RevisorOriginalArticulosModel;
 import app.model.VerMisArticulosModel;
 import app.model.IndicarPreferenciaArticulosModel;
 import app.model.ParticiparDiscusionesCoordModel;
@@ -170,6 +172,13 @@ public class AppMain {
 		buttons.add(new ButtonProvider("Revision como subrevisor - Revisor", e -> {
 			SubrevisorArticulosController controller = new SubrevisorArticulosController(new SubrevisorArticulosModel(), 
 					new SubrevisorArticulosView(), textEmail.getText());
+
+			controller.initController();
+		}));
+		
+		buttons.add(new ButtonProvider("Revision como revisor original - Revisor", e -> {
+			RevisorOriginalArticulosController controller = new RevisorOriginalArticulosController(new RevisorOriginalArticulosModel(), 
+					new RevisorOriginalArticulosView(), textEmail.getText());
 
 			controller.initController();
 		}));
