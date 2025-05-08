@@ -14,6 +14,17 @@ import giis.demo.util.Database;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+/**
+ * Pruebas JUnit del proceso de negocio: Enviar una nueva versión de un artículo.
+ * 
+ * Dado que el modelo no distingue entre versión y envío nuevo, se simula la subida
+ * de una versión mediante un nuevo envío con el mismo título.
+ * 
+ * Se comprueba:
+ * - Que solo el autor original puede subir la versión.
+ * - Que no se permita si ha vencido el deadline de la conferencia.
+ * - Que el sistema gestione correctamente un intento válido (aunque actualmente falla).
+ */
 @RunWith(JUnitParamsRunner.class)
 public class TestActualizarVersionArticulo {
 
@@ -23,6 +34,12 @@ public class TestActualizarVersionArticulo {
 	private final int ID_TRACK = 1;
 	private final int ID_ARTICULO = 1;
 
+	/**
+	 * Preparación de la base de datos con datos mínimos:
+	 * - Una conferencia con track.
+	 * - Dos usuarios (uno autor, otro no).
+	 * - Un artículo con un título dado.
+	 */
 	@Before
 	public void setUp() {
 		db.createDatabase(true);
@@ -53,9 +70,14 @@ public class TestActualizarVersionArticulo {
 		});
 	}
 
+	/**
+	 * Prueba parametrizada que simula el intento de subir una nueva versión
+	 * mediante una nueva llamada a enviarArticulo con el mismo título.
+	 */
 	@Test
 	@Parameters(method = "getCasosVersion")
 	public void testNuevaVersion(String email, String fechaDeadline, boolean debeFallar) {
+		// Modificamos el deadline para simular que estamos dentro o fuera de plazo
 		db.executeUpdate("UPDATE Conferencia SET deadlineEnvio = ?", fechaDeadline);
 
 		ArrayList<AutorDTO> autores = new ArrayList<>();
@@ -74,6 +96,12 @@ public class TestActualizarVersionArticulo {
 		}
 	}
 
+	/**
+	 * Casos de prueba:
+	 * - CP1: Usuario correcto y dentro de plazo.
+	 * - CP2: Otro usuario (no autorizado).
+	 * - CP3: Usuario válido pero fuera de plazo.
+	 */
 	@SuppressWarnings("unused")
 	private Object[] getCasosVersion() {
 		return new Object[] {
