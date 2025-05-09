@@ -45,7 +45,7 @@ public class IndicarPreferenciaArticulosView  {
 		comboBoxExperto.setModel(new DefaultComboBoxModel<String>(new String[] {
 			    "-- Selecciona filtro --",
 			    "Todos los artículos",
-			    "En los que soy experto/a"
+			    "En los que soy experto"
 			}));
 		contentPane.add(comboBoxExperto, "cell 0 1,growx");
 		
